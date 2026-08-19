@@ -1,0 +1,214 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Property {
+  id                   String                @id @default(uuid())
+  title                String
+  location             String
+  maxGuests            Int                   @map("max_guests")
+  bedrooms             Int
+  beds                 Int
+  bathrooms            Int
+  rating               Float                 @default(0)
+  reviewCount          Int                   @default(0) @map("review_count")
+  description          String
+  hostName             String                @map("host_name")
+  hostYearsHosting     Int                   @map("host_years_hosting")
+  hostResponseRate     Int                   @map("host_response_rate")
+  neighborhoodText     String                @map("neighborhood_text")
+  houseRules           String                @map("house_rules")
+  cancellationPolicy   String                @map("cancellation_policy")
+  safetyNotes          String                @map("safety_notes")
+  latitude             Float?
+  longitude            Float?
+  basePrice            Decimal               @map("base_price")
+  cleaningFee          Decimal               @map("cleaning_fee")
+  taxRate              Decimal               @map("tax_rate")
+  depositPercentage    Int                   @default(100) @map("deposit_percentage")
+  isActive             Boolean               @default(true) @map("is_active")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @updatedAt @map("updated_at")
+  images               PropertyImage[]
+  highlights           Highlight[]
+  amenities            PropertyAmenity[]
+  sleepingArrangements SleepingArrangement[]
+  reviews              Review[]
+  pricingRules         PricingRule[]
+  bookings             Booking[]
+  blockedDates         BlockedDate[]
+  icalSources          IcalSource[]
+
+  @@map("properties")
+}
+
+model PropertyImage {
+  id         String   @id @default(uuid())
+  propertyId String   @map("property_id")
+  url        String
+  sortOrder  Int      @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("property_images")
+}
+
+model Highlight {
+  id         String   @id @default(uuid())
+  propertyId String   @map("property_id")
+  icon       String
+  text       String
+  sortOrder  Int      @map("sort_order")
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("highlights")
+}
+
+model AmenityCategory {
+  id        String    @id @default(uuid())
+  name      String
+  sortOrder Int       @map("sort_order")
+  amenities Amenity[]
+
+  @@map("amenity_categories")
+}
+
+model Amenity {
+  id         String            @id @default(uuid())
+  categoryId String            @map("category_id")
+  name       String
+  icon       String
+  category   AmenityCategory   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  properties PropertyAmenity[]
+
+  @@index([categoryId])
+  @@map("amenities")
+}
+
+model PropertyAmenity {
+  id         String   @id @default(uuid())
+  propertyId String   @map("property_id")
+  amenityId  String   @map("amenity_id")
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  amenity    Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, amenityId])
+  @@index([propertyId])
+  @@index([amenityId])
+  @@map("property_amenities")
+}
+
+model SleepingArrangement {
+  id         String   @id @default(uuid())
+  propertyId String   @map("property_id")
+  roomName   String   @map("room_name")
+  bedType    String   @map("bed_type")
+  imageUrl   String?  @map("image_url")
+  sortOrder  Int      @map("sort_order")
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("sleeping_arrangements")
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  propertyId    String   @map("property_id")
+  guestName     String   @map("guest_name")
+  guestAvatar   String?  @map("guest_avatar")
+  date          DateTime
+  comment       String
+  cleanliness   Int
+  accuracy      Int
+  checkIn       Int      @map("check_in")
+  communication Int
+  location      Int
+  value         Int
+  property      Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("reviews")
+}
+
+model PricingRule {
+  id            String   @id @default(uuid())
+  propertyId    String   @map("property_id")
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+  pricePerNight Decimal  @map("price_per_night")
+  property      Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("pricing_rules")
+}
+
+model Booking {
+  id                    String    @id @default(uuid())
+  propertyId            String    @map("property_id")
+  guestName             String    @map("guest_name")
+  guestEmail            String    @map("guest_email")
+  guestPhone            String?   @map("guest_phone")
+  checkIn               DateTime  @map("check_in")
+  checkOut              DateTime  @map("check_out")
+  guests                Int
+  totalPrice            Decimal   @map("total_price")
+  status                String    @default("pending")
+  stripeSessionId       String?   @map("stripe_session_id")
+  stripePaymentIntentId String?   @map("stripe_payment_intent_id")
+  holdExpiresAt         DateTime? @map("hold_expires_at")
+  paidAt                DateTime? @map("paid_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  property              Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@index([status])
+  @@map("bookings")
+}
+
+model BlockedDate {
+  id         String   @id @default(uuid())
+  propertyId String   @map("property_id")
+  date       DateTime
+  source     String   @default("manual")
+  bookingId  String?  @map("booking_id")
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, date])
+  @@index([propertyId])
+  @@map("blocked_dates")
+}
+
+model IcalSource {
+  id         String    @id @default(uuid())
+  propertyId String    @map("property_id")
+  name       String
+  url        String
+  enabled    Boolean   @default(true)
+  lastSyncAt DateTime? @map("last_sync_at")
+  lastError  String?   @map("last_error")
+  property   Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("ical_sources")
+}
