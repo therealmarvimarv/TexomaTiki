@@ -11,7 +11,7 @@ export default function InquirySuccess() {
             <ArrowLeft className="w-4 h-4" />
             Back to property
           </Link>
-          <span className="text-sm font-semibold text-gray-700">Tiki Cottage</span>
+          <span className="text-sm font-semibold text-gray-700">Texoma Tiki</span>
         </div>
       </div>
 
@@ -71,7 +71,7 @@ export default function InquirySuccess() {
               to="/"
               className="flex items-center justify-center w-full py-3 px-6 bg-gray-900 text-white font-medium text-sm rounded-xl hover:bg-gray-700 transition-colors"
             >
-              Back to Tiki Cottage
+              Back to Texoma Tiki
             </Link>
             <Link
               to="/#booking"
