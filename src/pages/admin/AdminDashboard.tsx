@@ -87,7 +87,7 @@ export default function AdminDashboard() {
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <span className="font-bold text-gray-900 text-lg">Tiki Cottage</span>
+            <span className="font-bold text-gray-900 text-lg">Texoma Tiki Cottage</span>
             <span className="hidden sm:inline-block text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full font-medium">Admin</span>
           </div>
 
