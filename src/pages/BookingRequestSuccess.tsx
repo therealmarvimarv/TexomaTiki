@@ -88,7 +88,7 @@ export default function BookingRequestSuccess() {
               <ArrowLeft className="w-4 h-4" />
               Back to property
             </Link>
-            <span className="text-sm font-semibold text-gray-700">Tiki Cottage</span>
+            <span className="text-sm font-semibold text-gray-700">Texoma Tiki</span>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center px-4 py-12">
@@ -105,7 +105,7 @@ export default function BookingRequestSuccess() {
               to="/"
               className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 bg-gray-900 text-white font-medium text-sm rounded-xl hover:bg-gray-700 transition-colors"
             >
-              Back to Tiki Cottage
+              Back to Texoma Tiki
             </Link>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function BookingRequestSuccess() {
             <ArrowLeft className="w-4 h-4" />
             Back to property
           </Link>
-          <span className="text-sm font-semibold text-gray-700">Tiki Cottage</span>
+          <span className="text-sm font-semibold text-gray-700">Texoma Tiki</span>
         </div>
       </div>
 
@@ -268,7 +268,7 @@ export default function BookingRequestSuccess() {
               to="/"
               className="flex items-center justify-center gap-2 w-full py-3 px-6 bg-gray-900 text-white font-medium text-sm rounded-xl hover:bg-gray-700 transition-colors"
             >
-              Back to Tiki Cottage
+              Back to Texoma Tiki
             </Link>
             <Link
               to="/#contact"
