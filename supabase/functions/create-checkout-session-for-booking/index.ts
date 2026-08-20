@@ -88,18 +88,18 @@ Deno.serve(async (req: Request) => {
 
     const paymentMode = settings?.payment_mode ?? "test_manual";
 
-    // Manual modes never create Stripe checkout sessions — even admin-initiated.
-    if (paymentMode === "test_manual" || paymentMode === "live_manual") {
-      return json({ error: "Online payment is not enabled for the active mode", code: "MANUAL_MODE" }, 503);
-    }
-
-    if (paymentMode !== "test_stripe" && paymentMode !== "live_stripe") {
+    // Admin-initiated checkout creation supports all four modes. Manual modes
+    // (test_manual / live_manual) skip checkout at guest submission time but
+    // still create a Stripe session here once the host approves the request.
+    const isLiveMode = paymentMode === "live_stripe" || paymentMode === "live_manual";
+    const isTestMode = paymentMode === "test_stripe" || paymentMode === "test_manual";
+    if (!isLiveMode && !isTestMode) {
       return json({ error: `Unsupported payment mode: ${paymentMode}`, code: "UNSUPPORTED_MODE" }, 400);
     }
 
     // Load only the vault key matching the active mode — no fallback between test and live.
-    const vaultKeyName = paymentMode === "live_stripe" ? "stripe_live_secret_key" : "stripe_test_secret_key";
-    const requiredPrefix = paymentMode === "live_stripe" ? "sk_live_" : "sk_test_";
+    const vaultKeyName = isLiveMode ? "stripe_live_secret_key" : "stripe_test_secret_key";
+    const requiredPrefix = isLiveMode ? "sk_live_" : "sk_test_";
 
     const { data: vaultKey } = await supabase.rpc("payment_settings_get_secret", { p_name: vaultKeyName });
     const secretKey = (typeof vaultKey === "string" && vaultKey.startsWith(requiredPrefix)) ? vaultKey : "";
