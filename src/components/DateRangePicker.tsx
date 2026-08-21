@@ -61,13 +61,13 @@ function MonthGrid({ year, month, checkIn, checkOut, hovered, today, onDayClick,
 
   const hasPricing = !!pricingMap;
   const hasSubLabel = hasPricing || !!minNightsMap;
-  const cellHeight = hasSubLabel ? 'h-14 sm:h-9' : 'h-12 sm:h-6';
+  const cellHeight = hasSubLabel ? 'h-16 sm:h-9' : 'h-14 sm:h-6';
 
   return (
     <div className="w-full">
       <div className="grid grid-cols-7 mb-0.5">
         {DAY_NAMES.map((d, i) => (
-          <div key={i} className="text-center text-xs sm:text-[10px] font-medium text-gray-400 py-2 sm:py-0 tracking-wide">{d}</div>
+          <div key={i} className="text-center text-sm sm:text-[10px] font-medium text-gray-400 py-2.5 sm:py-0 tracking-wide">{d}</div>
         ))}
       </div>
       <div className="grid grid-cols-7">
@@ -100,7 +100,7 @@ function MonthGrid({ year, month, checkIn, checkOut, hovered, today, onDayClick,
           return (
             <div
               key={i}
-              className={`relative ${cellHeight} flex flex-col items-center ${(hasPricing || hasSubLabel) ? 'justify-start pt-1 sm:pt-0.5' : 'justify-center'}`}
+              className={`relative ${cellHeight} flex flex-col items-center ${(hasPricing || hasSubLabel) ? 'justify-start pt-1.5 sm:pt-0.5' : 'justify-center'}`}
               onClick={() => !isPast && onDayClick(day)}
               onMouseEnter={() => !isPast && onDayHover(day)}
               onMouseLeave={() => onDayHover(null)}
@@ -123,7 +123,7 @@ function MonthGrid({ year, month, checkIn, checkOut, hovered, today, onDayClick,
 
               <span
                 className={[
-                  'relative z-10 w-9 h-9 sm:w-5 sm:h-5 flex items-center justify-center text-sm sm:text-[10px] rounded-full transition-colors',
+                  'relative z-10 w-11 h-11 sm:w-5 sm:h-5 flex items-center justify-center text-base sm:text-[10px] rounded-full transition-colors',
                   isPast
                     ? isBlocked
                       ? 'text-gray-300 cursor-not-allowed line-through'
@@ -143,7 +143,7 @@ function MonthGrid({ year, month, checkIn, checkOut, hovered, today, onDayClick,
               </span>
 
               {hasSubLabel && !isPast && (
-                <span className="relative z-10 text-[11px] sm:text-[8px] leading-none mt-1 sm:mt-0.5 text-center w-full px-0.5 truncate text-gray-500">
+                <span className="relative z-10 text-xs sm:text-[8px] leading-none mt-1.5 sm:mt-0.5 text-center w-full px-0.5 truncate text-gray-500">
                   {price !== undefined ? `$${price}` : ''}
                 </span>
               )}
@@ -255,7 +255,7 @@ export default function DateRangePicker({ checkIn, checkOut, onSelect, pricingMa
         )}
       </div>
 
-      <div className="border-0 rounded-none overflow-visible shadow-none sm:border sm:border-gray-200 sm:rounded-xl sm:overflow-hidden sm:shadow-sm">
+      <div className="-mx-6 px-3 border-0 rounded-none overflow-visible shadow-none sm:mx-0 sm:px-0 sm:border sm:border-gray-200 sm:rounded-xl sm:overflow-hidden sm:shadow-sm">
         <div className="flex items-center justify-between px-1 py-3 border-b-0 bg-transparent sm:px-2 sm:py-1 sm:border-b sm:border-gray-100 sm:bg-gray-50">
           <button
             onClick={handlePrev}
