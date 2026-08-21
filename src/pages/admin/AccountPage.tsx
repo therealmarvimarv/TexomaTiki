@@ -65,7 +65,6 @@ interface SystemStatus {
   paymentMode: string;
   emailProvider: string;
   calendarSources: number;
-  propertyId: string;
 }
 
 type Flash = { type: 'ok' | 'err'; text: string } | null;
@@ -305,7 +304,6 @@ export default function AccountPage() {
         paymentMode: paymentRes.data?.payment_mode ?? 'test_manual',
         emailProvider: emailRes.data?.email_provider ?? 'disabled',
         calendarSources: calRes.count ?? 0,
-        propertyId: PROPERTY_ID,
       });
 
       setLoading(false);
@@ -633,8 +631,8 @@ export default function AccountPage() {
             <StatusCard label="Account Status" value="Active" variant="green" />
             <div className="sm:col-span-2">
               <StatusCard
-                label="Property ID"
-                value={status.propertyId}
+                label="Support ID"
+                value={accountId ?? 'Not available'}
                 mono
               />
             </div>
