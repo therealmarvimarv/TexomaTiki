@@ -631,7 +631,7 @@ export default function AccountPage() {
             <StatusCard label="Account Status" value="Active" variant="green" />
             <div className="sm:col-span-2">
               <StatusCard
-                label="Support ID"
+                label="Account ID"
                 value={accountId ?? 'Not available'}
                 mono
               />
