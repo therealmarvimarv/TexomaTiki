@@ -1,2 +1,57 @@
+# ── Public Edge Functions (verify_jwt = false) ───────────────────────────────
+# These endpoints are called without a Supabase JWT. Security is enforced by
+# other means: Stripe signature verification, per-property secret tokens,
+# input validation, or internal service-role invocation.
+
+[functions.create-booking-request]
+verify_jwt = false
+
+[functions.booking-lookup]
+verify_jwt = false
+
+[functions.payment-config-public]
+verify_jwt = false
+
+[functions.send-notifications]
+verify_jwt = false
+
+[functions.send-automated-emails]
+verify_jwt = false
+
+[functions.create-checkout-session]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
 [functions.ical-export]
 verify_jwt = false
+
+# ── Admin Edge Functions (verify_jwt = true) ──────────────────────────────────
+# These endpoints require a valid Supabase auth JWT. Each function also
+# performs its own in-code auth check (Authorization header + getUser) and
+# returns 401 if the caller is not an authenticated admin.
+
+[functions.admin-booking-action]
+verify_jwt = true
+
+[functions.email-settings-status]
+verify_jwt = true
+
+[functions.email-settings-update]
+verify_jwt = true
+
+[functions.payment-settings-status]
+verify_jwt = true
+
+[functions.payment-settings-update]
+verify_jwt = true
+
+[functions.create-checkout-session-for-booking]
+verify_jwt = true
+
+[functions.ical-export-token]
+verify_jwt = true
+
+[functions.ical-import]
+verify_jwt = true
