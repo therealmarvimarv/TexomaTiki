@@ -1,0 +1,2 @@
+[functions.ical-export]
+verify_jwt = false

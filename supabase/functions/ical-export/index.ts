@@ -23,8 +23,27 @@ Deno.serve(async (req: Request) => {
 
   try {
     const url = new URL(req.url);
-    const propertyId = url.searchParams.get("property_id");
-    const token = url.searchParams.get("token");
+
+    // Support two URL formats:
+    //   1. Path-based:  /functions/v1/ical-export/{property_id}/{token}.ics
+    //   2. Query-based: /functions/v1/ical-export?property_id=...&token=...  (legacy fallback)
+    let propertyId: string | null = null;
+    let token: string | null = null;
+
+    const pathSegments = url.pathname.split("/").filter(Boolean);
+    const funcIndex = pathSegments.indexOf("ical-export");
+    if (funcIndex !== -1 && pathSegments.length > funcIndex + 1) {
+      const afterFunc = pathSegments.slice(funcIndex + 1);
+      if (afterFunc.length >= 2) {
+        propertyId = decodeURIComponent(afterFunc[0]);
+        const last = afterFunc[afterFunc.length - 1];
+        token = decodeURIComponent(last.endsWith(".ics") ? last.slice(0, -4) : last);
+      }
+    }
+
+    // Fall back to query parameters for backward compatibility
+    if (!propertyId) propertyId = url.searchParams.get("property_id");
+    if (!token) token = url.searchParams.get("token");
 
     if (!propertyId) {
       return new Response("Missing property_id", { status: 400, headers: corsHeaders });
@@ -154,7 +173,7 @@ function toIcalDate(dateStr: string): string {
 }
 
 function toIcalDateTime(d: Date): string {
-  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "") + "Z";
+  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 }
 
 // Produce a short opaque hash of a UUID so the raw booking/block ID is never
