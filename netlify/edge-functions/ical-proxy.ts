@@ -41,6 +41,10 @@ export default async (request: Request, context: Context): Promise<Response> => 
     if (value) headers.set(name, value);
   }
 
+  headers.set("Access-Control-Allow-Origin", "*");
+  headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Client-Info, Apikey");
+
   return new Response(upstreamRes.body, {
     status: upstreamRes.status,
     statusText: upstreamRes.statusText,
