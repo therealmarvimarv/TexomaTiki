@@ -12,6 +12,8 @@ const FORWARD_HEADERS = [
   "cache-control",
 ];
 
+const REDACT_HEADERS = ["authorization", "cookie", "set-cookie", "x-api-key", "apikey"];
+
 export default async (request: Request, context: Context): Promise<Response> => {
   const url = new URL(request.url);
   const pathname = url.pathname;
@@ -24,6 +26,22 @@ export default async (request: Request, context: Context): Promise<Response> => 
     return new Response("Missing token", { status: 400 });
   }
   const token = last.endsWith(".ics") ? last.slice(0, -4) : last;
+
+  // ── TEMPORARY DIAGNOSTIC LOGGING (remove after VRBO test) ──────────────────
+  const safePath = pathname.replace(/\/ical\/[^/]+\.ics$/, "/ical/[REDACTED].ics");
+  const reqHeaders: Record<string, string> = {};
+  for (const [key, value] of request.headers.entries()) {
+    reqHeaders[key] = REDACT_HEADERS.includes(key.toLowerCase()) ? "[REDACTED]" : value;
+  }
+  context.log(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    method: request.method,
+    userAgent: request.headers.get("user-agent") ?? "(none)",
+    host: request.headers.get("host") ?? "(none)",
+    path: safePath,
+    headers: reqHeaders,
+  }));
+  // ── END TEMPORARY DIAGNOSTIC LOGGING ────────────────────────────────────────
 
   const upstream = `${SUPABASE_URL}/functions/v1/ical-export/${PROPERTY_ID}/${token}.ics`;
 
