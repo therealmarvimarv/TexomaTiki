@@ -2,15 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
-# Proxy clean custom-domain iCal URL to the Supabase ical-export Edge Function.
-# The property_id is injected internally so it never appears in the public URL.
-# status = 200 makes Netlify proxy (not redirect), so Airbnb/VRBO receive the
-# actual .ics response body directly.
-[[redirects]]
-  from = "/calendar/ical/:token.ics"
-  to = "https://kxytygmulacvwahvnrtm.supabase.co/functions/v1/ical-export/a1b2c3d4-e5f6-7890-abcd-ef1234567890/:token.ics"
-  status = 200
-  force = false
+# Serve clean custom-domain iCal URLs via a Netlify Edge Function.
+# The Edge Function fetches the Supabase ical-export endpoint internally,
+# strips the upstream Set-Cookie header, and returns only the safe headers.
+# This avoids VRBO rejecting the feed due to a cross-domain Set-Cookie.
+[[edge_functions]]
+  function = "ical-proxy"
+  path = "/calendar/ical/*"
 
 [[redirects]]
   from = "/*"
