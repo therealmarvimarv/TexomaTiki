@@ -2,14 +2,6 @@
   command = "npm run build"
   publish = "dist"
 
-# Serve clean custom-domain iCal URLs via a Netlify Edge Function.
-# The Edge Function fetches the Supabase ical-export endpoint internally,
-# strips the upstream Set-Cookie header, and returns only the safe headers.
-# This avoids VRBO rejecting the feed due to a cross-domain Set-Cookie.
-[[edge_functions]]
-  function = "ical-proxy"
-  path = "/icalendar/*"
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
