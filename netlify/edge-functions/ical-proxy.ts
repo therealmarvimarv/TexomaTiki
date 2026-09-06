@@ -19,7 +19,7 @@ export default async (request: Request, context: Context): Promise<Response> => 
   const pathname = url.pathname;
 
   // Extract the token from the last path segment, stripping the .ics suffix.
-  // Expected shape: /calendar/ical/{token}.ics
+  // Expected shape: /icalendar/{token}.ics
   const segments = pathname.split("/").filter(Boolean);
   const last = segments[segments.length - 1];
   if (!last) {
@@ -28,7 +28,7 @@ export default async (request: Request, context: Context): Promise<Response> => 
   const token = last.endsWith(".ics") ? last.slice(0, -4) : last;
 
   // ── TEMPORARY DIAGNOSTIC LOGGING (remove after VRBO test) ──────────────────
-  const safePath = pathname.replace(/\/ical\/[^/]+\.ics$/, "/ical/[REDACTED].ics");
+  const safePath = pathname.replace(/\/icalendar\/[^/]+\.ics$/, "/icalendar/[REDACTED].ics");
   const reqHeaders: Record<string, string> = {};
   for (const [key, value] of request.headers.entries()) {
     reqHeaders[key] = REDACT_HEADERS.includes(key.toLowerCase()) ? "[REDACTED]" : value;

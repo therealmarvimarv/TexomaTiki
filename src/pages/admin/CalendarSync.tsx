@@ -62,7 +62,7 @@ function ExportFeedSection() {
   const [error, setError] = useState('');
 
   const exportUrl = exportToken
-    ? `${window.location.origin}/calendar/ical/${exportToken}.ics`
+    ? `${window.location.origin}/icalendar/${exportToken}.ics`
     : null;
 
   const load = useCallback(async () => {
