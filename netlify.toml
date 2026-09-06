@@ -3,12 +3,6 @@
   publish = "dist"
 
 [[redirects]]
-  from = "/calendar/:token.ics"
-  to = "https://kxytygmulacvwahvnrtm.supabase.co/functions/v1/ical-export/a1b2c3d4-e5f6-7890-abcd-ef1234567890/:token.ics"
-  status = 302
-  force = true
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
