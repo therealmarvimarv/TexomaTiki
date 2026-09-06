@@ -62,7 +62,7 @@ function ExportFeedSection() {
   const [error, setError] = useState('');
 
   const exportUrl = exportToken
-    ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ical-export/${PROPERTY_ID}/${exportToken}.ics`
+    ? `${window.location.origin}/calendar/ical/${exportToken}.ics`
     : null;
 
   const load = useCallback(async () => {
