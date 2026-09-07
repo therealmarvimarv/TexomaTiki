@@ -890,13 +890,27 @@ async function handleBookingRequestDeclined(cfg: EmailConfig, p: BookingRequestD
     ...accountParams(account),
   });
 
-  const tpl = await resolveTemplate(pid, "booking_request_declined_guest", vars, {
-    subject: `Your booking request was not approved – ${property}`,
-    html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto"><h2>Booking Request Not Approved</h2><p>Hi ${escapeHtml(p.guestName)}, unfortunately your booking request at ${escapeHtml(property)} was not approved. Your dates were not reserved and no payment was collected.</p></div>`,
-  });
+  const [guestTpl, adminTpl] = await Promise.all([
+    resolveTemplate(pid, "booking_request_declined_guest", vars, {
+      subject: `Your booking request was not approved – ${property}`,
+      html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto"><h2>Booking Request Not Approved</h2><p>Hi ${escapeHtml(p.guestName)}, unfortunately your booking request at ${escapeHtml(property)} was not approved. Your dates were not reserved and no payment was collected.</p></div>`,
+    }),
+    resolveTemplate(pid, "booking_request_declined_admin", vars, {
+      subject: `Booking Request Declined – ${p.guestName} (${p.checkIn})`,
+      html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto"><h2>Booking Request Declined</h2><p>Guest: ${escapeHtml(p.guestName)} (${escapeHtml(p.guestEmail)})<br>Dates: ${p.checkIn} – ${p.checkOut}</p></div>`,
+    }),
+  ]);
 
-  if (await isAutomationActive("booking_request_declined_guest")) {
-    await sendEmail(cfg, p.guestEmail, tpl.subject, tpl.html, "booking", relatedId, "booking_request_declined_guest");
+  const [guestActive, adminActive] = await Promise.all([
+    isAutomationActive("booking_request_declined_guest"),
+    isAutomationActive("booking_request_declined_admin"),
+  ]);
+  if (guestActive) {
+    await sendEmail(cfg, p.guestEmail, guestTpl.subject, guestTpl.html, "booking", relatedId, "booking_request_declined_guest");
+  }
+  if (adminActive && cfg.adminEmail) {
+    if (cfg.provider === "smtp") await new Promise(r => setTimeout(r, 600));
+    await sendEmail(cfg, cfg.adminEmail, adminTpl.subject, adminTpl.html, "booking", relatedId, "booking_request_declined_admin");
   }
 }
 
