@@ -436,13 +436,17 @@ async function run(isTest: boolean, testAdminEmail?: string): Promise<{
   // Load eligible confirmed bookings
   const { data: bookings, error: bookErr } = await supabase
     .from("bookings")
-    .select("id,property_id,guest_name,guest_email,guest_phone,check_in,check_out,guests,total_price,amount_total,amount_subtotal,amount_fees,payment_status,confirmation_code,special_requests,status")
+    .select("id,property_id,guest_name,guest_email,guest_phone,check_in,check_out,guests,total_price,amount_total,amount_subtotal,amount_fees,payment_status,special_requests,status")
     .eq("property_id", PROPERTY_ID)
     .eq("status", "confirmed")
     .is("archived_at", null)
     .not("guest_email", "is", null);
 
-  if (bookErr || !bookings?.length) return result;
+  if (bookErr) {
+    result.errors.push(`Booking query failed: ${bookErr.message ?? String(bookErr)}`);
+    return result;
+  }
+  if (!bookings?.length) return result;
 
   const nowUtc = new Date();
 
