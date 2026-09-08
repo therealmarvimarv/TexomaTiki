@@ -207,13 +207,13 @@ async function sendEmail(
 ): Promise<{ ok: boolean; error?: string }> {
   if (!to) return { ok: false, error: "No recipient" };
   if (!cfg.provider || cfg.provider === "disabled") {
-    await logSend(bookingId, templateKey, to, "skipped", "Email provider disabled");
+    await logSend(bookingId, templateKey, to, subject, "skipped", "Email provider disabled");
     return { ok: false, error: "disabled" };
   }
 
   if (cfg.provider === "resend") {
     if (!cfg.resendApiKey || !cfg.fromEmail) {
-      await logSend(bookingId, templateKey, to, "skipped", "Resend not configured");
+      await logSend(bookingId, templateKey, to, subject, "skipped", "Resend not configured");
       return { ok: false, error: "Resend not configured" };
     }
     const res = await fetch("https://api.resend.com/emails", {
@@ -223,10 +223,10 @@ async function sendEmail(
     });
     if (!res.ok) {
       const err = await res.text();
-      await logSend(bookingId, templateKey, to, "failed", err.slice(0, 200));
+      await logSend(bookingId, templateKey, to, subject, "failed", err.slice(0, 200));
       return { ok: false, error: err };
     }
-    await logSend(bookingId, templateKey, to, "sent");
+    await logSend(bookingId, templateKey, to, subject, "sent");
     return { ok: true };
   }
 
@@ -237,7 +237,7 @@ async function sendEmail(
       !cfg.smtpPassword && "smtp_password",
     ].filter(Boolean).join(", ");
     if (missing) {
-      await logSend(bookingId, templateKey, to, "skipped", `Missing: ${missing}`);
+      await logSend(bookingId, templateKey, to, subject, "skipped", `Missing: ${missing}`);
       return { ok: false, error: `Missing SMTP config: ${missing}` };
     }
     try {
@@ -248,11 +248,11 @@ async function sendEmail(
         connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 15000,
       });
       await transporter.sendMail({ from: cfg.smtpFrom || cfg.smtpUsername, to, subject, html });
-      await logSend(bookingId, templateKey, to, "sent");
+      await logSend(bookingId, templateKey, to, subject, "sent");
       return { ok: true };
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      await logSend(bookingId, templateKey, to, "failed", msg);
+      await logSend(bookingId, templateKey, to, subject, "failed", msg);
       return { ok: false, error: msg };
     }
   }
@@ -264,6 +264,7 @@ async function logSend(
   bookingId: string,
   templateKey: string,
   recipient: string,
+  subject: string,
   status: string,
   errorMessage?: string,
 ) {
@@ -274,7 +275,7 @@ async function logSend(
       channel: "email",
       provider: "automated",
       recipient,
-      subject: "",
+      subject,
       status,
       template_key: templateKey || null,
       error_message: errorMessage ?? null,
