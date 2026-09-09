@@ -334,7 +334,8 @@ export default function AccountPage() {
 
   async function upsert(patch: Record<string, unknown>) {
     if (accountId) {
-      return supabase.from('account_settings').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', accountId);
+      const { error } = await supabase.from('account_settings').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', accountId);
+      return { error };
     }
     const { data, error } = await supabase.from('account_settings').insert({
       property_id: PROPERTY_ID,

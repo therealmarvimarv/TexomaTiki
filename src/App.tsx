@@ -24,15 +24,13 @@ function useWebsiteSettings() {
 
       if (!data) return;
 
-      if (data.favicon_url) {
-        let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
-        if (!link) {
-          link = document.createElement('link');
-          link.rel = 'icon';
-          document.head.appendChild(link);
-        }
-        link.href = data.favicon_url;
+      let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
       }
+      link.href = data.favicon_url || '/vite.svg';
 
       if (data.seo_title) {
         document.title = data.seo_title;
