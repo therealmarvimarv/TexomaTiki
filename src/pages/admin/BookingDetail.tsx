@@ -11,6 +11,9 @@ interface BookingRow {
   guest_phone: string | null;
   guests: number;
   pets: number;
+  adults: number | null;
+  children: number | null;
+  infants: number | null;
   special_requests: string | null;
   check_in: string;
   check_out: string;
@@ -583,11 +586,21 @@ export default function BookingDetail() {
         {/* Guest Info */}
         <Section title="Guest Info">
           <FieldGrid>
+            <Field label="Booking Number" value={booking.id.slice(0, 8).toUpperCase()} mono />
             <Field label="Name" value={booking.guest_name} />
             <Field label="Email" value={<a href={`mailto:${booking.guest_email}`} className="hover:underline">{booking.guest_email}</a>} />
             <Field label="Phone" value={booking.guest_phone} />
             <Field label="Guests" value={booking.guests} />
             <Field label="Pets" value={booking.pets ?? 0} />
+            {(() => {
+              const parts: string[] = [];
+              if (booking.adults != null && booking.adults > 0) parts.push(`${booking.adults} Adult${booking.adults !== 1 ? 's' : ''}`);
+              if (booking.children != null && booking.children > 0) parts.push(`${booking.children} Child${booking.children !== 1 ? 'ren' : ''}`);
+              if (booking.infants != null && booking.infants > 0) parts.push(`${booking.infants} Infant${booking.infants !== 1 ? 's' : ''}`);
+              if (booking.pets != null && booking.pets > 0) parts.push(`${booking.pets} Pet${booking.pets !== 1 ? 's' : ''}`);
+              const breakdown = parts.length > 0 ? parts.join(', ') : null;
+              return <Field label="Guest Breakdown" value={breakdown ?? 'Breakdown unavailable'} span />;
+            })()}
             {booking.special_requests && (
               <Field label="Special Requests" value={booking.special_requests} span />
             )}

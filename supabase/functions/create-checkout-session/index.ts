@@ -369,6 +369,9 @@ interface RequestBody {
   check_out: string;
   guests: number;
   pets?: number;
+  adults?: number;
+  children?: number;
+  infants?: number;
   special_requests?: string;
   guest_name: string;
   guest_email: string;
@@ -440,7 +443,7 @@ Deno.serve(async (req: Request) => {
     const body: RequestBody = await req.json();
     const {
       property_id, check_in, check_out, guests,
-      pets = 0, special_requests,
+      pets = 0, adults, children, infants, special_requests,
       guest_name, guest_email, guest_phone,
     } = body;
 
@@ -570,6 +573,9 @@ Deno.serve(async (req: Request) => {
         check_out: check_out + "T00:00:00Z",
         guests,
         pets,
+        adults: adults ?? null,
+        children: children ?? null,
+        infants: infants ?? null,
         special_requests: special_requests ?? null,
         guest_name,
         guest_email,

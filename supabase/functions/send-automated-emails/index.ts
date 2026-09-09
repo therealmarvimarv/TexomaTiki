@@ -37,6 +37,10 @@ interface Booking {
   check_in: string;
   check_out: string;
   guests: number;
+  pets: number | null;
+  adults: number | null;
+  children: number | null;
+  infants: number | null;
   total_price: number;
   amount_total: number | null;
   amount_subtotal: number | null;
@@ -145,6 +149,13 @@ function buildVars(
   const total = fmtMoney(booking.amount_total, booking.total_price);
   const confirmCode = booking.confirmation_code ?? booking.id.slice(0, 8).toUpperCase();
 
+  const guestDetailsParts: string[] = [];
+  if (booking.adults != null && booking.adults > 0) guestDetailsParts.push(`${booking.adults} Adult${booking.adults !== 1 ? "s" : ""}`);
+  if (booking.children != null && booking.children > 0) guestDetailsParts.push(`${booking.children} Child${booking.children !== 1 ? "ren" : ""}`);
+  if (booking.infants != null && booking.infants > 0) guestDetailsParts.push(`${booking.infants} Infant${booking.infants !== 1 ? "s" : ""}`);
+  if (booking.pets != null && booking.pets > 0) guestDetailsParts.push(`${booking.pets} Pet${booking.pets !== 1 ? "s" : ""}`);
+  const guestDetails = guestDetailsParts.join(", ");
+
   return {
     // Property / Listing
     listing_name: account.listing_name ?? "",
@@ -175,6 +186,8 @@ function buildVars(
     check_out: fmtDate(checkOut),
     nights: String(nights),
     guests: String(booking.guests),
+    booking_number: confirmCode,
+    guest_details: guestDetails,
     confirmation_code: confirmCode,
     average_nightly_price: fmtMoney(booking.amount_subtotal, booking.total_price / Math.max(nights, 1)),
     total_trip_price: total,
@@ -437,7 +450,7 @@ async function run(isTest: boolean, testAdminEmail?: string): Promise<{
   // Load eligible confirmed bookings
   const { data: bookings, error: bookErr } = await supabase
     .from("bookings")
-    .select("id,property_id,guest_name,guest_email,guest_phone,check_in,check_out,guests,total_price,amount_total,amount_subtotal,amount_fees,payment_status,special_requests,status")
+    .select("id,property_id,guest_name,guest_email,guest_phone,check_in,check_out,guests,pets,adults,children,infants,total_price,amount_total,amount_subtotal,amount_fees,payment_status,special_requests,status")
     .eq("property_id", PROPERTY_ID)
     .eq("status", "confirmed")
     .is("archived_at", null)

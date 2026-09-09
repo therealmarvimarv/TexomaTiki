@@ -212,11 +212,15 @@ function buildVars(params: {
   nights?: number;
   guests?: number;
   pets?: number;
+  adults?: number;
+  children?: number;
+  infants?: number;
   totalPrice?: number;
   totalTripPrice?: number;
   averageNightlyPrice?: number;
   cleaningFee?: number;
   confirmationCode?: string;
+  bookingNumber?: string;
   paymentStatus?: string;
   bookingStatus?: string;
   specialRequests?: string;
@@ -250,6 +254,15 @@ function buildVars(params: {
   primaryGuestContactPhone?: string;
 }): Record<string, string> {
   const total = params.totalTripPrice ?? params.totalPrice;
+  const bookingNumber = params.bookingNumber ?? params.confirmationCode ?? "";
+
+  const guestDetailsParts: string[] = [];
+  if (params.adults != null && params.adults > 0) guestDetailsParts.push(`${params.adults} Adult${params.adults !== 1 ? "s" : ""}`);
+  if (params.children != null && params.children > 0) guestDetailsParts.push(`${params.children} Child${params.children !== 1 ? "ren" : ""}`);
+  if (params.infants != null && params.infants > 0) guestDetailsParts.push(`${params.infants} Infant${params.infants !== 1 ? "s" : ""}`);
+  if (params.pets != null && params.pets > 0) guestDetailsParts.push(`${params.pets} Pet${params.pets !== 1 ? "s" : ""}`);
+  const guestDetails = guestDetailsParts.join(", ");
+
   return {
     // Property / Listing
     listing_name: params.listingName ?? "",
@@ -280,6 +293,8 @@ function buildVars(params: {
     check_out: params.checkOut ? fmtDate(params.checkOut) : "",
     nights: params.nights != null ? String(params.nights) : "",
     guests: params.guests != null ? String(params.guests) : "",
+    booking_number: bookingNumber,
+    guest_details: guestDetails,
     confirmation_code: params.confirmationCode ?? "",
     average_nightly_price: params.averageNightlyPrice != null ? fmtMoney(params.averageNightlyPrice) : "",
     total_trip_price: total != null ? fmtMoney(total) : "",
@@ -371,17 +386,36 @@ async function loadAccountSettings(): Promise<AccountSettings> {
 
 // ── Load booking confirmation code ────────────────────────────────────────────
 
-async function loadConfirmationCode(bookingId: string | undefined): Promise<string> {
-  if (!bookingId) return "";
+interface BookingDetails {
+  confirmationCode: string;
+  adults: number | null;
+  children: number | null;
+  infants: number | null;
+  pets: number | null;
+}
+
+async function loadBookingDetails(bookingId: string | undefined): Promise<BookingDetails> {
+  const fallback: BookingDetails = {
+    confirmationCode: bookingId ? bookingId.slice(0, 8).toUpperCase() : "",
+    adults: null, children: null, infants: null, pets: null,
+  };
+  if (!bookingId) return fallback;
   try {
     const { data } = await supabase
       .from("bookings")
-      .select("confirmation_code,payment_status")
+      .select("confirmation_code,adults,children,infants,pets")
       .eq("id", bookingId)
       .maybeSingle();
-    return (data as { confirmation_code?: string } | null)?.confirmation_code ?? bookingId.slice(0, 8).toUpperCase();
+    if (!data) return fallback;
+    return {
+      confirmationCode: (data as { confirmation_code?: string }).confirmation_code ?? fallback.confirmationCode,
+      adults: (data as { adults?: number | null }).adults ?? null,
+      children: (data as { children?: number | null }).children ?? null,
+      infants: (data as { infants?: number | null }).infants ?? null,
+      pets: (data as { pets?: number | null }).pets ?? null,
+    };
   } catch {
-    return "";
+    return fallback;
   }
 }
 
@@ -741,12 +775,15 @@ async function handleBookingConfirmed(cfg: EmailConfig, p: BookingConfirmedPaylo
   const pid = p.propertyId ?? cfg.propertyId;
   const relatedId = p.bookingId ?? null;
   const account = await loadAccountSettings();
-  const confirmationCode = await loadConfirmationCode(p.bookingId);
+  const bd = await loadBookingDetails(p.bookingId);
   const vars = buildVars({
     propertyTitle: property, guestName: p.guestName, guestEmail: p.guestEmail,
     guestPhone: p.guestPhone, checkIn: p.checkIn, checkOut: p.checkOut,
-    nights: p.nights, guests: p.guests, pets: p.pets, totalPrice: p.totalPrice,
-    totalTripPrice: p.totalPrice, confirmationCode, paymentStatus: p.paymentStatus,
+    nights: p.nights, guests: p.guests, pets: p.pets ?? bd.pets ?? undefined,
+    adults: bd.adults ?? undefined, children: bd.children ?? undefined, infants: bd.infants ?? undefined,
+    totalPrice: p.totalPrice,
+    totalTripPrice: p.totalPrice, confirmationCode: bd.confirmationCode, bookingNumber: bd.confirmationCode,
+    paymentStatus: p.paymentStatus,
     ...accountParams(account),
   });
 
@@ -838,13 +875,16 @@ async function handleBookingRequestApproved(cfg: EmailConfig, p: BookingRequestA
   const pid = p.propertyId ?? cfg.propertyId;
   const relatedId = p.bookingId ?? null;
   const account = await loadAccountSettings();
-  const confirmationCode = await loadConfirmationCode(p.bookingId);
+  const bd = await loadBookingDetails(p.bookingId);
 
   const vars = buildVars({
     propertyTitle: property, guestName: p.guestName, guestEmail: p.guestEmail,
     guestPhone: p.guestPhone, checkIn: p.checkIn, checkOut: p.checkOut,
-    nights: p.nights, guests: p.guests, pets: p.pets, totalPrice: p.totalPrice,
-    totalTripPrice: p.totalPrice, confirmationCode, paymentStatus: p.paymentStatus ?? "pending",
+    nights: p.nights, guests: p.guests, pets: p.pets ?? bd.pets ?? undefined,
+    adults: bd.adults ?? undefined, children: bd.children ?? undefined, infants: bd.infants ?? undefined,
+    totalPrice: p.totalPrice,
+    totalTripPrice: p.totalPrice, confirmationCode: bd.confirmationCode, bookingNumber: bd.confirmationCode,
+    paymentStatus: p.paymentStatus ?? "pending",
     paymentUrl: p.paymentUrl,
     ...accountParams(account),
   });

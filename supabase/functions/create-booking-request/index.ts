@@ -97,6 +97,9 @@ Deno.serve(async (req: Request) => {
     const checkOut = (body.checkOut ?? body.check_out) as string | undefined;
     const guests = body.guests as number | undefined;
     const pets = (body.pets as number | undefined) ?? 0;
+    const adults = body.adults as number | undefined;
+    const children = body.children as number | undefined;
+    const infants = body.infants as number | undefined;
     const guestName = (body.guestName ?? body.guest_name) as string | undefined;
     const guestEmail = (body.guestEmail ?? body.guest_email) as string | undefined;
     const guestPhone = (body.guestPhone ?? body.guest_phone) as string | undefined;
@@ -305,6 +308,9 @@ Deno.serve(async (req: Request) => {
         check_out: checkOut,
         guests,
         pets,
+        adults: adults ?? null,
+        children: children ?? null,
+        infants: infants ?? null,
         special_requests: specialRequests ?? null,
         status: "pending_review",
         payment_status: "unpaid",
@@ -338,6 +344,9 @@ Deno.serve(async (req: Request) => {
       nights,
       guests,
       pets,
+      adults: adults ?? undefined,
+      children: children ?? undefined,
+      infants: infants ?? undefined,
       totalPrice: totalDollars,
       specialRequests: specialRequests ?? undefined,
     });
