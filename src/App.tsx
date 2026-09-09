@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import PropertyPage from './pages/PropertyPage';
 import BookingSuccess from './pages/BookingSuccess';
@@ -8,8 +9,52 @@ import PhotoTourPage from './pages/PhotoTourPage';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PlatformDashboard from './pages/platform/PlatformDashboard';
+import { supabase } from './lib/supabase';
+
+const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+
+function useWebsiteSettings() {
+  useEffect(() => {
+    async function applyWebsiteSettings() {
+      const { data } = await supabase
+        .from('account_settings')
+        .select('favicon_url, seo_title, seo_meta_description')
+        .eq('property_id', PROPERTY_ID)
+        .maybeSingle();
+
+      if (!data) return;
+
+      if (data.favicon_url) {
+        let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = data.favicon_url;
+      }
+
+      if (data.seo_title) {
+        document.title = data.seo_title;
+      }
+
+      if (data.seo_meta_description) {
+        let meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.name = 'description';
+          document.head.appendChild(meta);
+        }
+        meta.content = data.seo_meta_description;
+      }
+    }
+    applyWebsiteSettings();
+  }, []);
+}
 
 function App() {
+  useWebsiteSettings();
+
   return (
     <BrowserRouter>
       <Routes>

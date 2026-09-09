@@ -1684,6 +1684,10 @@ CREATE TABLE IF NOT EXISTS account_settings (
   primary_guest_contact_name text,
   primary_guest_contact_email text,
   primary_guest_contact_phone text,
+  logo_url text,
+  favicon_url text,
+  seo_title text,
+  seo_meta_description text,
   UNIQUE (property_id)
 );
 ALTER TABLE account_settings ENABLE ROW LEVEL SECURITY;
@@ -1727,11 +1731,32 @@ DO $$ BEGIN
     CREATE POLICY "property_photos_delete_auth" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'property-photos');
   END IF;
 END $$;
-DO $$ BEGIN
+DO $ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND schemaname = 'storage' AND policyname = 'property_photos_select_public') THEN
     CREATE POLICY "property_photos_select_public" ON storage.objects FOR SELECT TO public USING (bucket_id = 'property-photos');
   END IF;
-END $$;
+END $;
+
+-- Branding storage bucket (logo + favicon uploads)
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES ('branding', 'branding', true, 2097152, ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml', 'image/x-icon', 'image/vnd.microsoft.icon'])
+ON CONFLICT (id) DO NOTHING;
+
+DO $ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND schemaname = 'storage' AND policyname = 'branding_select_public') THEN
+    CREATE POLICY "branding_select_public" ON storage.objects FOR SELECT TO public USING (bucket_id = 'branding');
+  END IF;
+END $;
+DO $ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND schemaname = 'storage' AND policyname = 'branding_insert_auth') THEN
+    CREATE POLICY "branding_insert_auth" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'branding');
+  END IF;
+END $;
+DO $ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND schemaname = 'storage' AND policyname = 'branding_delete_auth') THEN
+    CREATE POLICY "branding_delete_auth" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'branding');
+  END IF;
+END $;
 
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -2460,7 +2485,7 @@ ON CONFLICT (property_id) DO NOTHING;
 -- Views created:  1  (public_availability)
 -- Functions:     15  (vault helpers + utility)
 -- Triggers:       2  (email_settings, payment_settings updated_at)
--- Storage bucket: property-photos (public, 10 MB limit)
+-- Storage buckets: property-photos (public, 10 MB limit), branding (public, 2 MB limit)
 -- Cron jobs:      3  (expired payments, archive old bookings, cleanup inquiries)
 --
 -- Seeded (demo-ready):

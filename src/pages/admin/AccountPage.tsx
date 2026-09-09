@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { User, Building2, MapPin, Mail, Settings2, Activity, Shield, LogOut, Save, CheckCircle, AlertCircle, ChevronDown, Headphones as HeadphonesIcon } from 'lucide-react';
+import { User, Building2, MapPin, Mail, Settings2, Activity, Shield, LogOut, Save, CheckCircle, AlertCircle, ChevronDown, Headphones as HeadphonesIcon, Globe, Upload, Trash2, Image as ImageIcon } from 'lucide-react';
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
@@ -59,6 +59,11 @@ interface AccountRow {
   check_in_time: string | null;
   check_out_time: string | null;
   suggested_door_code: string | null;
+  // Website Settings
+  logo_url: string | null;
+  favicon_url: string | null;
+  seo_title: string | null;
+  seo_meta_description: string | null;
 }
 
 interface SystemStatus {
@@ -232,6 +237,18 @@ export default function AccountPage() {
   const [prefSaving, setPrefSaving] = useState(false);
   const [prefFlash, setPrefFlash] = useState<Flash>(null);
 
+  // Website Settings
+  const [logoUrl, setLogoUrl] = useState('');
+  const [faviconUrl, setFaviconUrl] = useState('');
+  const [seoTitle, setSeoTitle] = useState('');
+  const [seoMetaDescription, setSeoMetaDescription] = useState('');
+  const [websiteSaving, setWebsiteSaving] = useState(false);
+  const [websiteFlash, setWebsiteFlash] = useState<Flash>(null);
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [faviconUploading, setFaviconUploading] = useState(false);
+  const logoFileRef = useRef<HTMLInputElement>(null);
+  const faviconFileRef = useRef<HTMLInputElement>(null);
+
   // System status
   const [status, setStatus] = useState<SystemStatus | null>(null);
 
@@ -298,6 +315,10 @@ export default function AccountPage() {
         setTimezone(a.timezone);
         setCurrency(a.currency);
         setDateFormat(a.date_format);
+        setLogoUrl(a.logo_url ?? '');
+        setFaviconUrl(a.favicon_url ?? '');
+        setSeoTitle(a.seo_title ?? '');
+        setSeoMetaDescription(a.seo_meta_description ?? '');
       }
 
       setStatus({
@@ -403,6 +424,60 @@ export default function AccountPage() {
       ? { type: 'err', text: 'Failed to save preferences.' }
       : { type: 'ok', text: 'Preferences saved.' });
     setPrefSaving(false);
+  }
+
+  async function uploadBrandingImage(file: File, kind: 'logo' | 'favicon') {
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+    const path = `${kind}-${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from('branding').upload(path, file, { upsert: true });
+    if (uploadError) {
+      flash(setWebsiteFlash, 'website', { type: 'err', text: `Failed to upload ${kind}.` });
+      return null;
+    }
+    const { data: { publicUrl } } = supabase.storage.from('branding').getPublicUrl(path);
+    return publicUrl;
+  }
+
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoUploading(true);
+    const url = await uploadBrandingImage(file, 'logo');
+    if (url) setLogoUrl(url);
+    setLogoUploading(false);
+    if (e.target) e.target.value = '';
+  }
+
+  async function handleFaviconUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFaviconUploading(true);
+    const url = await uploadBrandingImage(file, 'favicon');
+    if (url) setFaviconUrl(url);
+    setFaviconUploading(false);
+    if (e.target) e.target.value = '';
+  }
+
+  function removeLogo() {
+    setLogoUrl('');
+  }
+
+  function removeFavicon() {
+    setFaviconUrl('');
+  }
+
+  async function saveWebsiteSettings() {
+    setWebsiteSaving(true);
+    const { error } = await upsert({
+      logo_url: logoUrl.trim() || null,
+      favicon_url: faviconUrl.trim() || null,
+      seo_title: seoTitle.trim() || null,
+      seo_meta_description: seoMetaDescription.trim() || null,
+    });
+    flash(setWebsiteFlash, 'website', error
+      ? { type: 'err', text: 'Failed to save website settings.' }
+      : { type: 'ok', text: 'Website settings saved.' });
+    setWebsiteSaving(false);
   }
 
   async function sendPasswordReset() {
@@ -614,6 +689,135 @@ export default function AccountPage() {
           <div className="flex items-center gap-3 pt-1">
             <SaveButton onClick={savePreferences} saving={prefSaving} />
             {prefFlash && <FlashBanner flash={prefFlash} />}
+          </div>
+        </div>
+      </SectionCard>
+
+      {/* Website Settings */}
+      <SectionCard icon={Globe} title="Website Settings">
+        <div className="space-y-5">
+          {/* Branding */}
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Branding</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Logo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Logo</label>
+                {logoUrl ? (
+                  <div className="space-y-2">
+                    <div className="w-full h-24 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
+                      <img src={logoUrl} alt="Logo preview" className="max-h-full max-w-full object-contain" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => logoFileRef.current?.click()}
+                        disabled={logoUploading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        {logoUploading ? 'Uploading…' : 'Replace'}
+                      </button>
+                      <button
+                        onClick={removeLogo}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => logoFileRef.current?.click()}
+                      disabled={logoUploading}
+                      className="w-full h-24 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-1.5 text-gray-400 hover:border-gray-400 hover:text-gray-500 transition-colors disabled:opacity-60"
+                    >
+                      {logoUploading ? (
+                        <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <ImageIcon className="w-6 h-6" />
+                          <span className="text-xs font-medium">Upload logo</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+                <input ref={logoFileRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={handleLogoUpload} className="hidden" />
+              </div>
+
+              {/* Favicon */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Favicon</label>
+                {faviconUrl ? (
+                  <div className="space-y-2">
+                    <div className="w-full h-24 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
+                      <img src={faviconUrl} alt="Favicon preview" className="max-h-16 max-w-16 object-contain" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => faviconFileRef.current?.click()}
+                        disabled={faviconUploading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        {faviconUploading ? 'Uploading…' : 'Replace'}
+                      </button>
+                      <button
+                        onClick={removeFavicon}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => faviconFileRef.current?.click()}
+                      disabled={faviconUploading}
+                      className="w-full h-24 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-1.5 text-gray-400 hover:border-gray-400 hover:text-gray-500 transition-colors disabled:opacity-60"
+                    >
+                      {faviconUploading ? (
+                        <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <ImageIcon className="w-6 h-6" />
+                          <span className="text-xs font-medium">Upload favicon</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+                <input ref={faviconFileRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/x-icon,image/vnd.microsoft.icon" onChange={handleFaviconUpload} className="hidden" />
+              </div>
+            </div>
+          </div>
+
+          {/* SEO */}
+          <div className="border-t border-gray-100 pt-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">SEO</p>
+            <div className="space-y-4">
+              <Field label="Homepage SEO Title" helper="Used as the browser tab title for your homepage">
+                <TextInput value={seoTitle} onChange={setSeoTitle} placeholder="e.g. Tiki Cottage Lake Texoma – Vacation Rental" />
+              </Field>
+              <Field label="Homepage Meta Description" helper="Shown in search engine results for your homepage">
+                <textarea
+                  value={seoMetaDescription}
+                  onChange={e => setSeoMetaDescription(e.target.value)}
+                  placeholder="Brief description of your property for search engines…"
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none"
+                />
+              </Field>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 pt-1">
+            <SaveButton onClick={saveWebsiteSettings} saving={websiteSaving} />
+            {websiteFlash && <FlashBanner flash={websiteFlash} />}
           </div>
         </div>
       </SectionCard>
