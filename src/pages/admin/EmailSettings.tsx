@@ -257,6 +257,8 @@ const EMAIL_TEMPLATE_VARIABLES: { group: string; vars: [string, string][] }[] = 
     ['check_out', 'Formatted check-out date'],
     ['nights', 'Number of nights'],
     ['guests', 'Number of guests'],
+    ['booking_number', 'Booking number'],
+    ['guest_details', 'Guest breakdown (e.g. 2 Adults, 1 Child, 1 Pet)'],
     ['confirmation_code', 'Booking confirmation code'],
     ['average_nightly_price', 'Average nightly rate'],
     ['total_trip_price', 'Total trip price'],
