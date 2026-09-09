@@ -476,13 +476,11 @@ export default function AccountPage() {
       seo_meta_description: seoMetaDescription.trim() || null,
     });
     if (!error) {
-      let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
-      }
+      document.querySelectorAll('link[rel="icon"]').forEach(el => el.remove());
+      const link = document.createElement('link');
+      link.rel = 'icon';
       link.href = faviconUrl.trim() || '/vite.svg';
+      document.head.appendChild(link);
     }
     flash(setWebsiteFlash, 'website', error
       ? { type: 'err', text: 'Failed to save website settings.' }
