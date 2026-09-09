@@ -84,7 +84,7 @@ function fmtDate(s: string): string {
 }
 
 function fmtMoney(v: number): string {
-  return v == null ? '—' : `$${(v / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  return v == null ? '—' : `${v.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 }
 
 function isBetween(day: string, start: string, end: string): boolean {
