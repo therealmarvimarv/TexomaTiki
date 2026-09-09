@@ -744,6 +744,7 @@ export default function AccountPage() {
                     </button>
                   </div>
                 )}
+                <p className="mt-1 text-xs text-gray-400">Recommended size: 500 × 500 pixels</p>
                 <input ref={logoFileRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={handleLogoUpload} className="hidden" />
               </div>
 
@@ -791,6 +792,7 @@ export default function AccountPage() {
                     </button>
                   </div>
                 )}
+                <p className="mt-1 text-xs text-gray-400">Recommended size: 512 × 512 pixels</p>
                 <input ref={faviconFileRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/x-icon,image/vnd.microsoft.icon" onChange={handleFaviconUpload} className="hidden" />
               </div>
             </div>
