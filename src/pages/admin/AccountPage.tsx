@@ -475,6 +475,15 @@ export default function AccountPage() {
       seo_title: seoTitle.trim() || null,
       seo_meta_description: seoMetaDescription.trim() || null,
     });
+    if (!error) {
+      let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = faviconUrl.trim() || '/vite.svg';
+    }
     flash(setWebsiteFlash, 'website', error
       ? { type: 'err', text: 'Failed to save website settings.' }
       : { type: 'ok', text: 'Website settings saved.' });
