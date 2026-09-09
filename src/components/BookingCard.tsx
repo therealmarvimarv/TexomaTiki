@@ -412,8 +412,7 @@ export default function BookingCard({ propertyId, basePrice, cleaningFee, taxRat
                 />
 
                 <p className="text-gray-500 text-sm mt-4 leading-relaxed">
-                  This place has a maximum of {maxGuests} guest{maxGuests !== 1 ? 's' : ''}, not
-                  including infants. If you're bringing more than 2 pets, please let your host know.
+                  Maximum of {maxGuests} adult{maxGuests !== 1 ? 's' : ''} and children. Infants don't count toward this limit. If you're bringing more than 2 pets, please let your host know.
                 </p>
 
                 <div className="flex justify-end mt-3">
