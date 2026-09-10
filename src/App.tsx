@@ -25,12 +25,10 @@ function useWebsiteSettings() {
       if (!data) return;
 
       document.querySelectorAll('link[rel="icon"]').forEach(el => el.remove());
-      if (data.favicon_url) {
-        const link = document.createElement('link');
-        link.rel = 'icon';
-        link.href = data.favicon_url;
-        document.head.appendChild(link);
-      }
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = data.favicon_url || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+      document.head.appendChild(link);
 
       if (data.seo_title) {
         document.title = data.seo_title;
