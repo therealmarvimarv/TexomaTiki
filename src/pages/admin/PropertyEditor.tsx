@@ -914,13 +914,15 @@ export default function PropertyEditor() {
       return;
     }
     const { data: { publicUrl } } = supabase.storage.from('branding').getPublicUrl(path);
+    await supabase.from('properties').update({ host_photo_url: publicUrl }).eq('id', property.id);
     setProperty({ ...property, hostPhotoUrl: publicUrl });
     setHostPhotoUploading(false);
     if (e.target) e.target.value = '';
   }
 
-  function removeHostPhoto() {
+  async function removeHostPhoto() {
     if (!property) return;
+    await supabase.from('properties').update({ host_photo_url: null }).eq('id', property.id);
     setProperty({ ...property, hostPhotoUrl: undefined });
   }
 
