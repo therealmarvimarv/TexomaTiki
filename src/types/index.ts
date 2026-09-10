@@ -12,6 +12,7 @@ export interface Property {
   hostName: string;
   hostYearsHosting: number;
   hostResponseRate: number;
+  hostPhotoUrl?: string;
   neighborhoodText: string;
   houseRules: string;
   cancellationPolicy: string;

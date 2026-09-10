@@ -5,6 +5,7 @@ interface Props {
   hostName: string;
   hostYearsHosting: number;
   hostResponseRate: number;
+  hostPhotoUrl?: string;
   highlights: Highlight[];
 }
 
@@ -26,12 +27,16 @@ const getIcon = (iconName: string) => {
   return iconMap[iconName] || Icons.Home;
 };
 
-export default function HostSection({ hostName, hostYearsHosting, hostResponseRate, highlights }: Props) {
+export default function HostSection({ hostName, hostYearsHosting, hostResponseRate, hostPhotoUrl, highlights }: Props) {
   return (
     <div className="py-8 border-b">
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center text-white text-2xl font-semibold">
-          {hostName[0]}
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center text-white text-2xl font-semibold overflow-hidden flex-shrink-0">
+          {hostPhotoUrl ? (
+            <img src={hostPhotoUrl} alt={hostName} className="w-full h-full object-cover" />
+          ) : (
+            hostName[0]
+          )}
         </div>
         <div>
           <h2 className="text-2xl font-semibold">Hosted by {hostName}</h2>

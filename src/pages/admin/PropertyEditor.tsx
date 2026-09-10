@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Property } from '../../types';
-import { Save, X, Plus, Trash2 } from 'lucide-react';
+import { Save, X, Plus, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
 import PhotosEditor from './PhotosEditor';
 import PricingEditor from './PricingEditor';
 import FeesEditor from './FeesEditor';
@@ -800,6 +800,8 @@ export default function PropertyEditor() {
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<Tab>('basic');
   const [msg, setMsg] = useState('');
+  const [hostPhotoUploading, setHostPhotoUploading] = useState(false);
+  const hostPhotoFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     supabase
@@ -823,6 +825,7 @@ export default function PropertyEditor() {
           hostName: data.host_name,
           hostYearsHosting: data.host_years_hosting,
           hostResponseRate: data.host_response_rate,
+          hostPhotoUrl: data.host_photo_url ?? undefined,
           neighborhoodText: data.neighborhood_text,
           houseRules: data.house_rules,
           cancellationPolicy: data.cancellation_policy,
@@ -860,6 +863,7 @@ export default function PropertyEditor() {
         host_name: property.hostName,
         host_years_hosting: property.hostYearsHosting,
         host_response_rate: property.hostResponseRate,
+        host_photo_url: property.hostPhotoUrl || null,
         neighborhood_text: property.neighborhoodText,
         house_rules: property.houseRules,
         cancellation_policy: property.cancellationPolicy,
@@ -894,6 +898,31 @@ export default function PropertyEditor() {
     await supabase.from('property_images').delete().eq('id', imageId);
     setProperty({ ...property, images: property.images.filter((img) => img.id !== imageId) });
   };
+
+  async function handleHostPhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !property) return;
+    setHostPhotoUploading(true);
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+    const path = `host-photo-${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from('branding').upload(path, file, { upsert: true });
+    if (uploadError) {
+      setMsg('Upload failed');
+      setTimeout(() => setMsg(''), 2500);
+      setHostPhotoUploading(false);
+      if (e.target) e.target.value = '';
+      return;
+    }
+    const { data: { publicUrl } } = supabase.storage.from('branding').getPublicUrl(path);
+    setProperty({ ...property, hostPhotoUrl: publicUrl });
+    setHostPhotoUploading(false);
+    if (e.target) e.target.value = '';
+  }
+
+  function removeHostPhoto() {
+    if (!property) return;
+    setProperty({ ...property, hostPhotoUrl: undefined });
+  }
 
   useEffect(() => {
     if (!property) return;
@@ -1017,6 +1046,48 @@ export default function PropertyEditor() {
                     className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Host Photo</label>
+                {property.hostPhotoUrl ? (
+                  <div className="space-y-2">
+                    <div className="w-24 h-24 rounded-full border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center">
+                      <img src={property.hostPhotoUrl} alt="Host photo preview" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => hostPhotoFileRef.current?.click()}
+                        disabled={hostPhotoUploading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        {hostPhotoUploading ? 'Uploading…' : 'Replace'}
+                      </button>
+                      <button
+                        onClick={removeHostPhoto}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => hostPhotoFileRef.current?.click()}
+                    disabled={hostPhotoUploading}
+                    className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-gray-400 hover:text-gray-500 transition-colors disabled:opacity-60"
+                  >
+                    {hostPhotoUploading ? (
+                      <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                    ) : (
+                      <ImageIcon className="w-6 h-6" />
+                    )}
+                  </button>
+                )}
+                <p className="mt-1 text-xs text-gray-400">Recommended size: 500 × 500 pixels. File types: PNG, JPEG, or WebP.</p>
+                <input ref={hostPhotoFileRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={handleHostPhotoUpload} className="hidden" />
               </div>
 
             </div>

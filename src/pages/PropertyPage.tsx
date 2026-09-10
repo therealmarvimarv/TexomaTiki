@@ -62,6 +62,7 @@ async function fetchProperty(id: string): Promise<Property> {
     hostName: prop.host_name,
     hostYearsHosting: prop.host_years_hosting,
     hostResponseRate: prop.host_response_rate,
+    hostPhotoUrl: prop.host_photo_url ?? undefined,
     neighborhoodText: prop.neighborhood_text,
     houseRules: prop.house_rules,
     cancellationPolicy: prop.cancellation_policy,
@@ -172,6 +173,7 @@ export default function PropertyPage() {
               hostName={property.hostName}
               hostYearsHosting={property.hostYearsHosting}
               hostResponseRate={property.hostResponseRate}
+              hostPhotoUrl={property.hostPhotoUrl}
               highlights={property.highlights}
             />
 
