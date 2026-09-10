@@ -77,20 +77,17 @@ export default function BrandedHeader({ data }: Props) {
 
         {/* Right — Tagline + Badges */}
         {hasRightSide && (
-          <div className="flex flex-col items-end gap-2 min-w-0">
+          <div className="flex flex-col items-center gap-4 min-w-0 md:min-w-[360px]">
             {/* Tagline */}
             {taglines.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap justify-end">
+              <div
+                className="flex items-center justify-center gap-2.5 flex-wrap text-center"
+                style={{ color: taglineColor, fontFamily: 'Caveat, Segoe Print, Bradley Hand, cursive' }}
+              >
                 {taglines.map((t, i) => (
-                  <span
-                    key={i}
-                    className="text-lg md:text-xl font-semibold tracking-wide"
-                    style={{ color: taglineColor }}
-                  >
+                  <span key={i} className="text-3xl md:text-4xl font-normal leading-none tracking-wide whitespace-nowrap">
                     {t}
-                    {i < taglines.length - 1 && (
-                      <span className="text-gray-300 ml-2" style={{ color: '#d1d5db' }}>·</span>
-                    )}
+                    {i < taglines.length - 1 && <span className="ml-2.5">·</span>}
                   </span>
                 ))}
               </div>
@@ -98,27 +95,22 @@ export default function BrandedHeader({ data }: Props) {
 
             {/* Badges */}
             {badges.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap justify-end">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-4 justify-items-center w-full">
                 {badges.map((key, i) => {
                   const def = getBadgeDef(key);
                   if (!def) return null;
                   const Icon = def.icon;
                   const isFirst = i === 0;
-                  const colorClass = isFirst ? '' : 'text-gray-600';
-                  const bgClass = isFirst ? 'border-2' : 'border border-gray-200';
                   return (
-                    <span
-                      key={key}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${bgClass} ${colorClass}`}
-                      style={
-                        isFirst
-                          ? { color: taglineColor, borderColor: taglineColor }
-                          : undefined
-                      }
-                    >
-                      <Icon className="w-3.5 h-3.5" />
-                      {def.label}
-                    </span>
+                    <div key={key} className="flex flex-col items-center justify-start gap-1.5 min-w-[72px] text-center">
+                      <Icon
+                        className="w-7 h-7 md:w-8 md:h-8 stroke-[1.8]"
+                        style={isFirst ? { color: taglineColor } : { color: '#17283d' }}
+                      />
+                      <span className="text-[11px] md:text-xs leading-tight font-medium text-gray-700 whitespace-nowrap">
+                        {def.label}
+                      </span>
+                    </div>
                   );
                 })}
               </div>
