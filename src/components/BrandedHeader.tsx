@@ -60,13 +60,13 @@ export default function BrandedHeader({ data }: Props) {
       style={{ borderBottomColor: 'rgb(241 245 249)' }}
     >
       <div
-        className={`max-w-7xl mx-auto px-6 md:px-24 py-5 flex items-center gap-6 ${
+        className={`max-w-7xl mx-auto px-6 md:px-24 py-6 md:py-7 flex flex-col md:flex-row items-center gap-6 ${
           hasRightSide ? 'justify-between' : 'justify-center'
         }`}
       >
         {/* Left — Logo */}
         {logoUrl && (
-          <div className="flex-shrink-0 max-w-[220px] h-16 flex items-center">
+          <div className="flex-shrink-0 w-full md:w-auto max-w-[340px] h-28 flex items-center justify-center md:justify-start">
             <img
               src={logoUrl}
               alt="Property logo"
@@ -77,7 +77,7 @@ export default function BrandedHeader({ data }: Props) {
 
         {/* Right — Tagline + Badges */}
         {hasRightSide && (
-          <div className="flex flex-col items-center gap-4 min-w-0 md:min-w-[360px]">
+          <div className="flex flex-col items-center gap-3 w-full md:w-[440px] min-w-0">
             {/* Tagline */}
             {taglines.length > 0 && (
               <div
@@ -85,7 +85,7 @@ export default function BrandedHeader({ data }: Props) {
                 style={{ color: taglineColor, fontFamily: 'Caveat, Segoe Print, Bradley Hand, cursive' }}
               >
                 {taglines.map((t, i) => (
-                  <span key={i} className="text-3xl md:text-4xl font-normal leading-none tracking-wide whitespace-nowrap">
+                  <span key={i} className="text-2xl md:text-3xl font-normal leading-none tracking-wide whitespace-nowrap">
                     {t}
                     {i < taglines.length - 1 && <span className="ml-2.5">·</span>}
                   </span>
@@ -95,19 +95,19 @@ export default function BrandedHeader({ data }: Props) {
 
             {/* Badges */}
             {badges.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-4 justify-items-center w-full">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-3 justify-items-center w-full">
                 {badges.map((key, i) => {
                   const def = getBadgeDef(key);
                   if (!def) return null;
                   const Icon = def.icon;
                   const isFirst = i === 0;
                   return (
-                    <div key={key} className="flex flex-col items-center justify-start gap-1.5 min-w-[72px] text-center">
+                    <div key={key} className="flex flex-col items-center justify-start gap-1 min-w-[64px] text-center">
                       <Icon
-                        className="w-7 h-7 md:w-8 md:h-8 stroke-[1.8]"
+                        className="w-6 h-6 md:w-7 md:h-7 stroke-[1.8]"
                         style={isFirst ? { color: taglineColor } : { color: '#17283d' }}
                       />
-                      <span className="text-[11px] md:text-xs leading-tight font-medium text-gray-700 whitespace-nowrap">
+                      <span className="text-[10px] md:text-[11px] leading-tight font-medium text-gray-700 whitespace-nowrap">
                         {def.label}
                       </span>
                     </div>
