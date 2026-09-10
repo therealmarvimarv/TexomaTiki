@@ -16,6 +16,7 @@ import GuestInfoSection from '../components/GuestInfoSection';
 import LocalRecommendations from '../components/LocalRecommendations';
 import BookingCard from '../components/BookingCard';
 import StickyNav from '../components/StickyNav';
+import BrandedHeader, { BrandedHeaderData } from '../components/BrandedHeader';
 
 const DEFAULT_PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
@@ -111,12 +112,30 @@ export default function PropertyPage() {
   const { id } = useParams();
   const propertyId = id || DEFAULT_PROPERTY_ID;
   const [property, setProperty] = useState<Property | null>(null);
+  const [headerData, setHeaderData] = useState<BrandedHeaderData | null>(null);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
-    fetchProperty(propertyId)
-      .then(setProperty)
+    Promise.all([
+      fetchProperty(propertyId),
+      supabase
+        .from('account_settings')
+        .select('logo_url, header_taglines, header_tagline_color, header_badges, show_tagline_badges')
+        .eq('property_id', propertyId)
+        .maybeSingle(),
+    ])
+      .then(([prop, headerRes]) => {
+        setProperty(prop);
+        const h = headerRes.data as any;
+        setHeaderData({
+          logoUrl: h?.logo_url ?? null,
+          taglines: h?.header_taglines ?? [],
+          taglineColor: h?.header_tagline_color ?? '#0f88bd',
+          badges: h?.header_badges ?? [],
+          showTaglineBadges: h?.show_tagline_badges ?? true,
+        });
+      })
       .catch(() => setFetchError(true))
       .finally(() => setLoading(false));
   }, [propertyId]);
@@ -157,6 +176,8 @@ export default function PropertyPage() {
   return (
     <div className="min-h-screen bg-white">
       <StickyNav />
+
+      {headerData && <BrandedHeader data={headerData} />}
 
       <div className="max-w-7xl mx-auto px-6 md:px-24 py-8">
         <div id="photos" className="mb-8">

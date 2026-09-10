@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { User, Building2, MapPin, Mail, Settings2, Activity, Shield, LogOut, Save, CheckCircle, AlertCircle, ChevronDown, Headphones as HeadphonesIcon, Globe, Upload, Trash2, Image as ImageIcon } from 'lucide-react';
+import { User, Building2, MapPin, Mail, Settings2, Activity, Shield, LogOut, Save, CheckCircle, AlertCircle, ChevronDown, Headphones as HeadphonesIcon, Globe, Upload, Trash2, Image as ImageIcon, Plus, X } from 'lucide-react';
+import { TAGLINE_PRESETS, BADGE_OPTIONS } from '../../components/BrandedHeader';
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
@@ -64,6 +65,10 @@ interface AccountRow {
   favicon_url: string | null;
   seo_title: string | null;
   seo_meta_description: string | null;
+  header_taglines: string[] | null;
+  header_tagline_color: string | null;
+  header_badges: string[] | null;
+  show_tagline_badges: boolean | null;
 }
 
 interface SystemStatus {
@@ -249,6 +254,14 @@ export default function AccountPage() {
   const logoFileRef = useRef<HTMLInputElement>(null);
   const faviconFileRef = useRef<HTMLInputElement>(null);
 
+  // Branded Header Settings
+  const [headerTaglines, setHeaderTaglines] = useState<string[]>([]);
+  const [headerTaglineColor, setHeaderTaglineColor] = useState('#0f88bd');
+  const [headerBadges, setHeaderBadges] = useState<string[]>([]);
+  const [showTaglineBadges, setShowTaglineBadges] = useState(true);
+  const [taglineSelectValue, setTaglineSelectValue] = useState('');
+  const [customTagline, setCustomTagline] = useState('');
+
   // System status
   const [status, setStatus] = useState<SystemStatus | null>(null);
 
@@ -319,6 +332,10 @@ export default function AccountPage() {
         setFaviconUrl(a.favicon_url ?? '');
         setSeoTitle(a.seo_title ?? '');
         setSeoMetaDescription(a.seo_meta_description ?? '');
+        setHeaderTaglines(a.header_taglines ?? []);
+        setHeaderTaglineColor(a.header_tagline_color ?? '#0f88bd');
+        setHeaderBadges(a.header_badges ?? []);
+        setShowTaglineBadges(a.show_tagline_badges ?? true);
       }
 
       setStatus({
@@ -467,6 +484,24 @@ export default function AccountPage() {
     setFaviconUrl('');
   }
 
+  function addTagline(value: string) {
+    const v = value.trim();
+    if (!v || headerTaglines.includes(v) || headerTaglines.length >= 3) return;
+    setHeaderTaglines([...headerTaglines, v.slice(0, 30)]);
+  }
+
+  function removeTagline(idx: number) {
+    setHeaderTaglines(headerTaglines.filter((_, i) => i !== idx));
+  }
+
+  function toggleBadge(key: string) {
+    if (headerBadges.includes(key)) {
+      setHeaderBadges(headerBadges.filter(b => b !== key));
+    } else if (headerBadges.length < 4) {
+      setHeaderBadges([...headerBadges, key]);
+    }
+  }
+
   async function saveWebsiteSettings() {
     setWebsiteSaving(true);
     const { error } = await upsert({
@@ -474,6 +509,10 @@ export default function AccountPage() {
       favicon_url: faviconUrl.trim() || null,
       seo_title: seoTitle.trim() || null,
       seo_meta_description: seoMetaDescription.trim() || null,
+      header_taglines: headerTaglines,
+      header_tagline_color: headerTaglineColor,
+      header_badges: headerBadges,
+      show_tagline_badges: showTaglineBadges,
     });
     if (!error) {
       document.querySelectorAll('link[rel="icon"]').forEach(el => el.remove());
@@ -804,6 +843,124 @@ export default function AccountPage() {
                 <p className="mt-1 text-xs text-gray-400">Recommended size: 512 × 512 pixels</p>
                 <input ref={faviconFileRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/x-icon,image/vnd.microsoft.icon" onChange={handleFaviconUpload} className="hidden" />
               </div>
+            </div>
+          </div>
+
+          {/* Homepage Header */}
+          <div className="border-t border-gray-100 pt-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Homepage Header</p>
+            <div className="space-y-4">
+              {/* Show toggle */}
+              <label className="flex items-center gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showTaglineBadges}
+                  onChange={e => setShowTaglineBadges(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                />
+                <span className="text-sm font-medium text-gray-700">Show Tagline &amp; Badges</span>
+              </label>
+              <p className="text-xs text-gray-400 -mt-2">When off, only the logo is shown (centered above the photo gallery).</p>
+
+              {showTaglineBadges && (
+                <>
+                  {/* Taglines */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
+                    <p className="text-xs text-gray-400 mb-2">Up to 3 short words or phrases. Shown above the badges on the homepage header.</p>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {headerTaglines.map((t, idx) => (
+                        <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-700">
+                          {t}
+                          <button onClick={() => removeTagline(idx)} className="text-gray-400 hover:text-red-500"><X className="w-3 h-3" /></button>
+                        </span>
+                      ))}
+                    </div>
+                    {headerTaglines.length < 3 && (
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <select
+                            value={taglineSelectValue}
+                            onChange={e => { setTaglineSelectValue(e.target.value); if (e.target.value && e.target.value !== '__custom__') { addTagline(e.target.value); setTaglineSelectValue(''); } }}
+                            className="w-full appearance-none px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent pr-8"
+                          >
+                            <option value="">Select a preset…</option>
+                            {TAGLINE_PRESETS.map(p => <option key={p} value={p}>{p}</option>)}
+                            <option value="__custom__">Custom…</option>
+                          </select>
+                          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                        {taglineSelectValue === '__custom__' && (
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={customTagline}
+                              onChange={e => setCustomTagline(e.target.value.slice(0, 30))}
+                              placeholder="Custom word/phrase"
+                              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTagline(customTagline); setCustomTagline(''); setTaglineSelectValue(''); } }}
+                              className="w-32 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            />
+                            <button
+                              onClick={() => { addTagline(customTagline); setCustomTagline(''); setTaglineSelectValue(''); }}
+                              className="flex items-center gap-1 px-3 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              Add
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Tagline Color */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tagline Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={headerTaglineColor}
+                        onChange={e => setHeaderTaglineColor(e.target.value)}
+                        className="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer p-1"
+                      />
+                      <span className="text-sm text-gray-500 font-mono">{headerTaglineColor}</span>
+                    </div>
+                    <p className="mt-1 text-xs text-gray-400">Also applied to the first badge's icon and label.</p>
+                  </div>
+
+                  {/* Badges */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Badges</label>
+                    <p className="text-xs text-gray-400 mb-2">Select up to 4. The first selected badge uses the tagline accent color.</p>
+                    <div className="flex flex-wrap gap-2">
+                      {BADGE_OPTIONS.map(b => {
+                        const selected = headerBadges.includes(b.key);
+                        const isFirst = selected && headerBadges[0] === b.key;
+                        return (
+                          <button
+                            key={b.key}
+                            onClick={() => toggleBadge(b.key)}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                              selected
+                                ? isFirst
+                                  ? 'border-2'
+                                  : 'border-gray-300 bg-gray-100 text-gray-700'
+                                : 'border-gray-200 text-gray-500 hover:border-gray-400'
+                            }`}
+                            style={isFirst ? { color: headerTaglineColor, borderColor: headerTaglineColor } : undefined}
+                          >
+                            <b.icon className="w-3.5 h-3.5" />
+                            {b.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {headerBadges.length === 4 && (
+                      <p className="mt-1 text-xs text-gray-400">Maximum of 4 badges selected.</p>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
