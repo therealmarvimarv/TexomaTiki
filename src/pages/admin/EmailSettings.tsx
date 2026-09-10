@@ -424,10 +424,10 @@ function SmtpForm({ status, token, onSaved }: {
       <div>
         <label className="block text-xs font-semibold text-gray-700 mb-2">Email Provider</label>
         <div className="flex gap-2 flex-wrap">
-          {(['disabled', 'smtp', 'resend'] as const).map(p => (
+          {(['disabled', 'smtp'] as const).map(p => (
             <button key={p} onClick={() => setProvider(p)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${provider === p ? 'bg-gray-900 text-white border-gray-900' : 'text-gray-600 border-gray-200 hover:border-gray-400'}`}>
-              {p === 'disabled' ? 'Disabled' : p === 'smtp' ? 'SMTP' : 'Resend'}
+              {p === 'disabled' ? 'Disabled' : 'SMTP'}
             </button>
           ))}
         </div>
