@@ -477,10 +477,13 @@ export default function AccountPage() {
     });
     if (!error) {
       document.querySelectorAll('link[rel="icon"]').forEach(el => el.remove());
-      const link = document.createElement('link');
-      link.rel = 'icon';
-      link.href = faviconUrl.trim() || '/vite.svg';
-      document.head.appendChild(link);
+      const fav = faviconUrl.trim();
+      if (fav) {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.href = fav;
+        document.head.appendChild(link);
+      }
     }
     flash(setWebsiteFlash, 'website', error
       ? { type: 'err', text: 'Failed to save website settings.' }
