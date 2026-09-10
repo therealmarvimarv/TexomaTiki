@@ -791,7 +791,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'contact', label: 'Contact' },
   { id: 'photos', label: 'Photos' },
   { id: 'pricing', label: 'Pricing' },
-  { id: 'policies', label: 'Policies' },
+  { id: 'policies', label: 'Things to Know' },
   { id: 'sections', label: 'Sections & Content' },
 ];
 
@@ -830,6 +830,11 @@ export default function PropertyEditor() {
           houseRules: data.house_rules,
           cancellationPolicy: data.cancellation_policy,
           safetyNotes: data.safety_notes,
+          showThingsToKnow: data.show_things_to_know ?? true,
+          thingsToKnowHeading: data.things_to_know_heading ?? '',
+          houseRulesTitle: data.house_rules_title ?? '',
+          cancellationPolicyTitle: data.cancellation_policy_title ?? '',
+          safetyNotesTitle: data.safety_notes_title ?? '',
           latitude: data.latitude ? Number(data.latitude) : undefined,
           longitude: data.longitude ? Number(data.longitude) : undefined,
           basePrice: Number(data.base_price),
@@ -868,6 +873,11 @@ export default function PropertyEditor() {
         house_rules: property.houseRules,
         cancellation_policy: property.cancellationPolicy,
         safety_notes: property.safetyNotes,
+        show_things_to_know: property.showThingsToKnow,
+        things_to_know_heading: property.thingsToKnowHeading || null,
+        house_rules_title: property.houseRulesTitle || null,
+        cancellation_policy_title: property.cancellationPolicyTitle || null,
+        safety_notes_title: property.safetyNotesTitle || null,
         latitude: property.latitude,
         longitude: property.longitude,
         updated_at: new Date().toISOString(),
@@ -1116,11 +1126,11 @@ export default function PropertyEditor() {
           {/* Sections & Content */}
           {tab === 'sections' && <SectionsEditor propertyId={property.id} />}
 
-          {/* Policies */}
+          {/* Things to Know */}
           {tab === 'policies' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold">Policies</h3>
+                <h3 className="text-lg font-semibold">Things to Know</h3>
                 <div className="flex items-center gap-3">
                   {msg && <span className={`text-sm font-medium ${msg === 'Saved!' ? 'text-green-600' : 'text-red-600'}`}>{msg}</span>}
                   <button
@@ -1133,32 +1143,102 @@ export default function PropertyEditor() {
                   </button>
                 </div>
               </div>
+              {/* Show on Homepage toggle */}
+              <div className="flex items-center justify-between bg-gray-50 rounded-xl px-5 py-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Show on Homepage</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Controls visibility of the entire Things to Know section on the public listing.</p>
+                </div>
+                <button
+                  role="switch"
+                  aria-checked={property.showThingsToKnow}
+                  onClick={() => setProperty({ ...property, showThingsToKnow: !property.showThingsToKnow })}
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    property.showThingsToKnow ? 'bg-gray-900' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      property.showThingsToKnow ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Section heading */}
               <div>
-                <label className="block text-sm font-medium mb-2">House Rules</label>
+                <label className="block text-sm font-medium mb-2">Section Heading</label>
+                <input
+                  type="text"
+                  value={property.thingsToKnowHeading}
+                  onChange={(e) => setProperty({ ...property, thingsToKnowHeading: e.target.value })}
+                  placeholder="Things to know"
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
+                />
+                <p className="mt-1 text-xs text-gray-400">Leave blank to use the default heading "Things to know".</p>
+              </div>
+
+              {/* House Rules */}
+              <div>
+                <label className="block text-sm font-medium mb-2">House Rules Title</label>
+                <input
+                  type="text"
+                  value={property.houseRulesTitle}
+                  onChange={(e) => setProperty({ ...property, houseRulesTitle: e.target.value })}
+                  placeholder="House rules"
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
+                />
+                <label className="block text-sm font-medium mb-2 mt-4">House Rules Description</label>
                 <textarea
                   value={property.houseRules}
-                  onChange={(e) => setProperty({ ...property, houseRules: e.target.value })}
+                  onChange={(e) => setProperty({ ...property, houseRules: e.target.value.slice(0, 200) })}
                   rows={4}
+                  maxLength={200}
                   className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
                 />
+                <p className="mt-1 text-xs text-gray-400 text-right">{property.houseRules.length} / 200</p>
               </div>
+
+              {/* Cancellation Policy */}
               <div>
-                <label className="block text-sm font-medium mb-2">Cancellation Policy</label>
+                <label className="block text-sm font-medium mb-2">Cancellation Policy Title</label>
+                <input
+                  type="text"
+                  value={property.cancellationPolicyTitle}
+                  onChange={(e) => setProperty({ ...property, cancellationPolicyTitle: e.target.value })}
+                  placeholder="Cancellation policy"
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
+                />
+                <label className="block text-sm font-medium mb-2 mt-4">Cancellation Policy Description</label>
                 <textarea
                   value={property.cancellationPolicy}
-                  onChange={(e) => setProperty({ ...property, cancellationPolicy: e.target.value })}
+                  onChange={(e) => setProperty({ ...property, cancellationPolicy: e.target.value.slice(0, 200) })}
                   rows={4}
+                  maxLength={200}
                   className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
                 />
+                <p className="mt-1 text-xs text-gray-400 text-right">{property.cancellationPolicy.length} / 200</p>
               </div>
+
+              {/* Safety & Property */}
               <div>
-                <label className="block text-sm font-medium mb-2">Safety Notes</label>
+                <label className="block text-sm font-medium mb-2">Safety & Property Title</label>
+                <input
+                  type="text"
+                  value={property.safetyNotesTitle}
+                  onChange={(e) => setProperty({ ...property, safetyNotesTitle: e.target.value })}
+                  placeholder="Safety & property"
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
+                />
+                <label className="block text-sm font-medium mb-2 mt-4">Safety & Property Description</label>
                 <textarea
                   value={property.safetyNotes}
-                  onChange={(e) => setProperty({ ...property, safetyNotes: e.target.value })}
+                  onChange={(e) => setProperty({ ...property, safetyNotes: e.target.value.slice(0, 200) })}
                   rows={4}
+                  maxLength={200}
                   className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
                 />
+                <p className="mt-1 text-xs text-gray-400 text-right">{property.safetyNotes.length} / 200</p>
               </div>
             </div>
           )}

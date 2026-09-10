@@ -26,6 +26,11 @@ export interface Property {
   showLocalRecommendations: boolean;
   showFaq: boolean;
   showGuestInfo: boolean;
+  showThingsToKnow: boolean;
+  thingsToKnowHeading?: string;
+  houseRulesTitle?: string;
+  cancellationPolicyTitle?: string;
+  safetyNotesTitle?: string;
   images: PropertyImage[];
   highlights: Highlight[];
   amenitiesByCategory: Record<string, Amenity[]>;

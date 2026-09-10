@@ -76,6 +76,11 @@ async function fetchProperty(id: string): Promise<Property> {
     showLocalRecommendations: prop.show_local_recommendations ?? true,
     showFaq: prop.show_faq ?? true,
     showGuestInfo: prop.show_guest_info ?? true,
+    showThingsToKnow: prop.show_things_to_know ?? true,
+    thingsToKnowHeading: prop.things_to_know_heading ?? undefined,
+    houseRulesTitle: prop.house_rules_title ?? undefined,
+    cancellationPolicyTitle: prop.cancellation_policy_title ?? undefined,
+    safetyNotesTitle: prop.safety_notes_title ?? undefined,
     images: (imagesRes.data ?? []).map((i) => ({ id: i.id, url: i.url, sortOrder: i.sort_order })),
     highlights: (highlightsRes.data ?? []).map((h) => ({ id: h.id, icon: h.icon, text: h.text, subtitle: h.subtitle ?? undefined, sortOrder: h.sort_order })),
     sleepingArrangements: (sleepingRes.data ?? []).map((s) => ({
@@ -212,11 +217,17 @@ export default function PropertyPage() {
           <GuestInfoSection propertyId={propertyId} />
         )}
 
-        <ThingsToKnow
-          houseRules={property.houseRules}
-          cancellationPolicy={property.cancellationPolicy}
-          safetyNotes={property.safetyNotes}
-        />
+        {property.showThingsToKnow && (
+          <ThingsToKnow
+            houseRules={property.houseRules}
+            cancellationPolicy={property.cancellationPolicy}
+            safetyNotes={property.safetyNotes}
+            heading={property.thingsToKnowHeading}
+            houseRulesTitle={property.houseRulesTitle}
+            cancellationPolicyTitle={property.cancellationPolicyTitle}
+            safetyNotesTitle={property.safetyNotesTitle}
+          />
+        )}
 
         {property.showFaq && (
           <FAQSection propertyId={propertyId} />
