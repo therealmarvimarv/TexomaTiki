@@ -77,7 +77,7 @@ export default function BrandedHeader({ data }: Props) {
 
         {/* Right — Tagline + Badges */}
         {hasRightSide && (
-          <div className="flex flex-col items-center gap-3 w-full md:w-[440px] min-w-0">
+          <div className="flex flex-col items-center gap-3 w-full md:w-[360px] min-w-0 md:ml-auto">
             {/* Tagline */}
             {taglines.length > 0 && (
               <div
@@ -85,7 +85,7 @@ export default function BrandedHeader({ data }: Props) {
                 style={{ color: taglineColor, fontFamily: 'Caveat, Segoe Print, Bradley Hand, cursive' }}
               >
                 {taglines.map((t, i) => (
-                  <span key={i} className="text-2xl md:text-3xl font-normal leading-none tracking-wide whitespace-nowrap">
+                  <span key={i} className="text-2xl md:text-[27px] font-normal leading-none tracking-wide whitespace-nowrap">
                     {t}
                     {i < taglines.length - 1 && <span className="ml-2.5">·</span>}
                   </span>
@@ -95,19 +95,19 @@ export default function BrandedHeader({ data }: Props) {
 
             {/* Badges */}
             {badges.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-3 justify-items-center w-full">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-2 gap-y-3 justify-items-center w-full">
                 {badges.map((key, i) => {
                   const def = getBadgeDef(key);
                   if (!def) return null;
                   const Icon = def.icon;
                   const isFirst = i === 0;
                   return (
-                    <div key={key} className="flex flex-col items-center justify-start gap-1 min-w-[64px] text-center">
+                    <div key={key} className="flex flex-col items-center justify-start gap-1 min-w-[58px] text-center">
                       <Icon
-                        className="w-6 h-6 md:w-7 md:h-7 stroke-[1.8]"
+                        className="w-5 h-5 md:w-6 md:h-6 stroke-[1.8]"
                         style={isFirst ? { color: taglineColor } : { color: '#17283d' }}
                       />
-                      <span className="text-[10px] md:text-[11px] leading-tight font-medium text-gray-700 whitespace-nowrap">
+                      <span className="text-[10px] leading-tight font-medium text-gray-700 whitespace-nowrap">
                         {def.label}
                       </span>
                     </div>
