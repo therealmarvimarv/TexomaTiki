@@ -532,7 +532,7 @@ export default function AccountPage() {
     if (!loginEmail) return;
     setResetSending(true);
     const { error } = await supabase.auth.resetPasswordForEmail(loginEmail, {
-      redirectTo: `${window.location.origin}/admin/account`,
+      redirectTo: `${window.location.origin}/admin/reset-password`,
     });
     flash(setResetFlash, 'reset', error
       ? { type: 'err', text: 'Could not send reset email. Check your auth configuration.' }

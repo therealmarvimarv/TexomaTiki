@@ -8,6 +8,7 @@ import BookingRequestSuccess from './pages/BookingRequestSuccess';
 import PhotoTourPage from './pages/PhotoTourPage';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import ResetPassword from './pages/admin/ResetPassword';
 import PlatformDashboard from './pages/platform/PlatformDashboard';
 import { supabase } from './lib/supabase';
 
@@ -63,6 +64,7 @@ function App() {
         <Route path="/inquiry/success" element={<InquirySuccess />} />
         <Route path="/booking/request-success" element={<BookingRequestSuccess />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/reset-password" element={<ResetPassword />} />
         <Route path="/admin/*" element={<AdminDashboard />} />
         <Route path="/platform/*" element={<PlatformDashboard />} />
       </Routes>
