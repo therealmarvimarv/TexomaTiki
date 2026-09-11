@@ -5,6 +5,7 @@ import { Menu, X } from 'lucide-react';
 export default function StickyNav() {
   const [isSticky, setIsSticky] = useState(false);
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
