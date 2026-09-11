@@ -17,9 +17,10 @@ export default function StickyNav() {
   }, []);
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
+    const isMobile = window.innerWidth < 768;
+    const targetId = isMobile && id === 'booking' ? 'booking-card-mobile' : id;
+    const element = document.getElementById(targetId);
     if (element) {
-      const isMobile = window.innerWidth < 768;
       if (isMobile && id === 'booking') {
         const navHeight = 64;
         const top = element.getBoundingClientRect().top + window.scrollY - navHeight;

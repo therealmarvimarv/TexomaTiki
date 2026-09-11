@@ -212,7 +212,7 @@ export default function PropertyPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-5 self-start sticky top-24">
+          <div id="booking-card-mobile" className="lg:col-span-5 self-start sticky top-24">
             <BookingCard
               propertyId={property.id}
               basePrice={Number(property.basePrice)}
