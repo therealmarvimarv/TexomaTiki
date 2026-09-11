@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PropertyImage } from '../types';
+import Lightbox from './photos/Lightbox';
 
 interface Props {
   images: PropertyImage[];
@@ -8,6 +10,7 @@ interface Props {
 
 export default function PropertyHero({ images, title }: Props) {
   const navigate = useNavigate();
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const heroImage = images[0];
   const gridImages = images.slice(1, 5);
   const totalCount = images.length;
@@ -16,10 +19,15 @@ export default function PropertyHero({ images, title }: Props) {
     navigate('/photos');
   }
 
+  const lightboxPhotos = images.map((img) => ({
+    src: img.url,
+    alt: title,
+  }));
+
   return (
     <div className="relative">
       <div className="grid grid-cols-4 gap-2 h-[480px] rounded-xl overflow-hidden">
-        <div className="col-span-4 md:col-span-2 relative group cursor-pointer" onClick={goToPhotos}>
+        <div className="col-span-4 md:col-span-2 relative group cursor-pointer" onClick={() => setLightboxIndex(0)}>
           <img
             src={heroImage?.url || '/placeholder.jpg'}
             alt={title}
@@ -45,7 +53,7 @@ export default function PropertyHero({ images, title }: Props) {
             <div
               key={img.id}
               className="relative group cursor-pointer"
-              onClick={goToPhotos}
+              onClick={() => setLightboxIndex(idx + 1)}
             >
               <img
                 src={img.url || '/placeholder.jpg'}
@@ -67,6 +75,16 @@ export default function PropertyHero({ images, title }: Props) {
         </svg>
         Show all photos
       </button>
+
+      {lightboxIndex !== null && (
+        <Lightbox
+          photos={lightboxPhotos}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onPrev={() => setLightboxIndex((i) => (i! - 1 + images.length) % images.length)}
+          onNext={() => setLightboxIndex((i) => (i! + 1) % images.length)}
+        />
+      )}
     </div>
   );
 }
