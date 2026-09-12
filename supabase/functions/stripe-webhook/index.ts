@@ -404,6 +404,40 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // ── charge.refunded ──────────────────────────────────────────────────────
+    // Synchronizes refunds issued directly from the Stripe Dashboard (or any
+    // source outside this app) back into the booking record.  The charge object
+    // embeds the PaymentIntent ID and the cumulative amount_refunded in cents.
+    if (event.type === "charge.refunded") {
+      const charge = session as Record<string, unknown>;
+      const paymentIntentId = charge["payment_intent"] as string | null;
+      const amountRefunded = charge["amount_refunded"] as number | null;
+
+      if (paymentIntentId && amountRefunded != null) {
+        const { data: booking } = await supabase
+          .from("bookings")
+          .select("id, amount_paid, refunded_amount")
+          .eq("stripe_payment_intent_id", paymentIntentId)
+          .maybeSingle();
+
+        if (booking) {
+          await supabase.from("payment_events")
+            .update({ booking_id: booking.id })
+            .eq("stripe_event_id", event.id);
+
+          const amountPaid = booking.amount_paid ?? 0;
+          const isFullyRefunded = amountRefunded >= amountPaid;
+
+          await supabase.from("bookings").update({
+            refunded_amount: amountRefunded,
+            refunded_at: new Date().toISOString(),
+            payment_status: isFullyRefunded ? "refunded" : "partially_refunded",
+            updated_at: new Date().toISOString(),
+          }).eq("id", booking.id);
+        }
+      }
+    }
+
     return new Response(JSON.stringify({ ok: true }), {
       headers: { "Content-Type": "application/json" },
     });

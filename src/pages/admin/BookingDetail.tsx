@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { ArrowLeft, AlertTriangle, X, CreditCard, Loader2, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, X, CreditCard, Loader2, Plus, Trash2, RotateCcw } from 'lucide-react';
 
 interface BookingRow {
   id: string;
@@ -234,6 +234,84 @@ function ManualPaymentModal({ amountDueCents, currentPaidCents, onConfirm, onCan
   );
 }
 
+// ── Refund partial modal ──────────────────────────────────────────────────────
+
+interface RefundPartialModalProps {
+  maxRefundableCents: number;
+  amountPaidCents: number;
+  alreadyRefundedCents: number;
+  onConfirm: (amountCents: number) => void;
+  onCancel: () => void;
+  saving: boolean;
+}
+
+function RefundPartialModal({ maxRefundableCents, amountPaidCents, alreadyRefundedCents, onConfirm, onCancel, saving }: RefundPartialModalProps) {
+  const [amountStr, setAmountStr] = useState((maxRefundableCents / 100).toFixed(2));
+  const amountCents = Math.round(parseFloat(amountStr || '0') * 100);
+  const valid = amountCents > 0 && amountCents <= maxRefundableCents && !isNaN(amountCents);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <RotateCcw className="w-5 h-5 text-blue-700" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900">Partial Refund</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Issues a refund via Stripe for the entered amount.</p>
+          </div>
+        </div>
+
+        <div className="space-y-3 mb-4">
+          <div className="flex justify-between text-xs">
+            <span className="text-gray-500">Amount Paid</span>
+            <span className="font-medium text-gray-700">{fmtMoney(amountPaidCents)}</span>
+          </div>
+          <div className="flex justify-between text-xs">
+            <span className="text-gray-500">Already Refunded</span>
+            <span className="font-medium text-gray-700">{fmtMoney(alreadyRefundedCents)}</span>
+          </div>
+          <div className="flex justify-between text-xs">
+            <span className="text-gray-500">Remaining Refundable</span>
+            <span className="font-semibold text-blue-700">{fmtMoney(maxRefundableCents)}</span>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1.5">Refund amount ($)</label>
+          <input
+            type="number"
+            min="0"
+            max={maxRefundableCents / 100}
+            step="0.01"
+            value={amountStr}
+            onChange={e => setAmountStr(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+          {!valid && amountStr && parseFloat(amountStr) > 0 && (
+            <p className="text-xs text-red-500 mt-1">Amount exceeds remaining refundable balance.</p>
+          )}
+        </div>
+
+        <div className="flex gap-3 justify-end mt-6">
+          <button onClick={onCancel} disabled={saving} className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50">
+            Cancel
+          </button>
+          <button
+            onClick={() => onConfirm(amountCents)}
+            disabled={!valid || saving}
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+          >
+            {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+            Issue Partial Refund
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Section wrapper ───────────────────────────────────────────────────────────
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -267,7 +345,7 @@ interface InternalNote {
   updated_at: string;
 }
 
-type ModalAction = 'approve' | 'confirm' | 'cancel' | 'decline' | 'refund' | null;
+type ModalAction = 'approve' | 'confirm' | 'cancel' | 'decline' | 'refund_full' | null;
 
 export default function BookingDetail() {
   const { bookingId } = useParams<{ bookingId: string }>();
@@ -278,6 +356,8 @@ export default function BookingDetail() {
   const [modalAction, setModalAction] = useState<ModalAction>(null);
   const [showManualPayment, setShowManualPayment] = useState(false);
   const [manualSaving, setManualSaving] = useState(false);
+  const [showRefundPartial, setShowRefundPartial] = useState(false);
+  const [refundSaving, setRefundSaving] = useState(false);
   const [archiving, setArchiving] = useState(false);
 
   // Payment notes edit state
@@ -370,36 +450,15 @@ export default function BookingDetail() {
       confirmLabel: 'Decline Booking',
       danger: true,
     },
-    refund: {
-      title: 'Mark as Refunded',
-      message: 'This marks the booking as refunded in the system. Ensure you have already issued the refund separately.',
-      confirmLabel: 'Mark Refunded',
+    refund_full: {
+      title: 'Issue Full Refund',
+      message: `This will refund ${fmtMoney((booking.amount_paid ?? 0) - (booking.refunded_amount ?? 0))} to the guest via Stripe. The booking will be marked as refunded.`,
+      confirmLabel: 'Issue Full Refund',
       danger: false,
     },
   };
 
-  async function performAction(action: ModalAction) {
-    if (!booking || !action) return;
-    setActionLoading(true);
-    setError('');
-    setModalAction(null);
-
-    if (action === 'refund') {
-      const now = new Date().toISOString();
-      const { error: updateError } = await supabase.from('bookings').update({
-        status: 'refunded',
-        payment_status: 'refunded',
-        refunded_at: now,
-        refunded_amount: booking.amount_paid ?? 0,
-      }).eq('id', booking.id);
-      if (updateError) { setError('Action failed. Please try again.'); setActionLoading(false); return; }
-      await load();
-      setActionLoading(false);
-      return;
-    }
-
-    // approve / confirm / cancel / decline → admin-booking-action edge function
-    const edgeAction = action as 'approve' | 'confirm' | 'cancel' | 'decline';
+  async function callEdgeFunction(payload: Record<string, unknown>): Promise<boolean> {
     const { data: session } = await supabase.auth.getSession();
     const token = session.session?.access_token;
 
@@ -411,19 +470,45 @@ export default function BookingDetail() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ bookingId: booking.id, action: edgeAction }),
+        body: JSON.stringify(payload),
       },
     );
 
     const data = await res.json();
     if (!res.ok) {
       setError(data.error ?? 'Action failed. Please try again.');
+      return false;
+    }
+    return true;
+  }
+
+  async function performAction(action: ModalAction) {
+    if (!booking || !action) return;
+    setActionLoading(true);
+    setError('');
+    setModalAction(null);
+
+    if (action === 'refund_full') {
+      const ok = await callEdgeFunction({ bookingId: booking.id, action: 'refund', refundMode: 'full' });
+      if (ok) await load();
       setActionLoading(false);
       return;
     }
 
-    await load();
+    // approve / confirm / cancel / decline → admin-booking-action edge function
+    const edgeAction = action as 'approve' | 'confirm' | 'cancel' | 'decline';
+    const ok = await callEdgeFunction({ bookingId: booking.id, action: edgeAction });
+    if (ok) await load();
     setActionLoading(false);
+  }
+
+  async function handleRefundPartial(amountCents: number) {
+    if (!booking) return;
+    setRefundSaving(true);
+    setError('');
+    const ok = await callEdgeFunction({ bookingId: booking.id, action: 'refund', refundMode: 'partial', refundAmount: amountCents });
+    if (ok) { setShowRefundPartial(false); await load(); }
+    setRefundSaving(false);
   }
 
   async function saveNotes() {
@@ -514,7 +599,9 @@ export default function BookingDetail() {
   const canConfirm = status === 'pending_review' || status === 'pending_payment' || status === 'pending';
   const canCancel = status === 'confirmed' || status === 'pending_review' || status === 'pending_payment';
   const canDecline = status === 'pending_review' || status === 'pending_payment';
-  const canRefund = status === 'confirmed' || status === 'cancelled';
+  const hasStripePaymentIntent = !!booking.stripe_payment_intent_id;
+  const remainingRefundable = (booking.amount_paid ?? 0) - (booking.refunded_amount ?? 0);
+  const canRefund = hasStripePaymentIntent && remainingRefundable > 0 && (status === 'confirmed' || status === 'cancelled' || status === 'payment_conflict' || status === 'refunded');
   const canRecordManual = status !== 'refunded' && status !== 'declined' && status !== 'expired';
   const due = amountDue(booking);
 
@@ -535,6 +622,16 @@ export default function BookingDetail() {
           onConfirm={handleManualPayment}
           onCancel={() => setShowManualPayment(false)}
           saving={manualSaving}
+        />
+      )}
+      {showRefundPartial && (
+        <RefundPartialModal
+          maxRefundableCents={remainingRefundable}
+          amountPaidCents={booking.amount_paid ?? 0}
+          alreadyRefundedCents={booking.refunded_amount ?? 0}
+          onConfirm={handleRefundPartial}
+          onCancel={() => setShowRefundPartial(false)}
+          saving={refundSaving}
         />
       )}
 
@@ -822,13 +919,24 @@ export default function BookingDetail() {
                 </button>
               )}
               {canRefund && (
-                <button
-                  onClick={() => setModalAction('refund')}
-                  disabled={actionLoading}
-                  className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
-                >
-                  Mark Refunded
-                </button>
+                <>
+                  <button
+                    onClick={() => setModalAction('refund_full')}
+                    disabled={actionLoading || refundSaving}
+                    className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    Refund Full
+                  </button>
+                  <button
+                    onClick={() => setShowRefundPartial(true)}
+                    disabled={actionLoading || refundSaving}
+                    className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    Refund Partial
+                  </button>
+                </>
               )}
               {canRecordManual && (
                 <button

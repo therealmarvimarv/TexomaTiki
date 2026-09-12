@@ -10,7 +10,9 @@ const corsHeaders = {
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-type Action = "approve" | "confirm" | "decline" | "cancel" | "mark_paid";
+type Action = "approve" | "confirm" | "decline" | "cancel" | "mark_paid" | "refund";
+
+type RefundMode = "full" | "partial";
 
 // Fire-and-forget notification — email failure must not break admin actions
 async function notify(payload: Record<string, unknown>): Promise<void> {
@@ -53,14 +55,28 @@ Deno.serve(async (req: Request) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+  // Verify caller is allowlisted in admin_users (service-role bypasses RLS)
+  const { data: adminRow } = await supabase
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!adminRow) {
+    return new Response(JSON.stringify({ error: "Forbidden — caller is not an admin user" }), {
+      status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const body = await req.json() as {
       bookingId: string;
       action: Action;
       notes?: string;
+      refundMode?: RefundMode;
+      refundAmount?: number;
     };
 
-    const { bookingId, action, notes } = body;
+    const { bookingId, action, notes, refundMode, refundAmount } = body;
 
     if (!bookingId || !action) {
       return new Response(JSON.stringify({ error: "bookingId and action are required" }), {
@@ -68,7 +84,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const validActions: Action[] = ["approve", "confirm", "decline", "cancel", "mark_paid"];
+    const validActions: Action[] = ["approve", "confirm", "decline", "cancel", "mark_paid", "refund"];
     if (!validActions.includes(action)) {
       return new Response(JSON.stringify({ error: `Invalid action: ${action}` }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -77,7 +93,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: booking, error: bookingError } = await supabase
       .from("bookings")
-      .select("id,property_id,guest_name,guest_email,check_in,check_out,guests,pets,amount_total,status,payment_status")
+      .select("id,property_id,guest_name,guest_email,check_in,check_out,guests,pets,amount_total,status,payment_status,amount_paid,refunded_amount,stripe_payment_intent_id,stripe_checkout_session_id,currency")
       .eq("id", bookingId)
       .maybeSingle();
 
@@ -456,6 +472,122 @@ Deno.serve(async (req: Request) => {
       return new Response(JSON.stringify({ ok: true, action: "mark_paid", bookingId }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // ── REFUND ────────────────────────────────────────────────────────────────
+    if (action === "refund") {
+      const paymentIntentId = booking.stripe_payment_intent_id;
+      if (!paymentIntentId) {
+        return new Response(JSON.stringify({ error: "This booking has no Stripe PaymentIntent and cannot be refunded via Stripe." }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const amountPaid = booking.amount_paid ?? 0;
+      const alreadyRefunded = booking.refunded_amount ?? 0;
+      const remainingRefundable = amountPaid - alreadyRefunded;
+
+      if (remainingRefundable <= 0) {
+        return new Response(JSON.stringify({ error: "This booking has no refundable amount remaining." }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      let refundAmountCents: number;
+      if (refundMode === "full") {
+        refundAmountCents = remainingRefundable;
+      } else if (refundMode === "partial") {
+        if (!refundAmount || refundAmount <= 0) {
+          return new Response(JSON.stringify({ error: "Refund amount must be greater than zero." }), {
+            status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        if (refundAmount > remainingRefundable) {
+          return new Response(JSON.stringify({ error: `Refund amount (${(refundAmount / 100).toFixed(2)}) exceeds remaining refundable amount (${(remainingRefundable / 100).toFixed(2)}).` }), {
+            status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        refundAmountCents = refundAmount;
+      } else {
+        return new Response(JSON.stringify({ error: "refundMode is required (\"full\" or \"partial\")" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Determine whether the original payment was test or live by checking
+      // the stored payment_events event_payload for this booking.
+      // Do NOT rely on the current payment_mode setting — it may have changed.
+      const { data: paymentEvent } = await supabase
+        .from("payment_events")
+        .select("event_payload")
+        .eq("booking_id", bookingId)
+        .eq("event_type", "checkout.session.completed")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const eventPayload = paymentEvent?.event_payload as Record<string, unknown> | null;
+      const isLiveMode = eventPayload?.livemode === true;
+
+      const vaultKeyName = isLiveMode ? "stripe_live_secret_key" : "stripe_test_secret_key";
+      const requiredPrefix = isLiveMode ? "sk_live_" : "sk_test_";
+
+      const { data: vaultKey } = await supabase.rpc("payment_settings_get_secret", { p_name: vaultKeyName });
+      const secretKey = (typeof vaultKey === "string" && vaultKey.startsWith(requiredPrefix)) ? vaultKey : "";
+      if (!secretKey) {
+        return new Response(JSON.stringify({ error: `Stripe ${isLiveMode ? "live" : "test"} secret key is not configured. Cannot issue refund.` }), {
+          status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Call Stripe Refunds API
+      const refundBody: Record<string, unknown> = {
+        payment_intent: paymentIntentId,
+        amount: String(refundAmountCents),
+      };
+
+      const formBody = Object.entries(refundBody)
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+        .join("&");
+
+      const stripeRes = await fetch("https://api.stripe.com/v1/refunds", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${secretKey}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formBody,
+      });
+
+      const stripeData = await stripeRes.json();
+
+      if (!stripeRes.ok) {
+        console.error("[admin-booking-action] Stripe refund error:", stripeData);
+        return new Response(JSON.stringify({
+          error: `Stripe refund failed: ${stripeData?.error?.message ?? "Unknown Stripe error"}`,
+        }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+
+      const newRefundedAmount = alreadyRefunded + refundAmountCents;
+      const isFullyRefunded = newRefundedAmount >= amountPaid;
+
+      await supabase.from("bookings").update({
+        refunded_amount: newRefundedAmount,
+        refunded_at: now,
+        payment_status: isFullyRefunded ? "refunded" : "partially_refunded",
+        updated_at: now,
+        ...(notes ? { payment_notes: notes } : {}),
+      }).eq("id", bookingId);
+
+      return new Response(JSON.stringify({
+        ok: true,
+        action: "refunded",
+        bookingId,
+        refundAmount: refundAmountCents,
+        totalRefunded: newRefundedAmount,
+        fullyRefunded: isFullyRefunded,
+        stripeRefundId: stripeData.id,
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     return new Response(JSON.stringify({ error: "Unhandled action" }), {
