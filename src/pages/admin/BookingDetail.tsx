@@ -452,7 +452,7 @@ export default function BookingDetail() {
     },
     refund_full: {
       title: 'Issue Full Refund',
-      message: `This will refund ${fmtMoney((booking.amount_paid ?? 0) - (booking.refunded_amount ?? 0))} to the guest via Stripe. The booking will be marked as refunded.`,
+      message: `This will refund ${fmtMoney((booking?.amount_paid ?? 0) - (booking?.refunded_amount ?? 0))} to the guest via Stripe. The booking will be marked as refunded.`,
       confirmLabel: 'Issue Full Refund',
       danger: false,
     },
