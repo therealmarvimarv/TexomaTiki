@@ -579,6 +579,22 @@ Deno.serve(async (req: Request) => {
         ...(notes ? { payment_notes: notes } : {}),
       }).eq("id", bookingId);
 
+      const refundType = refundMode === "full" ? "Full Refund" : "Partial Refund";
+
+      notify({
+        type: "booking_refunded",
+        bookingId,
+        propertyId: booking.property_id,
+        guestName: booking.guest_name,
+        guestEmail: booking.guest_email,
+        checkIn: booking.check_in.split("T")[0],
+        checkOut: booking.check_out.split("T")[0],
+        refundAmount: refundAmountCents / 100,
+        totalRefunded: newRefundedAmount / 100,
+        remainingAmount: (amountPaid - newRefundedAmount) / 100,
+        refundType,
+      });
+
       return new Response(JSON.stringify({
         ok: true,
         action: "refunded",

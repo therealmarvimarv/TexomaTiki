@@ -686,6 +686,21 @@ interface BookingRequestDeclinedPayload {
 }
 
 
+interface BookingRefundedPayload {
+  type: "booking_refunded";
+  bookingId?: string;
+  propertyId?: string;
+  guestName: string;
+  guestEmail: string;
+  checkIn: string;
+  checkOut: string;
+  refundAmount: number;
+  totalRefunded: number;
+  remainingAmount: number;
+  refundType: string;
+  propertyName?: string;
+}
+
 interface LegacyBookingPayload {
   type: "booking";
   bookingId?: string;
@@ -708,6 +723,7 @@ type Payload =
   | BookingRequestDeclinedPayload
   | BookingCancelledPayload
   | BookingDeclinedPayload
+  | BookingRefundedPayload
   | ContactPayload
   | LegacyBookingPayload;
 
@@ -954,6 +970,49 @@ async function handleBookingRequestDeclined(cfg: EmailConfig, p: BookingRequestD
   }
 }
 
+async function handleBookingRefunded(cfg: EmailConfig, p: BookingRefundedPayload): Promise<void> {
+  const property = p.propertyName ?? cfg.propertyTitle;
+  const pid = p.propertyId ?? cfg.propertyId;
+  const relatedId = p.bookingId ?? null;
+  const account = await loadAccountSettings();
+  const bd = await loadBookingDetails(p.bookingId);
+
+  const vars = buildVars({
+    propertyTitle: property, guestName: p.guestName, guestEmail: p.guestEmail,
+    checkIn: p.checkIn, checkOut: p.checkOut,
+    confirmationCode: bd.confirmationCode, bookingNumber: bd.confirmationCode,
+    ...accountParams(account),
+  });
+
+  vars.refund_amount = fmtMoney(p.refundAmount);
+  vars.total_refunded = fmtMoney(p.totalRefunded);
+  vars.remaining_amount = fmtMoney(p.remainingAmount);
+  vars.refund_type = p.refundType;
+
+  const [guestTpl, adminTpl] = await Promise.all([
+    resolveTemplate(pid, "booking_refunded_guest", vars, {
+      subject: `Refund Processed – ${property}`,
+      html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto"><h2>Refund Processed</h2><p>Hi ${escapeHtml(p.guestName)}, a ${escapeHtml(p.refundType)} has been processed for your booking at ${escapeHtml(property)}.</p><p>Amount refunded: <strong>${fmtMoney(p.refundAmount)}</strong></p><p>Total refunded: ${fmtMoney(p.totalRefunded)}</p><p>Remaining: ${fmtMoney(p.remainingAmount)}</p></div>`,
+    }),
+    resolveTemplate(pid, "booking_refunded_admin", vars, {
+      subject: `Refund Processed – ${p.guestName}`,
+      html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto"><h2>Refund Processed</h2><p>A ${escapeHtml(p.refundType)} has been processed for ${escapeHtml(p.guestName)}'s booking at ${escapeHtml(property)}.</p><p>Amount refunded: <strong>${fmtMoney(p.refundAmount)}</strong></p><p>Total refunded: ${fmtMoney(p.totalRefunded)}</p><p>Remaining: ${fmtMoney(p.remainingAmount)}</p></div>`,
+    }),
+  ]);
+
+  const [guestActive, adminActive] = await Promise.all([
+    isAutomationActive("booking_refunded_guest"),
+    isAutomationActive("booking_refunded_admin"),
+  ]);
+  if (guestActive) {
+    await sendEmail(cfg, p.guestEmail, guestTpl.subject, guestTpl.html, "booking", relatedId, "booking_refunded_guest");
+  }
+  if (adminActive && cfg.adminEmail) {
+    if (cfg.provider === "smtp") await new Promise(r => setTimeout(r, 600));
+    await sendEmail(cfg, cfg.adminEmail, adminTpl.subject, adminTpl.html, "booking", relatedId, "booking_refunded_admin");
+  }
+}
+
 async function handleContact(cfg: EmailConfig, p: ContactPayload): Promise<void> {
   const property = p.propertyName ?? cfg.propertyTitle;
   const pid = p.propertyId ?? cfg.propertyId;
@@ -1151,6 +1210,9 @@ Deno.serve(async (req: Request) => {
         break;
       case "booking_cancelled":
         await handleBookingCancelled(cfg, payload);
+        break;
+      case "booking_refunded":
+        await handleBookingRefunded(cfg, payload);
         break;
       case "booking_declined":
         await handleBookingDeclined(cfg, payload);
