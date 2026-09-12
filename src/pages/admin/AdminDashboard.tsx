@@ -53,16 +53,28 @@ function NavLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
 
 export default function AdminDashboard() {
   const [ready, setReady] = useState(false);
+  const [denied, setDenied] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) {
         navigate('/admin/login');
-      } else {
-        setReady(true);
+        return;
       }
+      const uid = data.session.user.id;
+      const { data: adminRow } = await supabase
+        .from('admin_users')
+        .select('role')
+        .eq('user_id', uid)
+        .maybeSingle();
+      if (!adminRow) {
+        setDenied(true);
+        setReady(true);
+        return;
+      }
+      setReady(true);
     });
   }, [navigate]);
 
@@ -70,6 +82,23 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (denied) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="max-w-sm w-full text-center">
+          <p className="text-lg font-semibold text-gray-900 mb-2">Access denied</p>
+          <p className="text-sm text-gray-500 mb-6">Your account is not authorized to access this dashboard.</p>
+          <button
+            onClick={() => navigate('/admin/login')}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+          >
+            Back to login
+          </button>
+        </div>
       </div>
     );
   }
