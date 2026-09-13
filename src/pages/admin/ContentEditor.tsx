@@ -567,7 +567,7 @@ function PoliciesTab() {
               <textarea
                 rows={2}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
-                placeholder="e.g. We want guests to have accurate expectations before booking. Please review these notes and contact the host with any specific questions."
+                placeholder="Optional intro shown above the details."
                 value={(meta.intro_note as string) ?? ''}
                 onChange={(e) => setMeta('intro_note', e.target.value)}
               />
