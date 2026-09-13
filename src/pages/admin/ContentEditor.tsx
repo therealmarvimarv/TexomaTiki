@@ -514,7 +514,7 @@ function PoliciesTab() {
       {editId === 'new' && (
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
           <p className="text-sm font-semibold text-gray-900 mb-3">New policy</p>
-          <PolicyForm />
+          {PolicyForm()}
         </div>
       )}
 
@@ -524,7 +524,7 @@ function PoliciesTab() {
             {editId === item.id ? (
               <div className="p-5 bg-blue-50">
                 <p className="text-sm font-semibold text-gray-900 mb-3">Edit policy</p>
-                <PolicyForm />
+                {PolicyForm()}
               </div>
             ) : (
               <div className="px-5 py-4 flex items-start justify-between gap-3">
