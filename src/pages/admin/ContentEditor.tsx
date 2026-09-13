@@ -30,6 +30,7 @@ interface Policy {
   title: string;
   content: string;
   is_active: boolean;
+  metadata: Record<string, unknown>;
 }
 
 interface Recommendation {
@@ -337,7 +338,7 @@ function PoliciesTab() {
   useEffect(() => {
     supabase
       .from('property_policies')
-      .select('id,policy_type,title,content,is_active')
+      .select('id,policy_type,title,content,is_active,metadata')
       .eq('property_id', PROPERTY_ID)
       .then(({ data, error }) => {
         if (error) console.error('PoliciesTab load error:', error);
@@ -354,23 +355,36 @@ function PoliciesTab() {
     setSaving(true);
     setMsg('');
 
+    const isCheckInOut = policy_type === 'check_in_out';
+    const draftMeta = (draft.metadata ?? {}) as Record<string, string>;
+    const existingMeta = (items.find((p) => p.id === editId)?.metadata ?? {}) as Record<string, unknown>;
+    const metadataToSave = isCheckInOut
+      ? { ...existingMeta, check_in_time: draftMeta.check_in_time ?? '', check_out_time: draftMeta.check_out_time ?? '', early_checkin_note: draftMeta.early_checkin_note ?? '', late_checkout_note: draftMeta.late_checkout_note ?? '', parking_note: draftMeta.parking_note ?? '', access_note: draftMeta.access_note ?? '' }
+      : {};
+
     if (editId === 'new') {
       const { data, error } = await supabase
         .from('property_policies')
-        .insert({ property_id: PROPERTY_ID, policy_type, title, content, metadata: {}, is_active: true })
-        .select('id,policy_type,title,content,is_active')
+        .insert({ property_id: PROPERTY_ID, policy_type, title, content: isCheckInOut ? '' : content, metadata: metadataToSave, is_active: true })
+        .select('id,policy_type,title,content,is_active,metadata')
         .maybeSingle();
       if (error) { setMsg('Error saving'); }
       else if (data) { setItems((prev) => [...prev, data as Policy]); setMsg('Saved!'); }
     } else if (editId) {
-      const { error } = await supabase
-        .from('property_policies')
-        .update({ policy_type, title, content, updated_at: new Date().toISOString() })
-        .eq('id', editId);
-      if (error) { setMsg('Error saving'); }
-      else {
-        setItems((prev) => prev.map((p) => p.id === editId ? { ...p, policy_type, title, content } : p));
-        setMsg('Saved!');
+      if (isCheckInOut) {
+        const { error } = await supabase
+          .from('property_policies')
+          .update({ policy_type, title, metadata: metadataToSave, updated_at: new Date().toISOString() })
+          .eq('id', editId);
+        if (error) { setMsg('Error saving'); }
+        else { setItems((prev) => prev.map((p) => p.id === editId ? { ...p, policy_type, title, metadata: metadataToSave } : p)); setMsg('Saved!'); }
+      } else {
+        const { error } = await supabase
+          .from('property_policies')
+          .update({ policy_type, title, content, updated_at: new Date().toISOString() })
+          .eq('id', editId);
+        if (error) { setMsg('Error saving'); }
+        else { setItems((prev) => prev.map((p) => p.id === editId ? { ...p, policy_type, title, content } : p)); setMsg('Saved!'); }
       }
     }
 
@@ -398,6 +412,10 @@ function PoliciesTab() {
   if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading…</div>;
 
   function PolicyForm() {
+    const isCheckInOut = (draft.policy_type ?? '').trim() === 'check_in_out';
+    const meta = (draft.metadata ?? {}) as Record<string, string>;
+    const setMeta = (key: string, value: string) => setDraft((d) => ({ ...d, metadata: { ...(d.metadata ?? {}), [key]: value } }));
+
     return (
       <div className="space-y-3">
         <div>
@@ -418,16 +436,47 @@ function PoliciesTab() {
             onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
           />
         </div>
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Content</label>
-          <textarea
-            rows={6}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
-            placeholder="Policy text shown to guests…"
-            value={draft.content ?? ''}
-            onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))}
-          />
-        </div>
+        {isCheckInOut ? (
+          <>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Check-in time</label>
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 4:00 PM" value={meta.check_in_time ?? ''} onChange={(e) => setMeta('check_in_time', e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Check-out time</label>
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 11:00 AM" value={meta.check_out_time ?? ''} onChange={(e) => setMeta('check_out_time', e.target.value)} />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Early check-in note</label>
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Early check-in may be available on request." value={meta.early_checkin_note ?? ''} onChange={(e) => setMeta('early_checkin_note', e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Late check-out note</label>
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Late check-out may be available on request." value={meta.late_checkout_note ?? ''} onChange={(e) => setMeta('late_checkout_note', e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Parking note</label>
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Parking is available on the property." value={meta.parking_note ?? ''} onChange={(e) => setMeta('parking_note', e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Access instructions notice</label>
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Access instructions will be sent after booking confirmation." value={meta.access_note ?? ''} onChange={(e) => setMeta('access_note', e.target.value)} />
+            </div>
+          </>
+        ) : (
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Content</label>
+            <textarea
+              rows={6}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
+              placeholder="Policy text shown to guests…"
+              value={draft.content ?? ''}
+              onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))}
+            />
+          </div>
+        )}
         <div className="flex gap-2">
           <button
             onClick={save}
@@ -454,7 +503,7 @@ function PoliciesTab() {
         <div className="flex items-center gap-3">
           {msg && <span className={`text-sm font-medium ${msg === 'Saved!' ? 'text-green-600' : 'text-red-600'}`}>{msg}</span>}
           <button
-            onClick={() => { setEditId('new'); setDraft({ policy_type: '', title: '', content: '' }); }}
+            onClick={() => { setEditId('new'); setDraft({ policy_type: '', title: '', content: '', metadata: {} }); }}
             className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-700 transition-colors"
           >
             <Plus className="w-4 h-4" /> Add policy
@@ -489,7 +538,7 @@ function PoliciesTab() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
                   <button
-                    onClick={() => { setEditId(item.id); setDraft({ policy_type: item.policy_type, title: item.title, content: item.content }); }}
+                    onClick={() => { setEditId(item.id); setDraft({ policy_type: item.policy_type, title: item.title, content: item.content, metadata: item.metadata ?? {} }); }}
                     className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     Edit

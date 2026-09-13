@@ -80,7 +80,7 @@ function CheckInOutCard({ policy }: { policy: Policy | undefined }) {
     <div id="check-in-out" className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
         <Key className="w-5 h-5 text-gray-700" />
-        <h3 className="font-semibold text-gray-900">Check-in &amp; check-out</h3>
+        <h3 className="font-semibold text-gray-900">{policy.title || 'Check-in & check-out'}</h3>
       </div>
       <div className="px-6 py-5 space-y-4">
         <div className="grid grid-cols-2 gap-4">
