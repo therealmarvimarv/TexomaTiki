@@ -327,6 +327,8 @@ function HouseRulesTab() {
 
 // ─── Policies Tab ─────────────────────────────────────────────────────────────
 
+const BUILTIN_POLICY_TYPES = new Set(['cancellation', 'check_in_out', 'pet', 'accessibility']);
+
 function PoliciesTab() {
   const [items, setItems] = useState<Policy[]>([]);
   const [loading, setLoading] = useState(true);
@@ -415,16 +417,19 @@ function PoliciesTab() {
     const isCheckInOut = (draft.policy_type ?? '').trim() === 'check_in_out';
     const meta = (draft.metadata ?? {}) as Record<string, string>;
     const setMeta = (key: string, value: string) => setDraft((d) => ({ ...d, metadata: { ...(d.metadata ?? {}), [key]: value } }));
+    const savedPolicy = editId && editId !== 'new' ? items.find((p) => p.id === editId) : undefined;
+    const isBuiltin = !!savedPolicy && BUILTIN_POLICY_TYPES.has(savedPolicy.policy_type);
 
     return (
       <div className="space-y-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Policy type <span className="text-gray-400 font-normal">(internal identifier)</span></label>
           <input
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+            className={`w-full border border-gray-300 rounded-lg px-3 py-2 text-sm ${isBuiltin ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''}`}
             placeholder="e.g. cancellation, pet_policy, noise_rules"
             value={draft.policy_type ?? ''}
             onChange={(e) => setDraft((d) => ({ ...d, policy_type: e.target.value }))}
+            readOnly={isBuiltin}
           />
         </div>
         <div>
