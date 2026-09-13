@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, ChevronUp, ChevronDown, Save, X } from 'lucide-react';
+import {
+  Plus, Trash2, ChevronUp, ChevronDown, Save, X,
+  Cigarette, PartyPopper, Moon, PawPrint, Shield, Users, Clock, Sparkles,
+  LogIn, LogOut, Car, Key, XCircle, AlertTriangle,
+} from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
@@ -266,20 +270,6 @@ function HouseRulesTab() {
 
   if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading…</div>;
 
-  function RuleForm() {
-    return (
-      <div className="space-y-3">
-        <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Rule title" value={draft.title ?? ''} onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))} />
-        <textarea rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none" placeholder="Description (optional)" value={draft.description ?? ''} onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} />
-        <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Icon name (e.g. Shield, PawPrint, Moon)" value={draft.icon ?? ''} onChange={(e) => setDraft((d) => ({ ...d, icon: e.target.value }))} />
-        <div className="flex gap-2">
-          <button onClick={save} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-700 disabled:opacity-60"><Save className="w-3.5 h-3.5" /> Save</button>
-          <button onClick={() => { setEditId(null); setDraft({}); }} className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-50"><X className="w-3.5 h-3.5" /> Cancel</button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -289,13 +279,13 @@ function HouseRulesTab() {
         </button>
       </div>
 
-      {editId === 'new' && <div className="bg-blue-50 border border-blue-100 rounded-xl p-5"><p className="text-sm font-semibold text-gray-900 mb-3">New rule</p><RuleForm /></div>}
+      {editId === 'new' && <div className="bg-blue-50 border border-blue-100 rounded-xl p-5"><p className="text-sm font-semibold text-gray-900 mb-3">New rule</p><RuleForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>}
 
       <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden">
         {items.map((item, i) => (
           <div key={item.id} className="bg-white">
             {editId === item.id ? (
-              <div className="p-4 bg-blue-50"><RuleForm /></div>
+              <div className="p-4 bg-blue-50"><RuleForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>
             ) : (
               <div className="px-5 py-4 flex items-start gap-3">
                 <div className="flex flex-col gap-1 flex-shrink-0 mt-1">
@@ -320,6 +310,56 @@ function HouseRulesTab() {
           </div>
         ))}
         {items.length === 0 && <div className="text-center py-10 text-gray-400 text-sm">No house rules yet.</div>}
+      </div>
+    </div>
+  );
+}
+
+const RULE_ICON_OPTIONS: { id: string; label: string; Icon: React.ElementType }[] = [
+  { id: 'Shield', label: 'General', Icon: Shield },
+  { id: 'Cigarette', label: 'No smoking', Icon: Cigarette },
+  { id: 'PartyPopper', label: 'No parties', Icon: PartyPopper },
+  { id: 'Moon', label: 'Quiet hours', Icon: Moon },
+  { id: 'PawPrint', label: 'Pets', Icon: PawPrint },
+  { id: 'Users', label: 'Guests', Icon: Users },
+  { id: 'Clock', label: 'Time', Icon: Clock },
+  { id: 'Sparkles', label: 'Cleaning', Icon: Sparkles },
+  { id: 'LogIn', label: 'Check-in', Icon: LogIn },
+  { id: 'LogOut', label: 'Check-out', Icon: LogOut },
+  { id: 'Car', label: 'Parking', Icon: Car },
+  { id: 'Key', label: 'Key / Access', Icon: Key },
+  { id: 'XCircle', label: 'Cancellation', Icon: XCircle },
+  { id: 'AlertTriangle', label: 'Warning', Icon: AlertTriangle },
+];
+
+function RuleForm({ draft, setDraft, save, saving, setEditId }: {
+  draft: Partial<HouseRule>;
+  setDraft: React.Dispatch<React.SetStateAction<Partial<HouseRule>>>;
+  save: () => Promise<void>;
+  saving: boolean;
+  setEditId: (id: string | null) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Rule title" value={draft.title ?? ''} onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))} />
+      <textarea rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none" placeholder="Description (optional)" value={draft.description ?? ''} onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} />
+      <div>
+        <label className="block text-xs font-medium text-gray-600 mb-1.5">Icon</label>
+        <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+          {RULE_ICON_OPTIONS.map(({ id, label, Icon }) => {
+            const selected = (draft.icon ?? 'Shield') === id;
+            return (
+              <button key={id} type="button" onClick={() => setDraft((d) => ({ ...d, icon: id }))} title={label} className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-colors ${selected ? 'border-gray-900 bg-gray-100' : 'border-gray-200 hover:bg-gray-50'}`}>
+                <Icon className={`w-5 h-5 ${selected ? 'text-gray-900' : 'text-gray-500'}`} />
+                <span className={`text-[10px] leading-tight text-center ${selected ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>{label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <button onClick={save} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-700 disabled:opacity-60"><Save className="w-3.5 h-3.5" /> Save</button>
+        <button onClick={() => { setEditId(null); setDraft({}); }} className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-50"><X className="w-3.5 h-3.5" /> Cancel</button>
       </div>
     </div>
   );
