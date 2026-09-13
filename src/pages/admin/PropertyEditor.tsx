@@ -1015,6 +1015,32 @@ export default function PropertyEditor() {
                 />
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Latitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={property.latitude ?? ''}
+                    onChange={(e) => setProperty({ ...property, latitude: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
+                    placeholder="e.g. 33.8523"
+                    className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Longitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={property.longitude ?? ''}
+                    onChange={(e) => setProperty({ ...property, longitude: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
+                    placeholder="e.g. -96.4919"
+                    className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 -mt-2">Used to place the map pin at the exact property location.</p>
+
               <div className="grid grid-cols-4 gap-4">
                 {(['maxGuests', 'bedrooms', 'beds', 'bathrooms'] as const).map(field => (
                   <div key={field}>
