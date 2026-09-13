@@ -31,7 +31,7 @@ interface Props {
 export default function LocalRecommendations({ propertyId }: Props) {
   const [items, setItems] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [activeCategory, setActiveCategory] = useState<string>('Food & Drinks');
 
   useEffect(() => {
     supabase

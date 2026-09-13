@@ -28,7 +28,7 @@ export default function FAQSection({ propertyId }: Props) {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [activeCategory, setActiveCategory] = useState<string>('Booking');
 
   useEffect(() => {
     supabase
