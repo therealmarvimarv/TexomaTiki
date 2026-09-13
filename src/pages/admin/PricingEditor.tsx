@@ -73,6 +73,9 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
   const [displayPriceMode, setDisplayPriceMode] = useState<'base' | 'average'>('base');
   const [savingBase, setSavingBase] = useState(false);
 
+  const liveBasePrice = parseFloat(basePriceInput);
+  const effectiveBasePrice = !isNaN(liveBasePrice) && liveBasePrice > 0 ? liveBasePrice : basePrice;
+
   const flash = (text: string) => { setMsg(text); setTimeout(() => setMsg(''), 2500); };
 
   const saveBaseSettings = async () => {
@@ -90,10 +93,11 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
 
   const dowAverage = (() => {
     if (!dowEnabled) return null;
-    const filled = dowRates.filter(r => r.rate && parseFloat(r.rate) > 0);
-    if (filled.length === 0) return null;
-    const sum = filled.reduce((acc, r) => acc + parseFloat(r.rate), 0);
-    return Math.round(sum / filled.length);
+    const sum = dowRates.reduce((acc, r) => {
+      const rate = parseFloat(r.rate);
+      return acc + (!isNaN(rate) && rate > 0 ? rate : effectiveBasePrice);
+    }, 0);
+    return Math.round(sum / 7);
   })();
 
   const load = useCallback(async () => {
@@ -153,7 +157,7 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
       if (rate && rate.rate) return parseFloat(rate.rate);
     }
 
-    return basePrice;
+    return effectiveBasePrice;
   };
 
   const saveDowRates = async () => {
@@ -567,7 +571,7 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
                     step="1"
                     value={row.rate}
                     onChange={e => setDowRates(prev => prev.map(r => r.day_of_week === row.day_of_week ? { ...r, rate: e.target.value } : r))}
-                    placeholder={String(basePrice)}
+                    placeholder={String(effectiveBasePrice)}
                     className="w-full pl-7 pr-3 py-1.5 border border-gray-200 rounded-lg text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-300"
                   />
                 </div>
