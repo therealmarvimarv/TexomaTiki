@@ -156,8 +156,12 @@ export default function BookingCard({ propertyId, basePrice, cleaningFee, taxRat
       const mode = (propRes.data?.display_price_mode ?? 'base') as 'base' | 'average';
       let headline = basePrice;
       if (mode === 'average' && ctx.dowRates.length > 0) {
-        const filled = ctx.dowRates.filter((r) => r.rate > 0);
-        if (filled.length > 0) headline = Math.round(filled.reduce((s, r) => s + r.rate, 0) / filled.length);
+        let sum = 0;
+        for (let dow = 0; dow < 7; dow++) {
+          const dowRate = ctx.dowRates.find((r) => r.day_of_week === dow && r.rate > 0);
+          sum += dowRate ? dowRate.rate : ctx.basePrice;
+        }
+        headline = Math.round(sum / 7);
       }
 
       // Build blocked dates set from sanitized public_availability view
