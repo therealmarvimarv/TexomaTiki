@@ -359,13 +359,16 @@ function PoliciesTab() {
 
     const isCheckInOut = policy_type === 'check_in_out';
     const isPet = policy_type === 'pet';
+    const isAccessibility = policy_type === 'accessibility';
     const draftMeta = (draft.metadata ?? {}) as Record<string, unknown>;
     const existingMeta = (items.find((p) => p.id === editId)?.metadata ?? {}) as Record<string, unknown>;
     const metadataToSave = isCheckInOut
       ? { ...existingMeta, check_in_time: draftMeta.check_in_time ?? '', check_out_time: draftMeta.check_out_time ?? '', early_checkin_note: draftMeta.early_checkin_note ?? '', late_checkout_note: draftMeta.late_checkout_note ?? '', parking_note: draftMeta.parking_note ?? '', access_note: draftMeta.access_note ?? '' }
       : isPet
         ? { ...existingMeta, pets_allowed: draftMeta.pets_allowed ?? false, max_pets: draftMeta.max_pets === '' || draftMeta.max_pets == null ? 0 : Number(draftMeta.max_pets), pet_fee_note: draftMeta.pet_fee_note ?? '', furniture_note: draftMeta.furniture_note ?? '' }
-        : {};
+        : isAccessibility
+          ? { ...existingMeta, intro_note: draftMeta.intro_note ?? '', single_story: draftMeta.single_story ?? false, entry_steps: draftMeta.entry_steps === '' || draftMeta.entry_steps == null ? 0 : Number(draftMeta.entry_steps), bedroom_floor: draftMeta.bedroom_floor ?? '', parking_distance: draftMeta.parking_distance ?? '', certification_note: draftMeta.certification_note ?? '' }
+          : {};
 
     const skipContent = isCheckInOut || isPet;
 
@@ -378,13 +381,13 @@ function PoliciesTab() {
       if (error) { setMsg('Error saving'); }
       else if (data) { setItems((prev) => [...prev, data as Policy]); setMsg('Saved!'); }
     } else if (editId) {
-      if (isCheckInOut || isPet) {
+      if (isCheckInOut || isPet || isAccessibility) {
         const { error } = await supabase
           .from('property_policies')
-          .update({ policy_type, title, ...(isPet ? { content } : {}), metadata: metadataToSave, updated_at: new Date().toISOString() })
+          .update({ policy_type, title, ...(isPet || isAccessibility ? { content } : {}), metadata: metadataToSave, updated_at: new Date().toISOString() })
           .eq('id', editId);
         if (error) { setMsg('Error saving'); }
-        else { setItems((prev) => prev.map((p) => p.id === editId ? { ...p, policy_type, title, ...(isPet ? { content } : {}), metadata: metadataToSave } : p)); setMsg('Saved!'); }
+        else { setItems((prev) => prev.map((p) => p.id === editId ? { ...p, policy_type, title, ...(isPet || isAccessibility ? { content } : {}), metadata: metadataToSave } : p)); setMsg('Saved!'); }
       } else {
         const { error } = await supabase
           .from('property_policies')
@@ -421,6 +424,7 @@ function PoliciesTab() {
   function PolicyForm() {
     const isCheckInOut = (draft.policy_type ?? '').trim() === 'check_in_out';
     const isPet = (draft.policy_type ?? '').trim() === 'pet';
+    const isAccessibility = (draft.policy_type ?? '').trim() === 'accessibility';
     const meta = (draft.metadata ?? {}) as Record<string, unknown>;
     const setMeta = (key: string, value: unknown) => setDraft((d) => ({ ...d, metadata: { ...(d.metadata ?? {}), [key]: value } }));
     const savedPolicy = editId && editId !== 'new' ? items.find((p) => p.id === editId) : undefined;
@@ -504,6 +508,49 @@ function PoliciesTab() {
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Furniture note</label>
               <textarea rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none" placeholder="e.g. Pets are not permitted on furniture or bedding." value={(meta.furniture_note as string) ?? ''} onChange={(e) => setMeta('furniture_note', e.target.value)} />
+            </div>
+          </>
+        ) : isAccessibility ? (
+          <>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Content</label>
+              <textarea
+                rows={4}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
+                placeholder="Policy text shown to guests…"
+                value={draft.content ?? ''}
+                onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Intro paragraph</label>
+              <textarea
+                rows={2}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
+                placeholder="e.g. We want guests to have accurate expectations before booking. Please review these notes and contact the host with any specific questions."
+                value={(meta.intro_note as string) ?? ''}
+                onChange={(e) => setMeta('intro_note', e.target.value)}
+              />
+            </div>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input type="checkbox" checked={meta.single_story === true} onChange={(e) => setMeta('single_story', e.target.checked)} className="rounded" />
+              Single story
+            </label>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Entry steps</label>
+              <input type="number" min={0} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 0 for step-free" value={meta.entry_steps ?? ''} onChange={(e) => setMeta('entry_steps', e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Bedroom floor</label>
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. ground, first" value={(meta.bedroom_floor as string) ?? ''} onChange={(e) => setMeta('bedroom_floor', e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Parking distance</label>
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 10 min walk" value={(meta.parking_distance as string) ?? ''} onChange={(e) => setMeta('parking_distance', e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Certification note</label>
+              <textarea rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none" placeholder="e.g. This property has not been professionally certified for accessibility." value={(meta.certification_note as string) ?? ''} onChange={(e) => setMeta('certification_note', e.target.value)} />
             </div>
           </>
         ) : (
