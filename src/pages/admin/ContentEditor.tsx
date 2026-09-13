@@ -364,7 +364,7 @@ function PoliciesTab() {
     const metadataToSave = isCheckInOut
       ? { ...existingMeta, check_in_time: draftMeta.check_in_time ?? '', check_out_time: draftMeta.check_out_time ?? '', early_checkin_note: draftMeta.early_checkin_note ?? '', late_checkout_note: draftMeta.late_checkout_note ?? '', parking_note: draftMeta.parking_note ?? '', access_note: draftMeta.access_note ?? '' }
       : isPet
-        ? { ...existingMeta, pets_allowed: draftMeta.pets_allowed ?? false, max_pets: draftMeta.max_pets ?? 0, pet_fee_note: draftMeta.pet_fee_note ?? '', furniture_note: draftMeta.furniture_note ?? '' }
+        ? { ...existingMeta, pets_allowed: draftMeta.pets_allowed ?? false, max_pets: draftMeta.max_pets === '' || draftMeta.max_pets == null ? 0 : Number(draftMeta.max_pets), pet_fee_note: draftMeta.pet_fee_note ?? '', furniture_note: draftMeta.furniture_note ?? '' }
         : {};
 
     const skipContent = isCheckInOut || isPet;
@@ -495,7 +495,7 @@ function PoliciesTab() {
             </label>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Maximum pets</label>
-              <input type="number" min={0} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 2" value={(meta.max_pets as number) ?? ''} onChange={(e) => setMeta('max_pets', Number(e.target.value))} />
+              <input type="number" min={0} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 2" value={meta.max_pets ?? ''} onChange={(e) => setMeta('max_pets', e.target.value)} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Pet fee</label>
