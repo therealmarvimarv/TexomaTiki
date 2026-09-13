@@ -164,7 +164,13 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
     } else {
       for (const row of dowRates) {
         const rate = parseFloat(row.rate);
-        if (isNaN(rate) || rate <= 0) continue;
+        if (isNaN(rate) || rate <= 0) {
+          if (row.id) {
+            await supabase.from('day_of_week_rates').delete().eq('id', row.id);
+            setDowRates(prev => prev.map(r => r.day_of_week === row.day_of_week ? { ...r, id: undefined } : r));
+          }
+          continue;
+        }
         if (row.id) {
           await supabase.from('day_of_week_rates').update({ rate }).eq('id', row.id);
         } else {
