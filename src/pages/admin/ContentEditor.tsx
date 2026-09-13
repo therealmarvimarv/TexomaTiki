@@ -753,33 +753,6 @@ function RecommendationsTab() {
 
   if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading…</div>;
 
-  function RecForm() {
-    return (
-      <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
-          <input className="border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Name *" value={draft.name ?? ''} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
-          <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm" value={draft.category ?? 'General'} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))}>
-            {REC_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-          </select>
-        </div>
-        <textarea rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none" placeholder="Short description" value={draft.description ?? ''} onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} />
-        <div className="grid grid-cols-2 gap-3">
-          <input className="border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Address" value={draft.address ?? ''} onChange={(e) => setDraft((d) => ({ ...d, address: e.target.value }))} />
-          <input className="border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Distance (e.g. 5 min drive)" value={draft.distance_label ?? ''} onChange={(e) => setDraft((d) => ({ ...d, distance_label: e.target.value }))} />
-        </div>
-        <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Website URL (optional)" value={draft.website_url ?? ''} onChange={(e) => setDraft((d) => ({ ...d, website_url: e.target.value }))} />
-        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-          <input type="checkbox" checked={draft.is_featured ?? false} onChange={(e) => setDraft((d) => ({ ...d, is_featured: e.target.checked }))} className="rounded" />
-          Feature this recommendation (shows star)
-        </label>
-        <div className="flex gap-2">
-          <button onClick={save} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-700 disabled:opacity-60"><Save className="w-3.5 h-3.5" /> Save</button>
-          <button onClick={() => { setEditId(null); setDraft({}); }} className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-50"><X className="w-3.5 h-3.5" /> Cancel</button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -789,13 +762,13 @@ function RecommendationsTab() {
         </button>
       </div>
 
-      {editId === 'new' && <div className="bg-blue-50 border border-blue-100 rounded-xl p-5"><p className="text-sm font-semibold text-gray-900 mb-3">New recommendation</p><RecForm /></div>}
+      {editId === 'new' && <div className="bg-blue-50 border border-blue-100 rounded-xl p-5"><p className="text-sm font-semibold text-gray-900 mb-3">New recommendation</p><RecForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>}
 
       <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden">
         {items.map((item) => (
           <div key={item.id} className="bg-white">
             {editId === item.id ? (
-              <div className="p-5 bg-blue-50"><RecForm /></div>
+              <div className="p-5 bg-blue-50"><RecForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>
             ) : (
               <div className="px-5 py-4 flex items-start gap-3">
                 <div className="flex-1 min-w-0">
@@ -820,6 +793,39 @@ function RecommendationsTab() {
           </div>
         ))}
         {items.length === 0 && <div className="text-center py-10 text-gray-400 text-sm">No recommendations yet.</div>}
+      </div>
+    </div>
+  );
+}
+
+function RecForm({ draft, setDraft, save, saving, setEditId }: {
+  draft: Partial<Recommendation>;
+  setDraft: React.Dispatch<React.SetStateAction<Partial<Recommendation>>>;
+  save: () => Promise<void>;
+  saving: boolean;
+  setEditId: (id: string | null) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
+        <input className="border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Name *" value={draft.name ?? ''} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
+        <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm" value={draft.category ?? 'General'} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))}>
+          {REC_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+        </select>
+      </div>
+      <textarea rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none" placeholder="Short description" value={draft.description ?? ''} onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} />
+      <div className="grid grid-cols-2 gap-3">
+        <input className="border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Address" value={draft.address ?? ''} onChange={(e) => setDraft((d) => ({ ...d, address: e.target.value }))} />
+        <input className="border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Distance (e.g. 5 min drive)" value={draft.distance_label ?? ''} onChange={(e) => setDraft((d) => ({ ...d, distance_label: e.target.value }))} />
+      </div>
+      <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Website URL (optional)" value={draft.website_url ?? ''} onChange={(e) => setDraft((d) => ({ ...d, website_url: e.target.value }))} />
+      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input type="checkbox" checked={draft.is_featured ?? false} onChange={(e) => setDraft((d) => ({ ...d, is_featured: e.target.checked }))} className="rounded" />
+        Feature this recommendation (shows star)
+      </label>
+      <div className="flex gap-2">
+        <button onClick={save} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-700 disabled:opacity-60"><Save className="w-3.5 h-3.5" /> Save</button>
+        <button onClick={() => { setEditId(null); setDraft({}); }} className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-50"><X className="w-3.5 h-3.5" /> Cancel</button>
       </div>
     </div>
   );
