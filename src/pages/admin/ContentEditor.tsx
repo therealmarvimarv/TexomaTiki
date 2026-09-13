@@ -367,7 +367,7 @@ function PoliciesTab() {
       : isPet
         ? { ...existingMeta, pets_allowed: draftMeta.pets_allowed ?? false, max_pets: draftMeta.max_pets === '' || draftMeta.max_pets == null ? 0 : Number(draftMeta.max_pets), pet_fee_note: draftMeta.pet_fee_note ?? '', furniture_note: draftMeta.furniture_note ?? '' }
         : isAccessibility
-          ? { ...existingMeta, intro_note: draftMeta.intro_note ?? '', single_story: draftMeta.single_story ?? false, entry_steps: draftMeta.entry_steps === '' || draftMeta.entry_steps == null ? 0 : Number(draftMeta.entry_steps), bedroom_floor: draftMeta.bedroom_floor ?? '', parking_distance: draftMeta.parking_distance ?? '', certification_note: draftMeta.certification_note ?? '' }
+          ? { ...existingMeta, intro_note: draftMeta.intro_note ?? '', single_story: draftMeta.single_story === undefined ? null : draftMeta.single_story, entry_steps: draftMeta.entry_steps === '' || draftMeta.entry_steps === undefined ? null : Number(draftMeta.entry_steps), bedroom_floor: draftMeta.bedroom_floor ?? '', parking_distance: draftMeta.parking_distance ?? '', certification_note: draftMeta.certification_note ?? '' }
           : {};
 
     const skipContent = isCheckInOut || isPet;
@@ -532,10 +532,14 @@ function PoliciesTab() {
                 onChange={(e) => setMeta('intro_note', e.target.value)}
               />
             </div>
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-              <input type="checkbox" checked={meta.single_story === true} onChange={(e) => setMeta('single_story', e.target.checked)} className="rounded" />
-              Single story
-            </label>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Property level</label>
+              <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value={meta.single_story === true ? 'true' : meta.single_story === false ? 'false' : ''} onChange={(e) => setMeta('single_story', e.target.value === '' ? undefined : e.target.value === 'true')}>
+                <option value="">Not specified</option>
+                <option value="true">Single story</option>
+                <option value="false">Multi-story</option>
+              </select>
+            </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Entry steps</label>
               <input type="number" min={0} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 0 for step-free" value={meta.entry_steps ?? ''} onChange={(e) => setMeta('entry_steps', e.target.value)} />
