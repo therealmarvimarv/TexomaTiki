@@ -358,28 +358,33 @@ function PoliciesTab() {
     setMsg('');
 
     const isCheckInOut = policy_type === 'check_in_out';
-    const draftMeta = (draft.metadata ?? {}) as Record<string, string>;
+    const isPet = policy_type === 'pet';
+    const draftMeta = (draft.metadata ?? {}) as Record<string, unknown>;
     const existingMeta = (items.find((p) => p.id === editId)?.metadata ?? {}) as Record<string, unknown>;
     const metadataToSave = isCheckInOut
       ? { ...existingMeta, check_in_time: draftMeta.check_in_time ?? '', check_out_time: draftMeta.check_out_time ?? '', early_checkin_note: draftMeta.early_checkin_note ?? '', late_checkout_note: draftMeta.late_checkout_note ?? '', parking_note: draftMeta.parking_note ?? '', access_note: draftMeta.access_note ?? '' }
-      : {};
+      : isPet
+        ? { ...existingMeta, pets_allowed: draftMeta.pets_allowed ?? false, max_pets: draftMeta.max_pets ?? 0, pet_fee_note: draftMeta.pet_fee_note ?? '', furniture_note: draftMeta.furniture_note ?? '' }
+        : {};
+
+    const skipContent = isCheckInOut || isPet;
 
     if (editId === 'new') {
       const { data, error } = await supabase
         .from('property_policies')
-        .insert({ property_id: PROPERTY_ID, policy_type, title, content: isCheckInOut ? '' : content, metadata: metadataToSave, is_active: true })
+        .insert({ property_id: PROPERTY_ID, policy_type, title, content: skipContent ? '' : content, metadata: metadataToSave, is_active: true })
         .select('id,policy_type,title,content,is_active,metadata')
         .maybeSingle();
       if (error) { setMsg('Error saving'); }
       else if (data) { setItems((prev) => [...prev, data as Policy]); setMsg('Saved!'); }
     } else if (editId) {
-      if (isCheckInOut) {
+      if (isCheckInOut || isPet) {
         const { error } = await supabase
           .from('property_policies')
-          .update({ policy_type, title, metadata: metadataToSave, updated_at: new Date().toISOString() })
+          .update({ policy_type, title, ...(isPet ? { content } : {}), metadata: metadataToSave, updated_at: new Date().toISOString() })
           .eq('id', editId);
         if (error) { setMsg('Error saving'); }
-        else { setItems((prev) => prev.map((p) => p.id === editId ? { ...p, policy_type, title, metadata: metadataToSave } : p)); setMsg('Saved!'); }
+        else { setItems((prev) => prev.map((p) => p.id === editId ? { ...p, policy_type, title, ...(isPet ? { content } : {}), metadata: metadataToSave } : p)); setMsg('Saved!'); }
       } else {
         const { error } = await supabase
           .from('property_policies')
@@ -415,8 +420,9 @@ function PoliciesTab() {
 
   function PolicyForm() {
     const isCheckInOut = (draft.policy_type ?? '').trim() === 'check_in_out';
-    const meta = (draft.metadata ?? {}) as Record<string, string>;
-    const setMeta = (key: string, value: string) => setDraft((d) => ({ ...d, metadata: { ...(d.metadata ?? {}), [key]: value } }));
+    const isPet = (draft.policy_type ?? '').trim() === 'pet';
+    const meta = (draft.metadata ?? {}) as Record<string, unknown>;
+    const setMeta = (key: string, value: unknown) => setDraft((d) => ({ ...d, metadata: { ...(d.metadata ?? {}), [key]: value } }));
     const savedPolicy = editId && editId !== 'new' ? items.find((p) => p.id === editId) : undefined;
     const isBuiltin = !!savedPolicy && BUILTIN_POLICY_TYPES.has(savedPolicy.policy_type);
 
@@ -447,28 +453,57 @@ function PoliciesTab() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Check-in time</label>
-                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 4:00 PM" value={meta.check_in_time ?? ''} onChange={(e) => setMeta('check_in_time', e.target.value)} />
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 4:00 PM" value={(meta.check_in_time as string) ?? ''} onChange={(e) => setMeta('check_in_time', e.target.value)} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Check-out time</label>
-                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 11:00 AM" value={meta.check_out_time ?? ''} onChange={(e) => setMeta('check_out_time', e.target.value)} />
+                <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 11:00 AM" value={(meta.check_out_time as string) ?? ''} onChange={(e) => setMeta('check_out_time', e.target.value)} />
               </div>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Early check-in note</label>
-              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Early check-in may be available on request." value={meta.early_checkin_note ?? ''} onChange={(e) => setMeta('early_checkin_note', e.target.value)} />
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Early check-in may be available on request." value={(meta.early_checkin_note as string) ?? ''} onChange={(e) => setMeta('early_checkin_note', e.target.value)} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Late check-out note</label>
-              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Late check-out may be available on request." value={meta.late_checkout_note ?? ''} onChange={(e) => setMeta('late_checkout_note', e.target.value)} />
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Late check-out may be available on request." value={(meta.late_checkout_note as string) ?? ''} onChange={(e) => setMeta('late_checkout_note', e.target.value)} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Parking note</label>
-              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Parking is available on the property." value={meta.parking_note ?? ''} onChange={(e) => setMeta('parking_note', e.target.value)} />
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Parking is available on the property." value={(meta.parking_note as string) ?? ''} onChange={(e) => setMeta('parking_note', e.target.value)} />
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Access instructions notice</label>
-              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Access instructions will be sent after booking confirmation." value={meta.access_note ?? ''} onChange={(e) => setMeta('access_note', e.target.value)} />
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Access instructions will be sent after booking confirmation." value={(meta.access_note as string) ?? ''} onChange={(e) => setMeta('access_note', e.target.value)} />
+            </div>
+          </>
+        ) : isPet ? (
+          <>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Content</label>
+              <textarea
+                rows={4}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
+                placeholder="Policy text shown to guests…"
+                value={draft.content ?? ''}
+                onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))}
+              />
+            </div>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input type="checkbox" checked={meta.pets_allowed === true} onChange={(e) => setMeta('pets_allowed', e.target.checked)} className="rounded" />
+              Pets allowed
+            </label>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Maximum pets</label>
+              <input type="number" min={0} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 2" value={(meta.max_pets as number) ?? ''} onChange={(e) => setMeta('max_pets', Number(e.target.value))} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Pet fee</label>
+              <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Pet fee shown during booking if pets are added." value={(meta.pet_fee_note as string) ?? ''} onChange={(e) => setMeta('pet_fee_note', e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Furniture note</label>
+              <textarea rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none" placeholder="e.g. Pets are not permitted on furniture or bedding." value={(meta.furniture_note as string) ?? ''} onChange={(e) => setMeta('furniture_note', e.target.value)} />
             </div>
           </>
         ) : (

@@ -159,7 +159,7 @@ function PetPolicyCard({ policy }: { policy: Policy | undefined }) {
     <div id="pet-policy" className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
         <PawPrint className="w-5 h-5 text-gray-700" />
-        <h3 className="font-semibold text-gray-900">Pet policy</h3>
+        <h3 className="font-semibold text-gray-900">{policy.title?.trim() || 'Pet policy'}</h3>
         {meta.pets_allowed ? (
           <span className="ml-auto text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
             Pets allowed
