@@ -422,16 +422,17 @@ function PoliciesTab() {
 
     return (
       <div className="space-y-3">
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Policy type <span className="text-gray-400 font-normal">(internal identifier)</span></label>
-          <input
-            className={`w-full border border-gray-300 rounded-lg px-3 py-2 text-sm ${isBuiltin ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''}`}
-            placeholder="e.g. cancellation, pet_policy, noise_rules"
-            value={draft.policy_type ?? ''}
-            onChange={(e) => setDraft((d) => ({ ...d, policy_type: e.target.value }))}
-            readOnly={isBuiltin}
-          />
-        </div>
+        {!isBuiltin && (
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Policy type <span className="text-gray-400 font-normal">(internal identifier)</span></label>
+            <input
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              placeholder="e.g. cancellation, pet_policy, noise_rules"
+              value={draft.policy_type ?? ''}
+              onChange={(e) => setDraft((d) => ({ ...d, policy_type: e.target.value }))}
+            />
+          </div>
+        )}
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Title <span className="text-gray-400 font-normal">(shown to guests)</span></label>
           <input
