@@ -70,41 +70,39 @@ function AccountNavItem({ onNavigate }: { onNavigate?: () => void }) {
         Account
       </Link>
       {inAccountSection && (
-        <>
-          <div className="hidden lg:block absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-            <Link
-              to="/admin/account/privacy"
-              onClick={onNavigate}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              to="/admin/account/terms"
-              onClick={onNavigate}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Terms &amp; Conditions
-            </Link>
-          </div>
-          <div className="lg:hidden ml-6 mt-1 space-y-1">
-            <Link
-              to="/admin/account/privacy"
-              onClick={onNavigate}
-              className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              to="/admin/account/terms"
-              onClick={onNavigate}
-              className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            >
-              Terms &amp; Conditions
-            </Link>
-          </div>
-        </>
+        <div className="hidden lg:block absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+          <Link
+            to="/admin/account/privacy"
+            onClick={onNavigate}
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            to="/admin/account/terms"
+            onClick={onNavigate}
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Terms &amp; Conditions
+          </Link>
+        </div>
       )}
+      <div className="lg:hidden ml-6 mt-1 space-y-1">
+        <Link
+          to="/admin/account/privacy"
+          onClick={onNavigate}
+          className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+        >
+          Privacy Policy
+        </Link>
+        <Link
+          to="/admin/account/terms"
+          onClick={onNavigate}
+          className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+        >
+          Terms &amp; Conditions
+        </Link>
+      </div>
     </div>
   );
 }
