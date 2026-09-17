@@ -1,1 +1,162 @@
-PASTE ADMIN PRIVACY POLICY HERE
+Webdevsters Vacation Rental Management Platform
+Privacy Policy
+Effective Date: September 16, 2026
+Webdevsters (“Webdevsters,” “we,” “us,” or “our”) is a technology company that provides websites, software applications, mobile applications, chatbots, SaaS products, and related technology services.
+This Privacy Policy applies specifically to the Webdevsters Vacation Rental Management Platform (the “Platform”), including its administrative dashboard, property-management tools, booking-management features, and related services provided to property owners and authorized administrators.
+This Privacy Policy does not automatically apply to every website, application, chatbot, or other product created or operated by Webdevsters. Separate products or services may have their own applicable privacy policies.
+This Privacy Policy explains how information is collected, used, processed, shared, retained, and protected in connection with use of the Platform.
+1. Information We Collect
+When a property owner, administrator, or other authorized user uses the Platform, we may collect or maintain information including:
+•	Name 
+•	Email address 
+•	Telephone number 
+•	Business or property name 
+•	Business contact information 
+•	Property and listing information 
+•	Account and administrative-role information 
+•	Support requests and communications 
+•	Information necessary to configure and operate the property website 
+•	Booking, pricing, availability, payment, email, and other Platform settings 
+Webdevsters also maintains authentication and account information necessary to provide authorized access to the Platform.
+Authentication credentials are handled through the Platform's authentication system and are not intended to be publicly accessible.
+2. Guest Information Processed Through the Platform
+Property owners may collect information from guests through vacation-rental websites powered or managed through the Platform.
+Depending on how a property is configured, this information may include:
+•	Guest name 
+•	Email address 
+•	Telephone number 
+•	Check-in and check-out dates 
+•	Number of guests 
+•	Number of pets 
+•	Booking information 
+•	Special requests or messages 
+•	Inquiry information 
+•	Payment and booking status 
+The individual property owner controls the guest relationship and determines how guest information is used in connection with operating the rental property.
+Webdevsters processes guest information as necessary to provide the Platform and its related services to the property owner, including booking management, availability management, payment integrations, communications, and administrative functions.
+Webdevsters does not use guest information processed on behalf of property owners for unrelated advertising or marketing purposes.
+3. How We Use Information
+Webdevsters may use information collected or processed through the Platform to:
+•	Create and administer authorized accounts 
+•	Authenticate Platform users 
+•	Operate and maintain the Platform 
+•	Provide property-management and booking-management functionality 
+•	Configure and operate client property websites 
+•	Manage bookings and availability 
+•	Support payment-processing integrations 
+•	Deliver transactional communications 
+•	Provide technical and customer support 
+•	Maintain Platform security 
+•	Detect or prevent unauthorized access, fraud, or misuse 
+•	Diagnose technical problems 
+•	Communicate with property owners and authorized administrators 
+•	Maintain records reasonably necessary for legal, accounting, security, or dispute-resolution purposes 
+•	Improve the functionality, reliability, and security of the Platform 
+4. Payment Processing
+The Platform may integrate with Stripe to process guest payments.
+When Stripe Checkout is used, payment-card information is entered directly through Stripe's payment system. Webdevsters does not receive or store guests' complete credit-card numbers.
+The Platform may store payment-related information necessary to manage bookings, including:
+•	Payment status 
+•	Amount paid 
+•	Refunded amount 
+•	Stripe Checkout session identifiers 
+•	Stripe payment intent identifiers 
+•	Whether a payment has been refunded or partially refunded 
+Sensitive Stripe credentials used to operate the integration are maintained using secure credential-storage mechanisms and are not stored in ordinary public database fields.
+5. Third-Party Services
+Webdevsters uses third-party service providers to operate and support portions of the Platform.
+Depending on the features enabled for a particular property, these providers may support functions such as:
+•	Database and authentication services 
+•	Secure data and credential storage 
+•	Payment processing and refunds 
+•	Transactional email delivery 
+•	Website hosting and deployment 
+•	Server-side processing and infrastructure 
+•	Calendar synchronization with external booking platforms 
+•	Other technical or operational services necessary to provide the Platform 
+These providers may receive or process information as reasonably necessary to perform the services they provide.
+Webdevsters may change, replace, or add service providers over time as the Platform evolves.
+The handling of information by third-party providers is also subject to their own terms, privacy policies, and security practices.
+6. Cookies, Analytics, and Tracking
+The current version of the Platform does not use advertising cookies, third-party analytics platforms, tracking pixels, or behavioral advertising scripts.
+The Platform does not currently use browser local storage or session storage for independent marketing or behavioral tracking.
+Authentication information may be transmitted or maintained as necessary to provide secure authorized sessions.
+Webdevsters may update its technology practices in the future. If the Platform begins using additional tracking or analytics technologies, this Privacy Policy may be updated accordingly.
+7. How We Share Information
+Webdevsters does not sell personal information collected through the Platform.
+Information may be shared with service providers when reasonably necessary to:
+•	Operate and host the Platform 
+•	Process payments 
+•	Deliver transactional emails 
+•	Provide technical services 
+•	Secure the Platform 
+•	Provide requested functionality 
+•	Support property owners and administrators 
+Information may also be disclosed when reasonably necessary to:
+•	Comply with applicable laws or legal processes 
+•	Respond to lawful governmental requests 
+•	Investigate suspected fraud or abuse 
+•	Protect the rights, safety, security, or property of Webdevsters, Platform users, guests, or others 
+•	Enforce applicable agreements 
+•	Facilitate a merger, acquisition, restructuring, financing, or transfer of business assets, subject to applicable law 
+8. Property Owner Responsibility for Guest Information
+Property owners using the Platform are responsible for their relationship with their guests and for determining how guest information is collected and used in connection with their rental property.
+Property owners are responsible for ensuring that their use of guest information complies with applicable laws and with the privacy notices and terms presented to their guests.
+Webdevsters provides the technology used to process and manage such information on behalf of the property owner.
+Webdevsters may separately act on its own behalf with respect to information necessary for operating the Platform itself, including account administration, security, support, billing, legal compliance, and business operations.
+9. Data Retention
+Webdevsters retains information only for as long as reasonably necessary for the purposes for which it was collected or processed and for legitimate business, operational, accounting, security, dispute-resolution, and legal purposes.
+Certain Platform records may be retained for up to seven years when reasonably necessary for accounting, tax, payment, fraud-prevention, dispute, or legal purposes.
+The Platform currently includes certain automated data-management processes, including:
+•	Archived inquiries may be automatically deleted after a defined retention period. 
+•	Completed bookings may be archived after checkout. 
+•	Expired pending-payment bookings may be automatically updated when their payment period expires. 
+Archiving a record does not necessarily mean that all associated personal information has been permanently deleted.
+Information that is no longer reasonably necessary may be deleted, anonymized, or otherwise removed in accordance with applicable requirements and operational needs.
+10. Data Security
+Webdevsters uses administrative, technical, and access-control measures designed to protect information from unauthorized access, disclosure, alteration, or destruction.
+Platform administrative access is restricted through authenticated accounts and an authorized-user allowlist.
+Database access is further restricted through permissions and row-level security controls intended to prevent unauthorized access to private administrative information.
+Sensitive credentials are handled through restricted server-side systems and secure credential-storage mechanisms.
+No electronic system, network, database, or method of transmission can be guaranteed to be completely secure.
+11. Account Access
+The Platform is intended for authorized property owners, administrators, developers, and other individuals granted access by the appropriate account administrator.
+Public self-registration is not currently provided through the Platform.
+Users are responsible for maintaining the confidentiality of their login credentials and for activity conducted using their authorized account.
+Users should not provide their login credentials to unauthorized individuals.
+12. Privacy Rights and Requests
+Depending on applicable law and the individual's location, individuals may have rights relating to their personal information, which may include requesting:
+•	Access to certain personal information 
+•	Correction of inaccurate information 
+•	Deletion of certain information 
+•	Information regarding how their information is used or disclosed 
+Requests concerning information maintained directly by Webdevsters may be submitted to:
+legal@webdevsters.com
+If a request concerns guest information controlled by a particular property owner, Webdevsters may direct the individual to that property owner or assist the property owner as reasonably necessary to respond to the request.
+Webdevsters may verify the identity or authority of a person making a request before processing it.
+Certain information may be retained when reasonably necessary to comply with legal obligations, maintain transaction records, prevent fraud, resolve disputes, or protect the security and integrity of the Platform.
+13. Children
+The Webdevsters Vacation Rental Management Platform is intended for business users and authorized administrators who are at least 18 years old.
+The Platform is not intended for use by children under 18.
+Guest-facing booking requirements are addressed separately through the applicable property website and its guest Terms & Conditions.
+14. International and External Services
+The Platform may interact with third-party providers and external booking platforms.
+Information processed through these services may be handled on systems located outside the user's immediate state or region, depending on the infrastructure and practices of the applicable service provider.
+Use of third-party services is subject to their applicable privacy practices.
+15. Changes to This Privacy Policy
+Webdevsters may update this Privacy Policy to reflect changes in:
+•	Platform functionality 
+•	Technology 
+•	Service providers 
+•	Business practices 
+•	Security practices 
+•	Applicable legal requirements 
+When this Privacy Policy is revised, the Effective Date shown at the top will be updated.
+If a change materially affects Platform users, Webdevsters may provide additional notice through the Platform, by email, or through another reasonable method.
+16. Contact Information
+Questions, concerns, or privacy requests relating to the Webdevsters Vacation Rental Management Platform may be directed to:
+Webdevsters
+California, United States
+Email: legal@webdevsters.com
+
+
