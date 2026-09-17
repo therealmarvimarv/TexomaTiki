@@ -1,1 +1,215 @@
-PASTE ADMIN TERMS & CONDITIONS HERE
+Webdevsters Vacation Rental Management Platform
+Terms & Conditions
+Effective Date: September 16, 2026
+These Terms & Conditions (“Terms”) govern access to and use of the Webdevsters Vacation Rental Management Platform (the “Platform”), a software-as-a-service product provided by Webdevsters (“Webdevsters,” “we,” “us,” or “our”).
+Webdevsters is a technology company that provides websites, software applications, mobile applications, chatbots, SaaS products, and related technology services. These Terms apply specifically to the Vacation Rental Management Platform and do not automatically govern other products or services provided by Webdevsters.
+By accessing or using the Platform, the property owner, administrator, or other authorized user (“Client,” “you,” or “your”) agrees to these Terms.
+1. Platform Services
+The Platform provides tools that may include:
+•	Vacation-rental website management 
+•	Property and listing management 
+•	Booking requests and booking administration 
+•	Availability management 
+•	Pricing and fee management 
+•	Payment-processing integrations 
+•	Guest communications 
+•	Email notifications and automation 
+•	Calendar synchronization 
+•	Property content, policies, house rules, FAQs, and local recommendations 
+•	Cleaning and maintenance management 
+•	Administrative dashboards and account settings 
+•	Other related functionality made available by Webdevsters 
+Features may vary depending on the Client's configuration or service plan.
+2. Client Accounts
+Access to the administrative Platform is limited to authorized users.
+Public self-registration is not currently provided. Administrative accounts are created or authorized through Webdevsters and must satisfy the Platform's access-control requirements.
+You are responsible for:
+•	Maintaining the confidentiality of your account credentials 
+•	Providing accurate account information 
+•	Controlling who is permitted to use credentials issued to you 
+•	Promptly notifying Webdevsters if you believe an account or credential has been compromised 
+Activity performed through an authorized account may be treated as activity performed by that account holder.
+You must be at least 18 years old to use the Platform.
+3. Client Responsibility for the Rental Business
+Webdevsters provides the technology used to operate and manage portions of your vacation-rental business.
+Webdevsters is not the owner, operator, host, landlord, property manager, or booking party for your rental property unless separately agreed in writing.
+The Client remains responsible for the rental business and its relationship with guests, including:
+•	Property availability 
+•	Listing accuracy 
+•	Pricing 
+•	Taxes 
+•	Fees 
+•	Deposits 
+•	Guest eligibility 
+•	House rules 
+•	Property policies 
+•	Booking approvals or declines 
+•	Cancellations 
+•	Refund decisions 
+•	Property condition and safety 
+•	Local licensing and regulatory requirements 
+•	Communications with guests 
+•	Compliance with applicable laws 
+The Client is responsible for reviewing information entered into the Platform and ensuring that guest-facing information is accurate.
+4. Guest Terms and Privacy Notices
+The Client is responsible for maintaining appropriate guest-facing terms, policies, disclosures, and privacy information for its rental property.
+Webdevsters may provide technology or templates that assist with presenting those documents, but the Client remains responsible for property-specific policies and business decisions, including cancellation and refund terms.
+5. Bookings
+A booking request submitted through the Platform does not necessarily constitute an accepted or confirmed reservation.
+Depending on the Client's configuration, bookings may require:
+•	Client approval 
+•	Guest payment 
+•	Completion of payment before an expiration deadline 
+•	Satisfaction of property-specific requirements 
+The Client is responsible for determining whether a booking is approved, declined, cancelled, or otherwise accepted.
+Webdevsters does not guarantee that a prospective guest will complete a booking or payment.
+6. Payments and Stripe
+The Platform may integrate with Stripe for payment processing.
+When Stripe is enabled:
+•	Card information is entered and processed through Stripe. 
+•	Webdevsters does not store guests' full credit-card numbers. 
+•	Stripe may apply its own terms, fees, policies, fraud controls, account requirements, or restrictions. 
+•	Payment availability may depend on the Client maintaining a valid Stripe configuration. 
+The Platform may record information such as payment status, amounts paid, refunds, Stripe session identifiers, and payment intent identifiers in order to administer bookings.
+The Client is responsible for:
+•	Maintaining appropriate Stripe credentials and account status 
+•	Determining amounts charged to guests 
+•	Complying with Stripe's applicable requirements 
+•	Handling chargebacks, disputes, taxes, and financial obligations associated with its rental business 
+7. Refunds and Cancellations
+The Platform provides tools for recording and processing booking cancellations and refunds.
+The Client determines its own cancellation and refund policies and is responsible for applying those policies to its guests.
+Webdevsters does not independently determine whether a guest is entitled to a refund.
+Where a refund is processed through Stripe or another payment provider, processing time may depend on that provider and the guest's financial institution.
+8. Third-Party Services
+The Platform may rely on or integrate with third-party service providers to support functions such as:
+•	Website hosting and deployment 
+•	Database and authentication services 
+•	Payment processing 
+•	Email delivery 
+•	Secure storage 
+•	Infrastructure and server-side processing 
+•	Calendar synchronization 
+•	Other technical or operational services 
+These third-party providers may process information as reasonably necessary to provide their services.
+Webdevsters may change, replace, or add service providers over time as the Platform evolves.
+Webdevsters does not control the independent operation of third-party services and is not responsible for outages, service changes, restrictions, or failures caused by those providers.
+Use of third-party services may also be subject to the applicable provider’s own terms, privacy policies, and security practices.
+9. Calendar Synchronization
+The Platform may provide calendar import or export functionality using iCal or similar standards.
+External booking platforms determine when and how often they retrieve or synchronize calendar information.
+Webdevsters therefore cannot guarantee instantaneous synchronization between the Platform and external booking services.
+Clients remain responsible for monitoring availability and preventing conflicting reservations.
+10. Email Communications
+The Platform may send transactional emails relating to bookings, payments, inquiries, administrative activity, and other Platform functions.
+Email delivery may depend on third-party providers, recipient email systems, spam filtering, and correct configuration.
+Webdevsters does not guarantee that every email will be delivered, opened, or received.
+The Platform currently supports email communications and does not represent that SMS messaging is provided unless that functionality is specifically added or enabled.
+11. Acceptable Use
+You may not use the Platform to:
+•	Violate applicable law 
+•	Commit fraud or misrepresentation 
+•	Gain unauthorized access to another user's account or data 
+•	Introduce malicious software or harmful code 
+•	Attempt to bypass security or access controls 
+•	Interfere with Platform operation 
+•	Use the Platform to process unlawful transactions 
+•	Access information belonging to another Client without authorization 
+•	Reverse engineer or exploit the Platform except where such restriction is prohibited by law 
+12. Client Content and Data
+The Client retains responsibility for property information, photographs, descriptions, policies, pricing information, guest communications, and other content supplied through its account.
+The Client represents that it has the necessary rights or permissions to use and publish content it provides through the Platform.
+The Client grants Webdevsters permission to host, process, display, transmit, reproduce, and otherwise use that content only as reasonably necessary to provide and operate the Platform and related services.
+13. Guest Data
+The Client is responsible for the guest relationship and determines the purposes for which guest information is collected and used in connection with its rental business.
+Webdevsters processes guest information as necessary to provide the Platform and related services.
+The Client agrees to use guest information only for lawful purposes and to comply with applicable privacy and data-protection obligations.
+Additional information regarding data handling is provided in the Webdevsters Vacation Rental Management Platform Privacy Policy.
+14. Platform Ownership
+Except for Client-provided content and data, the Platform and its underlying software, interfaces, design elements, functionality, documentation, systems, and related intellectual property are owned by Webdevsters or its licensors.
+Access to the Platform does not transfer ownership of Webdevsters technology or intellectual property to the Client.
+The Client receives only the right to use the Platform according to these Terms and any applicable service agreement.
+15. Availability and Changes
+Webdevsters will make reasonable efforts to maintain the availability and functionality of the Platform.
+However, uninterrupted or error-free operation cannot be guaranteed.
+The Platform may occasionally be unavailable because of:
+•	Maintenance 
+•	Security updates 
+•	Software updates 
+•	Infrastructure failures 
+•	Third-party provider outages 
+•	Internet or network problems 
+•	Circumstances outside Webdevsters' reasonable control 
+Webdevsters may modify or improve Platform functionality over time.
+16. Backups and Business Records
+Webdevsters may maintain technical safeguards, backups, or recovery systems as part of operating the Platform.
+Clients should nevertheless maintain appropriate copies of business information they are legally or operationally required to retain.
+The Platform should not be treated as the Client's sole accounting, tax, or legally required recordkeeping system unless separately agreed in writing.
+17. Fees and Billing
+Fees for use of the Platform, hosting, development, support, or related services are governed by the Client's applicable proposal, invoice, subscription, service agreement, or other written arrangement with Webdevsters.
+Unless otherwise expressly stated in writing, these Terms do not replace any separate payment or subscription terms agreed between Webdevsters and the Client.
+18. Suspension or Termination
+Webdevsters may restrict or suspend Platform access when reasonably necessary to:
+•	Protect Platform security 
+•	Respond to suspected unauthorized use 
+•	Prevent misuse 
+•	Address a violation of these Terms 
+•	Comply with law 
+•	Address unpaid amounts where payment is required under the Client's service agreement 
+Where reasonably practicable, Webdevsters may provide notice before suspension.
+Clients may discontinue use of the Platform subject to any applicable contractual, subscription, hosting, or payment obligations contained in their separate service agreement.
+19. Disclaimer of Warranties
+The Platform is provided on an “as available” basis to the extent permitted by applicable law.
+Webdevsters does not guarantee:
+•	Continuous or uninterrupted operation 
+•	That every software defect will be eliminated 
+•	That third-party services will always remain available 
+•	That guests will complete bookings 
+•	That external calendars will synchronize immediately 
+•	That emails will always be delivered 
+•	That payment providers will approve every transaction 
+Nothing in these Terms excludes warranties or rights that cannot legally be excluded.
+20. Limitation of Liability
+To the fullest extent permitted by applicable law, Webdevsters will not be responsible for indirect, incidental, special, consequential, or punitive damages arising from use of the Platform, including losses arising from:
+•	Lost bookings 
+•	Guest disputes 
+•	Property damage 
+•	Client pricing errors 
+•	Incorrect property information 
+•	Third-party service outages 
+•	Payment-provider decisions 
+•	Calendar synchronization delays 
+•	Unauthorized credential sharing 
+•	Client failure to comply with applicable laws 
+Any limitation of liability contained in a separate written agreement between Webdevsters and the Client will also apply.
+Nothing in these Terms limits liability that cannot lawfully be limited.
+21. Indemnification
+To the extent permitted by applicable law, the Client agrees to be responsible for claims arising from the Client's:
+•	Operation of the rental property 
+•	Property condition or safety 
+•	Guest relationships 
+•	Client-created policies 
+•	Listing information 
+•	Client-provided content 
+•	Violation of law 
+•	Violation of third-party rights 
+•	Misuse of the Platform 
+This provision does not require the Client to indemnify Webdevsters for matters for which such indemnification is prohibited by applicable law.
+22. Governing Law
+These Terms are governed by the laws of the State of California, without regard to conflict-of-law principles, except where applicable law requires otherwise.
+Any additional dispute-resolution or venue provisions contained in a separately executed agreement between Webdevsters and the Client will also apply.
+23. Changes to These Terms
+Webdevsters may update these Terms as the Platform, business practices, technologies, or legal requirements change.
+The Effective Date will be updated when revisions are made.
+For material changes, Webdevsters may provide notice through the Platform, by email, or through another reasonable method.
+Continued use of the Platform following the effective date of revised Terms constitutes acceptance to the extent permitted by applicable law.
+24. Entire Agreement
+These Terms, together with the applicable Privacy Policy and any proposal, subscription agreement, service agreement, invoice terms, or other written agreement between the Client and Webdevsters, constitute the applicable agreement concerning use of the Platform.
+If a separately executed agreement conflicts with these Terms, the separately executed agreement controls to the extent of the conflict.
+25. Contact
+Questions regarding these Terms may be directed to:
+Webdevsters
+California, United States
+Email: legal@webdevsters.com
+
+
