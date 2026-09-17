@@ -14,7 +14,7 @@ import PaymentsEditor from './PaymentsEditor';
 import AccountPage from './AccountPage';
 import PlatformPrivacyPolicy from './PlatformPrivacyPolicy';
 import PlatformTermsConditions from './PlatformTermsConditions';
-import { LayoutDashboard, CalendarDays, BookOpen, Home, Menu, X, Sparkles, Wrench, Mail, CreditCard, CircleUser as UserCircle, ChevronDown, FileText, Shield } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, BookOpen, Home, Menu, X, Sparkles, Wrench, Mail, CreditCard, CircleUser as UserCircle } from 'lucide-react';
 
 interface NavItem {
   to: string;
@@ -53,50 +53,57 @@ function NavLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
   );
 }
 
-function AccountLegalSubmenu({ onNavigate }: { onNavigate?: () => void }) {
-  const [open, setOpen] = useState(false);
+function AccountNavItem({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
   const inAccountSection = location.pathname.startsWith('/admin/account');
 
-  if (!inAccountSection) return null;
-
   return (
     <div className="relative">
-      <button
-        onClick={() => setOpen(o => !o)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-        className="flex items-center gap-1.5 w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+      <Link
+        to="/admin/account"
+        onClick={onNavigate}
+        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+          inAccountSection ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+        }`}
       >
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
-        Legal Documents
-      </button>
-      {open && (
-        <div className="mt-1 w-full bg-gray-50 rounded-lg border border-gray-100 py-1">
-          <Link
-            to="/admin/account"
-            onClick={onNavigate}
-            className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-          >
-            <UserCircle className="w-4 h-4 text-gray-400" />
-            Account Settings
-          </Link>
-          <Link
-            to="/admin/account/privacy"
-            onClick={onNavigate}
-            className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-          >
-            <Shield className="w-4 h-4 text-gray-400" />
-            Platform Privacy Policy
-          </Link>
-          <Link
-            to="/admin/account/terms"
-            onClick={onNavigate}
-            className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-          >
-            <FileText className="w-4 h-4 text-gray-400" />
-            Platform Terms &amp; Conditions
-          </Link>
-        </div>
+        <UserCircle className="w-4 h-4 flex-shrink-0" />
+        Account
+      </Link>
+      {inAccountSection && (
+        <>
+          <div className="hidden lg:block absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+            <Link
+              to="/admin/account/privacy"
+              onClick={onNavigate}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              to="/admin/account/terms"
+              onClick={onNavigate}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Terms &amp; Conditions
+            </Link>
+          </div>
+          <div className="lg:hidden ml-6 mt-1 space-y-1">
+            <Link
+              to="/admin/account/privacy"
+              onClick={onNavigate}
+              className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              to="/admin/account/terms"
+              onClick={onNavigate}
+              className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+            >
+              Terms &amp; Conditions
+            </Link>
+          </div>
+        </>
       )}
     </div>
   );
@@ -173,9 +180,10 @@ export default function AdminDashboard() {
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
-            {NAV_ITEMS.map(item => (
+            {NAV_ITEMS.filter(item => item.to !== '/admin/account').map(item => (
               <NavLink key={item.to} item={item} />
             ))}
+            <AccountNavItem />
           </nav>
 
           {/* Spacer to balance the layout */}
@@ -188,10 +196,10 @@ export default function AdminDashboard() {
         <div className="lg:hidden fixed inset-0 z-30 top-14">
           <div className="absolute inset-0 bg-black/20" onClick={() => setMobileOpen(false)} />
           <div className="relative bg-white w-64 h-full shadow-xl p-4 space-y-1 overflow-y-auto">
-            {NAV_ITEMS.map(item => (
+            {NAV_ITEMS.filter(item => item.to !== '/admin/account').map(item => (
               <NavLink key={item.to} item={item} onClick={() => setMobileOpen(false)} />
             ))}
-            <AccountLegalSubmenu onNavigate={() => setMobileOpen(false)} />
+            <AccountNavItem onNavigate={() => setMobileOpen(false)} />
           </div>
         </div>
       )}
