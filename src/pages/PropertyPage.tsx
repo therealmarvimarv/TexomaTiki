@@ -17,6 +17,7 @@ import LocalRecommendations from '../components/LocalRecommendations';
 import BookingCard from '../components/BookingCard';
 import StickyNav from '../components/StickyNav';
 import BrandedHeader, { BrandedHeaderData } from '../components/BrandedHeader';
+import SiteFooter from '../components/SiteFooter';
 
 const DEFAULT_PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
@@ -258,6 +259,8 @@ export default function PropertyPage() {
           <ContactSection propertyId={propertyId} />
         </div>
       </div>
+
+      <SiteFooter />
     </div>
   );
 }

@@ -12,7 +12,9 @@ import MaintenanceManager from './MaintenanceManager';
 import EmailSettings from './EmailSettings';
 import PaymentsEditor from './PaymentsEditor';
 import AccountPage from './AccountPage';
-import { LayoutDashboard, CalendarDays, BookOpen, Home, Menu, X, Sparkles, Wrench, Mail, CreditCard, CircleUser as UserCircle } from 'lucide-react';
+import PlatformPrivacyPolicy from './PlatformPrivacyPolicy';
+import PlatformTermsConditions from './PlatformTermsConditions';
+import { LayoutDashboard, CalendarDays, BookOpen, Home, Menu, X, Sparkles, Wrench, Mail, CreditCard, CircleUser as UserCircle, ChevronDown, FileText, Shield } from 'lucide-react';
 
 interface NavItem {
   to: string;
@@ -48,6 +50,56 @@ function NavLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
       <Icon className="w-4 h-4 flex-shrink-0" />
       {item.label}
     </Link>
+  );
+}
+
+function AccountLegalSubmenu({ onNavigate }: { onNavigate?: () => void }) {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const inAccountSection = location.pathname.startsWith('/admin/account');
+
+  if (!inAccountSection) return null;
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(o => !o)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+      >
+        <UserCircle className="w-4 h-4 flex-shrink-0" />
+        Account
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+          <Link
+            to="/admin/account"
+            onClick={onNavigate}
+            className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <UserCircle className="w-4 h-4 text-gray-400" />
+            Account Settings
+          </Link>
+          <Link
+            to="/admin/account/privacy"
+            onClick={onNavigate}
+            className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <Shield className="w-4 h-4 text-gray-400" />
+            Platform Privacy Policy
+          </Link>
+          <Link
+            to="/admin/account/terms"
+            onClick={onNavigate}
+            className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <FileText className="w-4 h-4 text-gray-400" />
+            Platform Terms &amp; Conditions
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -122,9 +174,10 @@ export default function AdminDashboard() {
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
-            {NAV_ITEMS.map(item => (
+            {NAV_ITEMS.filter(item => item.to !== '/admin/account').map(item => (
               <NavLink key={item.to} item={item} />
             ))}
+            <AccountLegalSubmenu />
           </nav>
 
           {/* Spacer to balance the layout */}
@@ -136,10 +189,11 @@ export default function AdminDashboard() {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-30 top-14">
           <div className="absolute inset-0 bg-black/20" onClick={() => setMobileOpen(false)} />
-          <div className="relative bg-white w-64 h-full shadow-xl p-4 space-y-1">
-            {NAV_ITEMS.map(item => (
+          <div className="relative bg-white w-64 h-full shadow-xl p-4 space-y-1 overflow-y-auto">
+            {NAV_ITEMS.filter(item => item.to !== '/admin/account').map(item => (
               <NavLink key={item.to} item={item} onClick={() => setMobileOpen(false)} />
             ))}
+            <AccountLegalSubmenu onNavigate={() => setMobileOpen(false)} />
           </div>
         </div>
       )}
@@ -158,6 +212,8 @@ export default function AdminDashboard() {
           <Route path="/email" element={<EmailSettings />} />
           <Route path="/payments" element={<PaymentsEditor />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/account/privacy" element={<PlatformPrivacyPolicy />} />
+          <Route path="/account/terms" element={<PlatformTermsConditions />} />
         </Routes>
       </main>
     </div>

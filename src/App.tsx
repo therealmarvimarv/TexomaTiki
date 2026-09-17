@@ -6,6 +6,8 @@ import BookingCancelled from './pages/BookingCancelled';
 import InquirySuccess from './pages/InquirySuccess';
 import BookingRequestSuccess from './pages/BookingRequestSuccess';
 import PhotoTourPage from './pages/PhotoTourPage';
+import GuestPrivacyPolicy from './pages/legal/GuestPrivacyPolicy';
+import GuestTermsConditions from './pages/legal/GuestTermsConditions';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ResetPassword from './pages/admin/ResetPassword';
@@ -63,6 +65,8 @@ function App() {
         <Route path="/booking/cancelled" element={<BookingCancelled />} />
         <Route path="/inquiry/success" element={<InquirySuccess />} />
         <Route path="/booking/request-success" element={<BookingRequestSuccess />} />
+        <Route path="/privacy" element={<GuestPrivacyPolicy />} />
+        <Route path="/terms" element={<GuestTermsConditions />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/reset-password" element={<ResetPassword />} />
         <Route path="/admin/*" element={<AdminDashboard />} />
