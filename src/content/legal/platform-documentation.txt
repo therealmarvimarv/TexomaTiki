@@ -1,1 +1,621 @@
-PASTE ADMIN DOCUMENTATION HERE
+WEBDEVSTERS VACATION RENTAL MANAGEMENT PLATFORM
+OWNER & ADMIN DOCUMENTATION
+
+Last Updated: September 17, 2026
+
+This guide explains how to use the Webdevsters Vacation Rental Management Platform to manage your vacation-rental website, bookings, availability, pricing, payments, guest communications, and property information.
+
+The Platform is designed so that most day-to-day property management can be handled directly from the Admin Dashboard without editing website code.
+
+==================================================
+1. ACCESSING THE ADMIN DASHBOARD
+==================================================
+
+Administrative access is limited to authorized users.
+
+Use the login information provided to you to access your Admin Dashboard.
+
+Your account must be authorized before access is granted. Simply having login credentials does not automatically provide access unless the account has also been approved for the property.
+
+Keep your login credentials private.
+
+If you believe your account has been compromised, contact your administrator or Webdevsters as soon as possible.
+
+==================================================
+2. ADMIN DASHBOARD OVERVIEW
+==================================================
+
+The Admin Dashboard contains the main tools used to manage your property.
+
+Depending on your configuration, the main navigation includes:
+
+• Overview
+• Calendar
+• Bookings
+• Cleaning
+• Maintenance
+• Property
+• Email
+• Payments
+• Account
+
+The Account area also provides access to:
+
+• Privacy Policy
+• Terms & Conditions
+• Documentation
+
+==================================================
+3. OVERVIEW
+==================================================
+
+The Overview page provides a quick summary of activity related to your property.
+
+Use this area to get a general view of your rental before moving into the more detailed management sections.
+
+==================================================
+4. CALENDAR & AVAILABILITY
+==================================================
+
+The Calendar is used to manage when the property is available or unavailable.
+
+You may use the calendar to review:
+
+• Confirmed bookings
+• Pending bookings
+• Owner blocks
+• Manually blocked dates
+• Availability
+• Pricing information
+
+Dates may also be affected by bookings or calendar information synchronized from external booking platforms.
+
+OWNER BLOCKS
+
+Use an Owner Block when you want to reserve dates for yourself or otherwise prevent guests from booking them.
+
+BLOCKED DATES
+
+Dates can also be blocked for maintenance, private use, or other reasons.
+
+Always review the calendar after making availability changes.
+
+==================================================
+5. CALENDAR SYNCHRONIZATION
+==================================================
+
+The Platform supports iCal calendar synchronization with compatible external booking platforms.
+
+This allows availability to be shared between your direct-booking website and other booking services.
+
+Important:
+
+External booking platforms control how frequently they check imported calendar feeds.
+
+Changes made in this Platform may therefore appear here immediately but may take additional time to appear on another booking platform.
+
+Calendar synchronization should not be treated as instantaneous.
+
+Regularly review your calendars when managing reservations across multiple platforms.
+
+==================================================
+6. BOOKINGS
+==================================================
+
+The Bookings section is used to review and manage guest booking requests and reservations.
+
+A typical booking may move through statuses such as:
+
+• Pending
+• Approved
+• Pending Payment
+• Confirmed
+• Declined
+• Cancelled
+• Expired
+• Payment Failed
+• Refunded
+• Partially Refunded
+
+BOOKING REQUESTS
+
+When a guest submits a booking request, review the reservation information before taking action.
+
+Information may include:
+
+• Guest name
+• Email
+• Phone number
+• Check-in date
+• Check-out date
+• Adults
+• Children
+• Infants
+• Pets
+• Guest message or special request
+• Price and fees
+
+APPROVING A BOOKING
+
+If the request is acceptable, approve it using the available booking controls.
+
+If online payment is required, the booking may then move into a payment stage before becoming confirmed.
+
+DECLINING A BOOKING
+
+If you do not wish to accept the booking, use the decline option.
+
+CANCELLATIONS
+
+Cancellation and refund decisions are separate actions.
+
+Cancelling a reservation does not automatically mean that money has been refunded unless the applicable refund process has also been completed.
+
+==================================================
+7. PAYMENTS
+==================================================
+
+The Payments section controls how direct-booking payments are handled.
+
+Depending on your configuration, payments may be processed electronically or handled manually.
+
+If online card payments are enabled, guests are directed to a secure third-party payment checkout.
+
+The Platform does not store guests' complete credit-card numbers.
+
+Payment information shown inside the Platform may include:
+
+• Payment status
+• Amount paid
+• Payment session information
+• Refund status
+• Refunded amount
+
+PAYMENT SETTINGS
+
+Only modify payment settings when necessary.
+
+Incorrect payment credentials or settings can prevent guests from completing payment.
+
+TESTING
+
+If a test payment mode is available, use it when testing payment functionality rather than processing real charges.
+
+LIVE PAYMENTS
+
+Before accepting real bookings, make sure the correct live payment configuration is active.
+
+==================================================
+8. REFUNDS
+==================================================
+
+Refunds should be handled according to your property's published cancellation and refund policy.
+
+Depending on your payment configuration, refunds may be processed through the Platform's supported payment workflow or through the connected payment provider.
+
+The Platform may track:
+
+• Full refunds
+• Partial refunds
+• Total amount refunded
+• Updated payment status
+
+Always confirm that the refund has been successfully processed before telling a guest that the refund is complete.
+
+==================================================
+9. PRICING
+==================================================
+
+Pricing is managed from the Property pricing tools.
+
+Depending on the configuration, pricing may include:
+
+• Default nightly rate
+• Day-of-week rates
+• Date-specific price overrides
+• Seasonal pricing
+• Minimum-night requirements
+• Cleaning fees
+• Pet fees
+• Extra-guest fees
+• Other property fees
+
+DEFAULT NIGHTLY RATE
+
+The default nightly rate is used when no more specific pricing rule applies.
+
+DAY-OF-WEEK PRICING
+
+You may assign different rates to specific days of the week.
+
+If no custom rate is entered for a particular day, the default nightly rate is used.
+
+DATE-SPECIFIC PRICING
+
+Use date-specific pricing when particular dates require a special rate.
+
+Always review the public website after major pricing changes.
+
+==================================================
+10. PROPERTY INFORMATION
+==================================================
+
+The Property section controls the information displayed on the public property website.
+
+This may include:
+
+• Property name
+• Location
+• Description
+• Guest capacity
+• Bedrooms
+• Bathrooms
+• Property details
+• Contact information
+• Map coordinates
+• Amenities
+• Sleeping arrangements
+• Images
+• Highlights
+• Policies
+• House rules
+• FAQs
+• Local recommendations
+
+After making major changes, review the public website to confirm the information appears correctly.
+
+==================================================
+11. PROPERTY LOCATION & MAP
+==================================================
+
+The public map uses the latitude and longitude saved for the property.
+
+Enter accurate coordinates if you want the map pin to represent the property's correct location.
+
+Do not rely on a city or location name alone to position the map pin.
+
+==================================================
+12. PHOTOS
+==================================================
+
+Use the property photo tools to manage images shown to guests.
+
+Depending on the section, you may be able to:
+
+• Add images
+• Remove images
+• Reorder images
+• Assign images to photo sections
+• Manage photo-section features
+
+Use clear, current photographs that accurately represent the property.
+
+==================================================
+13. AMENITIES
+==================================================
+
+Amenities describe features available at the property.
+
+Review the amenity list periodically and keep it accurate.
+
+Do not advertise an amenity that is unavailable, removed, or temporarily out of service without clearly informing guests.
+
+==================================================
+14. POLICIES
+==================================================
+
+The Policies area contains important guest-facing information.
+
+Built-in policy areas may include:
+
+• Cancellation Policy
+• Check-In & Check-Out
+• Pet Policy
+• Accessibility Notes
+
+CANCELLATION POLICY
+
+Keep your cancellation and refund terms current and consistent with the Terms & Conditions provided to guests.
+
+CHECK-IN & CHECK-OUT
+
+You may manage information such as:
+
+• Check-in time
+• Check-out time
+• Early check-in notes
+• Late check-out notes
+• Parking information
+• Property access information
+
+PET POLICY
+
+You may manage information such as:
+
+• Whether pets are allowed
+• Maximum number of pets
+• Pet fees
+• Furniture or property restrictions
+
+ACCESSIBILITY NOTES
+
+Only enter accessibility information you know to be accurate.
+
+Information may include:
+
+• Property level
+• Number of entry steps
+• Bedroom floor
+• Parking distance
+• Accessibility notes
+• Certification information
+
+Do not make assumptions about accessibility features.
+
+If information is unknown, leave it unspecified.
+
+==================================================
+15. HOUSE RULES
+==================================================
+
+House Rules allow you to clearly communicate expectations to guests.
+
+Examples may include:
+
+• No smoking
+• No parties
+• Quiet hours
+• Pet rules
+• Parking rules
+• Guest limits
+• Check-in requirements
+• Check-out requirements
+• Property access rules
+• Safety requirements
+
+Each rule can include an icon to make the public display easier to scan.
+
+Keep your rules clear and reasonable.
+
+==================================================
+16. FREQUENTLY ASKED QUESTIONS
+==================================================
+
+The FAQ section helps answer common guest questions before they contact you.
+
+FAQ categories may include:
+
+• Booking
+• Payments
+• Check-In
+• Check-Out
+• Pets
+• Cancellation
+• House Rules
+• Local Area
+
+Only active FAQs are displayed publicly.
+
+Keep answers short, accurate, and easy to understand.
+
+==================================================
+17. LOCAL RECOMMENDATIONS
+==================================================
+
+Local Recommendations allow you to provide useful suggestions to guests.
+
+Categories may include:
+
+• Beaches & Outdoors
+• Food & Drinks
+• Family Activities
+• Shopping
+• Essentials
+
+Recommendations can be added, edited, removed, or organized through the Property management tools.
+
+Use current information whenever possible.
+
+Businesses may change hours, locations, or services, so review recommendations periodically.
+
+==================================================
+18. CLEANING
+==================================================
+
+The Cleaning section can be used to manage cleaning-related tasks connected to property operations.
+
+Use this section to review and maintain cleaning activity associated with upcoming or completed stays.
+
+Keep operational notes clear so anyone assisting with the property understands what needs to be completed.
+
+==================================================
+19. MAINTENANCE
+==================================================
+
+The Maintenance section is used to track property-maintenance information and internal notes.
+
+Use it to document issues that require attention.
+
+Guests should not rely on the Maintenance section because it is intended for administrative use.
+
+==================================================
+20. EMAIL & NOTIFICATIONS
+==================================================
+
+The Platform can send transactional emails related to bookings and property activity.
+
+Depending on your configuration, emails may include:
+
+• Booking request notifications
+• Booking approval or decline messages
+• Payment-related messages
+• Confirmation emails
+• Cancellation messages
+• Refund notifications
+• Other automated guest or host communications
+
+EMAIL SETTINGS
+
+The Email section controls your email configuration and available email templates.
+
+Be careful when changing email-provider credentials or technical email settings.
+
+EMAIL TEMPLATES
+
+Templates may contain variables that automatically insert booking or guest information.
+
+Do not remove required template variables unless you understand how they are being used.
+
+==================================================
+21. ACCOUNT
+==================================================
+
+The Account section contains information relating to the property's administrative account and website configuration.
+
+Depending on your setup, it may include:
+
+• Profile information
+• Owner/business information
+• Listing information
+• Contact information
+• Website settings
+• Preferences
+• Email-related settings
+• System status
+• Security
+• Support information
+
+Only enter accurate business and contact information.
+
+==================================================
+22. ADMIN USERS & ACCESS
+==================================================
+
+Administrative access is restricted.
+
+Authorized users may include the property owner, approved administrators, or approved developers.
+
+Admin and developer users may have similar access to property-management functionality depending on the Platform configuration.
+
+Do not create or share access with someone who should not be able to manage the property.
+
+If another person needs regular administrative access, request a separate authorized account rather than sharing credentials whenever possible.
+
+==================================================
+23. PRIVACY POLICY & TERMS & CONDITIONS
+==================================================
+
+The Account area provides access to the Platform Privacy Policy and Terms & Conditions.
+
+These documents apply to use of the administrative Platform.
+
+The public property website has separate guest-facing Privacy Policy and Terms & Conditions documents.
+
+The guest documents and administrative documents are separate and should not be confused with one another.
+
+==================================================
+24. PUBLIC WEBSITE LEGAL DOCUMENTS
+==================================================
+
+The public property website contains separate:
+
+• Privacy Policy
+• Terms & Conditions
+
+These documents apply to guests and visitors using the public website.
+
+Property-specific information such as cancellation terms, booking age, contact information, and other guest policies should remain accurate.
+
+Contact Webdevsters if your legal or business information changes and the website documents need to be updated.
+
+==================================================
+25. SECURITY BEST PRACTICES
+==================================================
+
+To help protect your property and guest information:
+
+• Use a strong password.
+• Do not share your password unnecessarily.
+• Log out when using a shared or public computer.
+• Notify Webdevsters if you believe an account has been compromised.
+• Do not send payment credentials or sensitive passwords through insecure messages.
+• Review administrative access when staff or business relationships change.
+
+==================================================
+26. BEFORE MAKING MAJOR CHANGES
+==================================================
+
+Before making significant changes to:
+
+• Payments
+• Email configuration
+• Pricing
+• Availability
+• Booking policies
+• Website settings
+
+make sure you understand what the setting controls.
+
+If you are unsure about a technical setting, contact Webdevsters before changing it.
+
+==================================================
+27. REVIEW CHANGES AFTER SAVING
+==================================================
+
+After updating guest-facing information, review the public website.
+
+Confirm that:
+
+• Text is correct
+• Pricing is correct
+• Dates are correct
+• Photos display correctly
+• Policies are accurate
+• Contact information is current
+• Links work
+• Mobile display looks correct
+
+A successful Save confirms that the information was stored, but you should still review the public result when making important changes.
+
+==================================================
+28. SUPPORT
+==================================================
+
+If you experience a problem with the Platform:
+
+1. Note what you were attempting to do.
+2. Record any error message you received.
+3. Take a screenshot when helpful.
+4. Avoid repeatedly changing unrelated settings.
+5. Contact Webdevsters or use the support information provided in your Account section.
+
+Providing clear details about the issue helps troubleshooting happen faster.
+
+==================================================
+29. PLATFORM UPDATES
+==================================================
+
+Webdevsters may periodically update the Platform to improve functionality, security, performance, or usability.
+
+Certain features or interface elements may change over time.
+
+This Documentation may also be updated as new features are added or existing features change.
+
+==================================================
+30. FINAL REMINDERS
+==================================================
+
+The Admin Dashboard is designed to give you control over the day-to-day operation of your vacation-rental website.
+
+For routine management:
+
+• Keep your calendar current.
+• Review booking requests promptly.
+• Keep pricing accurate.
+• Keep property information current.
+• Review payments before confirming financial matters with guests.
+• Maintain accurate policies and house rules.
+• Periodically review your public website.
+• Protect your administrative login credentials.
+
+When in doubt about a technical or security-related setting, contact Webdevsters before making the change.
