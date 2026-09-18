@@ -4,7 +4,70 @@ import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp, X, Image as ImageIc
 
 const STORAGE_BUCKET = 'property-photos';
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
-const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_SIZE = 25 * 1024 * 1024; // 25MB
+const MAX_DIMENSION = 3000;
+const JPEG_QUALITY = 0.85;
+
+async function optimizeImage(file: File): Promise<{ blob: Blob; contentType: string; ext: string }> {
+  const isPng = file.type === 'image/png';
+  const isWebp = file.type === 'image/webp';
+  const outputType = isPng ? 'image/png' : isWebp ? 'image/webp' : 'image/jpeg';
+  const ext = isPng ? 'png' : isWebp ? 'webp' : 'jpg';
+
+  let bitmap: ImageBitmap | null = null;
+  let objectUrl: string | null = null;
+  let img: HTMLImageElement | null = null;
+
+  try {
+    if (typeof createImageBitmap === 'function') {
+      bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    }
+  } catch {
+    bitmap = null;
+  }
+
+  if (!bitmap) {
+    objectUrl = URL.createObjectURL(file);
+    img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img!.onload = () => resolve();
+      img!.onerror = () => reject(new Error('Image load failed'));
+    });
+    img.src = objectUrl;
+  }
+
+  const srcW = bitmap ? bitmap.width : img!.naturalWidth;
+  const srcH = bitmap ? bitmap.height : img!.naturalHeight;
+
+  let width = srcW;
+  let height = srcH;
+  const longest = Math.max(srcW, srcH);
+  if (longest > MAX_DIMENSION) {
+    const scale = MAX_DIMENSION / longest;
+    width = Math.round(srcW * scale);
+    height = Math.round(srcH * scale);
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D context unavailable');
+  ctx.drawImage(bitmap ?? img!, 0, 0, width, height);
+
+  const blob: Blob = await new Promise((resolve, reject) => {
+    canvas.toBlob(
+      b => (b ? resolve(b) : reject(new Error('toBlob failed'))),
+      outputType,
+      isPng ? undefined : JPEG_QUALITY,
+    );
+  });
+
+  if (bitmap) bitmap.close();
+  if (objectUrl) URL.revokeObjectURL(objectUrl);
+
+  return { blob, contentType: outputType, ext };
+}
 
 interface Photo {
   id: string;
@@ -239,16 +302,24 @@ export default function PhotosEditor({ propertyId }: { propertyId: string }) {
         continue;
       }
       if (file.size > MAX_SIZE) {
-        flashErr(`"${file.name}": file must be under 10MB.`);
+        flashErr(`"${file.name}": file must be under 25MB.`);
         continue;
       }
 
-      const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-      const path = `${propertyId}/${target ?? 'main'}/${Date.now()}-${safeName}`;
+      let optimized: { blob: Blob; contentType: string; ext: string };
+      try {
+        optimized = await optimizeImage(file);
+      } catch {
+        flashErr(`"${file.name}": could not process image.`);
+        continue;
+      }
+
+      const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      const path = `${propertyId}/${target ?? 'main'}/${Date.now()}-${baseName}.${optimized.ext}`;
 
       const { error: storageErr } = await supabase.storage
         .from(STORAGE_BUCKET)
-        .upload(path, file, { contentType: file.type, upsert: false });
+        .upload(path, optimized.blob, { contentType: optimized.contentType, upsert: false });
 
       if (storageErr) {
         flashErr(`Upload failed: ${storageErr.message}`);
@@ -620,7 +691,7 @@ export default function PhotosEditor({ propertyId }: { propertyId: string }) {
               />
             </div>
 
-            <p className="text-xs text-gray-400 mb-2">Upload JPG, PNG, or WebP images up to 10MB.</p>
+            <p className="text-xs text-gray-400 mb-2">Upload JPG, PNG, or WebP images up to 25MB.</p>
 
             {addMainPhotoVisible && (
               <form
@@ -728,7 +799,7 @@ export default function PhotosEditor({ propertyId }: { propertyId: string }) {
                       />
                     </div>
 
-                    <p className="text-xs text-gray-400 mb-2">Upload JPG, PNG, or WebP images up to 10MB.</p>
+                    <p className="text-xs text-gray-400 mb-2">Upload JPG, PNG, or WebP images up to 25MB.</p>
 
                     {addPhotoSectionId === section.id && (
                       <form
