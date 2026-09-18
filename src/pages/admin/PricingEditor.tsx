@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
-import { ChevronLeft, ChevronRight, ToggleLeft, ToggleRight, X, Moon, Plus, Save, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ToggleLeft, ToggleRight, X, Moon, Plus, Save, Trash2, Info } from 'lucide-react';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -422,6 +422,20 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
             >
               <ChevronRight className="w-4 h-4 text-gray-600" />
             </button>
+          </div>
+        </div>
+
+        {/* Pricing Calendar Tips */}
+        <div className="flex items-start gap-2.5 rounded-lg border border-blue-100 bg-blue-50/60 px-3.5 py-3">
+          <Info className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" strokeWidth={1.75} />
+          <div className="text-xs text-gray-600 space-y-1">
+            <p className="font-semibold text-gray-700">Pricing Calendar Tips</p>
+            <ul className="space-y-0.5 leading-relaxed">
+              <li>Click a nightly price on any date to set a custom price for that specific date.</li>
+              <li>Use the moon/minimum-stay control on a date to set a custom minimum stay starting on that date.</li>
+              <li>Leave the minimum-stay field blank or set it to 0 to remove the custom override.</li>
+              <li>Date-specific overrides take priority over seasonal, day-of-week, and default settings.</li>
+            </ul>
           </div>
         </div>
 
