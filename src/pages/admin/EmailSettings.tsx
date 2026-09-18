@@ -1318,7 +1318,6 @@ interface AutoFormProps {
 
 function AutoForm({ initial, templates, onSave, onCancel, saving }: AutoFormProps) {
   const [form, setForm] = useState({ ...initial });
-  const [varsOpen, setVarsOpen] = useState(false);
   const set = <K extends keyof typeof form>(k: K, v: typeof form[K]) =>
     setForm(f => ({ ...f, [k]: v }));
 
@@ -1382,30 +1381,6 @@ function AutoForm({ initial, templates, onSave, onCancel, saving }: AutoFormProp
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
           <p className="text-xs text-gray-400 mt-1">Templates are edited in the Templates tab.</p>
-          <div className="border rounded-xl overflow-hidden mt-3">
-            <button onClick={() => setVarsOpen(o => !o)}
-              className="w-full flex items-center justify-between px-3 py-2.5 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors">
-              <span>Available template variables</span>
-              {varsOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
-            {varsOpen && (
-              <div className="px-3 pb-3 pt-2 border-t bg-gray-50 space-y-3">
-                {EMAIL_TEMPLATE_VARIABLES.map(({ group, vars }) => (
-                  <div key={group}>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">{group}</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                      {vars.map(([key, desc]) => (
-                        <div key={key} className="flex items-center gap-2">
-                          <code className="text-xs bg-white border px-1.5 py-0.5 rounded font-mono text-blue-700 whitespace-nowrap">{`{{${key}}}`}</code>
-                          <span className="text-xs text-gray-500">{desc}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
         <div className="sm:col-span-2">
           <label className={labelCls}>Notes (optional)</label>
