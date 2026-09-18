@@ -14,6 +14,7 @@ import PaymentsEditor from './PaymentsEditor';
 import AccountPage from './AccountPage';
 import PlatformPrivacyPolicy from './PlatformPrivacyPolicy';
 import PlatformTermsConditions from './PlatformTermsConditions';
+import PlatformDocumentation from './PlatformDocumentation';
 import { LayoutDashboard, CalendarDays, BookOpen, Home, Menu, X, Sparkles, Wrench, Mail, CreditCard, CircleUser as UserCircle } from 'lucide-react';
 
 interface NavItem {
@@ -85,6 +86,13 @@ function AccountNavItem({ onNavigate }: { onNavigate?: () => void }) {
           >
             Terms &amp; Conditions
           </Link>
+          <Link
+            to="/admin/account/documentation"
+            onClick={onNavigate}
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Documentation
+          </Link>
         </div>
       )}
       <div className="lg:hidden ml-6 mt-1 space-y-1">
@@ -101,6 +109,13 @@ function AccountNavItem({ onNavigate }: { onNavigate?: () => void }) {
           className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
         >
           Terms &amp; Conditions
+        </Link>
+        <Link
+          to="/admin/account/documentation"
+          onClick={onNavigate}
+          className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+        >
+          Documentation
         </Link>
       </div>
     </div>
@@ -218,6 +233,7 @@ export default function AdminDashboard() {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/account/privacy" element={<PlatformPrivacyPolicy />} />
           <Route path="/account/terms" element={<PlatformTermsConditions />} />
+          <Route path="/account/documentation" element={<PlatformDocumentation />} />
         </Routes>
       </main>
     </div>
