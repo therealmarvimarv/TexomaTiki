@@ -64,6 +64,32 @@ export function resolveNightlyRate(
   return ctx.basePrice;
 }
 
+/**
+ * Resolve the minimum-night requirement for a given check-in date.
+ * Precedence (highest wins):
+ *   1. date_availability_overrides min_nights (caller supplies via override map)
+ *   2. active seasonal pricing preset min_nights (highest priority wins on overlap)
+ *   3. property default min_nights
+ */
+export function resolveMinNights(
+  dateStr: string,
+  propertyDefault: number,
+  seasonalPresets: SeasonalPreset[],
+  dateOverrides: Record<string, number>,
+): number {
+  if (dateOverrides[dateStr] !== undefined) return dateOverrides[dateStr];
+
+  const matchingPresets = seasonalPresets.filter(
+    (p) => dateStr >= p.start_date && dateStr <= p.end_date && p.min_nights != null && p.min_nights > 0,
+  );
+  if (matchingPresets.length > 0) {
+    const best = matchingPresets.reduce((a, b) => (b.priority > a.priority ? b : a));
+    return Number(best.min_nights);
+  }
+
+  return propertyDefault;
+}
+
 export interface PriceBreakdown {
   nights: number;
   subtotal: number;

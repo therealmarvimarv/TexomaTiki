@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
-import { loadPricingContext, calculatePricing as calcPricing, resolveNightlyRate, PricingContext } from '../lib/pricing';
+import { loadPricingContext, calculatePricing as calcPricing, resolveNightlyRate, resolveMinNights, PricingContext } from '../lib/pricing';
 import { PriceCalculation } from '../types';
 import DateRangePicker from './DateRangePicker';
 import { ChevronUp, ChevronDown, Minus, Plus, Loader2 } from 'lucide-react';
@@ -142,15 +142,17 @@ export default function BookingCard({ propertyId, basePrice, cleaningFee, taxRat
       }
 
       const globalMin = propRes.data?.min_nights ?? 1;
+      const dateMinOverrides: Record<string, number> = {};
+      for (const o of (availRes.data ?? [])) {
+        if (o.min_nights !== null) dateMinOverrides[o.date] = o.min_nights;
+      }
       const mnMap: Record<string, number> = {};
       const mnCur = new Date(today);
       while (mnCur <= horizon) {
         const [y, m, d] = [mnCur.getFullYear(), mnCur.getMonth() + 1, mnCur.getDate()];
-        mnMap[`${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`] = globalMin;
+        const dateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        mnMap[dateStr] = resolveMinNights(dateStr, globalMin, ctx.seasonalPresets, dateMinOverrides);
         mnCur.setDate(mnCur.getDate() + 1);
-      }
-      for (const o of (availRes.data ?? [])) {
-        if (o.min_nights !== null) mnMap[o.date] = o.min_nights;
       }
 
       const mode = (propRes.data?.display_price_mode ?? 'base') as 'base' | 'average';

@@ -44,6 +44,26 @@ interface DateOverride { date: string; rate: number }
 interface SeasonalPreset { start_date: string; end_date: string; nightly_rate: number; min_nights: number | null; priority: number; is_active: boolean }
 interface DbFee { name: string; fee_type: string; amount: number; applies_after_guests: number | null; apply_to_guest_quote: boolean; is_standard: boolean }
 
+function resolveMinNightsForCheckIn(
+  checkIn: string,
+  propertyDefault: number,
+  seasonalPresets: SeasonalPreset[],
+  dateOverrides: { date: string; min_nights: number | null }[],
+): number {
+  const dateOverride = dateOverrides.find((o) => o.date === checkIn && o.min_nights != null);
+  if (dateOverride) return Number(dateOverride.min_nights);
+
+  const matchingPresets = seasonalPresets.filter(
+    (p) => p.is_active && compareDates(checkIn, p.start_date) >= 0 && compareDates(checkIn, p.end_date) <= 0 && p.min_nights != null && p.min_nights > 0,
+  );
+  if (matchingPresets.length > 0) {
+    const best = matchingPresets.reduce((a, b) => (b.priority > a.priority ? b : a));
+    return Number(best.min_nights);
+  }
+
+  return propertyDefault;
+}
+
 function resolveNightlyRate(
   dateStr: string,
   basePrice: number,
@@ -169,13 +189,6 @@ Deno.serve(async (req: Request) => {
       }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const minNights = property.min_nights ?? 1;
-    if (nights < minNights) {
-      return new Response(JSON.stringify({ error: `Minimum stay is ${minNights} night(s)` }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const maxNights = property.max_nights ?? 0;
     if (maxNights > 0 && nights > maxNights) {
       return new Response(JSON.stringify({ error: `Maximum stay is ${maxNights} night(s)` }), {
@@ -231,11 +244,12 @@ Deno.serve(async (req: Request) => {
     }
 
     // ── Load pricing data ─────────────────────────────────────────────────────
-    const [dowRes, overrideRes, feesRes, seasonalRes] = await Promise.all([
+    const [dowRes, overrideRes, feesRes, seasonalRes, availOverrideRes] = await Promise.all([
       supabase.from("day_of_week_rates").select("day_of_week,rate").eq("property_id", propertyId),
       supabase.from("date_price_overrides").select("date,rate").eq("property_id", propertyId),
       supabase.from("property_fees").select("name,fee_type,amount,applies_after_guests,apply_to_guest_quote,is_standard").eq("property_id", propertyId).eq("enabled", true).order("sort_order"),
       supabase.from("seasonal_pricing_presets").select("start_date,end_date,nightly_rate,min_nights,priority,is_active").eq("property_id", propertyId).eq("is_active", true),
+      supabase.from("date_availability_overrides").select("date,min_nights").eq("property_id", propertyId).eq("date", checkIn),
     ]);
 
     const basePrice = Number(property.base_price ?? 0);
@@ -250,6 +264,19 @@ Deno.serve(async (req: Request) => {
       priority: p.priority,
       is_active: p.is_active,
     }));
+
+    // ── Minimum-night validation (seasonal-aware) ───────────────────────────
+    const effectiveMinNights = resolveMinNightsForCheckIn(
+      checkIn,
+      property.min_nights ?? 1,
+      seasonalPresets,
+      availOverrideRes.data ?? [],
+    );
+    if (nights < effectiveMinNights) {
+      return new Response(JSON.stringify({ error: `Minimum stay is ${effectiveMinNights} night(s)` }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const dbFees: DbFee[] = (feesRes.data ?? []).map((f) => ({
       name: f.name,
       fee_type: f.fee_type,

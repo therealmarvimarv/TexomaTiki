@@ -186,7 +186,32 @@ interface SeasonalPreset {
   start_date: string;
   end_date: string;
   nightly_rate: number;
+  min_nights: number | null;
   priority: number;
+}
+
+function resolveMinNightsForCheckIn(
+  checkIn: string,
+  propertyDefault: number,
+  seasonalPresets: SeasonalPreset[],
+  dateOverrides: { date: string; min_nights: number | null }[],
+): number {
+  const dateOverride = dateOverrides.find((o) => o.date === checkIn && o.min_nights != null);
+  if (dateOverride) return Number(dateOverride.min_nights);
+
+  const [cy, cm, cd] = checkIn.split("-").map(Number);
+  const ciDate = new Date(cy, cm - 1, cd);
+  const matchingPresets = seasonalPresets.filter((p) => {
+    const [sy, sm, sd] = p.start_date.split("-").map(Number);
+    const [ey, em, ed] = p.end_date.split("-").map(Number);
+    return ciDate >= new Date(sy, sm - 1, sd) && ciDate <= new Date(ey, em - 1, ed) && p.min_nights != null && p.min_nights > 0;
+  });
+  if (matchingPresets.length > 0) {
+    const best = matchingPresets.reduce((a, b) => (b.priority > a.priority ? b : a));
+    return Number(best.min_nights);
+  }
+
+  return propertyDefault;
 }
 
 function resolveNightlyRate(
@@ -487,7 +512,7 @@ Deno.serve(async (req: Request) => {
       supabase.from("date_availability_overrides").select("date,min_nights")
         .eq("property_id", property_id).gte("date", check_in).lte("date", check_out),
       supabase.from("seasonal_pricing_presets")
-        .select("start_date,end_date,nightly_rate,priority")
+        .select("start_date,end_date,nightly_rate,min_nights,priority")
         .eq("property_id", property_id)
         .eq("is_active", true),
     ]);
@@ -506,7 +531,6 @@ Deno.serve(async (req: Request) => {
     }
 
     const availOverrides = availOverrideRes.data ?? [];
-    const minNightsOverride = availOverrides.find((o) => o.date === check_in)?.min_nights ?? null;
 
     const rules: PropertyRules = {
       min_nights: prop.min_nights ?? 1,
@@ -515,18 +539,6 @@ Deno.serve(async (req: Request) => {
       min_notice_days: prop.min_notice_days ?? null,
       max_advance_days: prop.max_advance_days ?? null,
     };
-
-    // ── Availability check ────────────────────────────────────────────────────
-    const avail = await checkAvailability(
-      supabase, property_id, check_in, check_out, guests, rules, minNightsOverride,
-    );
-
-    if (!avail.available) {
-      const httpStatus = avail.code === "CONFLICT" || avail.code === "BLOCKED" ? 409 : 400;
-      return new Response(JSON.stringify({ error: avail.message, code: avail.code }), {
-        status: httpStatus, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
 
     // ── Server-side pricing ───────────────────────────────────────────────────
     const basePrice = Number(prop.base_price);
@@ -539,8 +551,29 @@ Deno.serve(async (req: Request) => {
       start_date: p.start_date,
       end_date: p.end_date,
       nightly_rate: Number(p.nightly_rate),
+      min_nights: p.min_nights,
       priority: p.priority,
     }));
+
+    const effectiveMinNights = resolveMinNightsForCheckIn(
+      check_in,
+      rules.min_nights,
+      seasonalPresets,
+      availOverrides,
+    );
+
+    // ── Availability check ────────────────────────────────────────────────────
+    const avail = await checkAvailability(
+      supabase, property_id, check_in, check_out, guests, rules, effectiveMinNights,
+    );
+
+    if (!avail.available) {
+      const httpStatus = avail.code === "CONFLICT" || avail.code === "BLOCKED" ? 409 : 400;
+      return new Response(JSON.stringify({ error: avail.message, code: avail.code }), {
+        status: httpStatus, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const dbFees: DbFee[] = (feesRes.data ?? []).map((f) => ({
       name: f.name,
       fee_type: f.fee_type,
