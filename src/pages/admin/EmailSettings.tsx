@@ -1243,6 +1243,7 @@ const TRIGGER_LABELS: Record<string, string> = {
   booking_request_declined: 'Booking Request Declined',
   booking_confirmed:        'Booking Confirmed / Paid',
   booking_cancelled:        'Booking Cancelled',
+  booking_refunded:         'Booking Refunded',
   inquiry_received:         'Inquiry Submitted',
   before_check_in:          'Before Check-In',
   day_of_check_in:          'Day of Check-In',
@@ -1291,6 +1292,7 @@ const IMMEDIATE_TRIGGERS = [
   'booking_request_declined',
   'booking_confirmed',
   'booking_cancelled',
+  'booking_refunded',
   'inquiry_received',
 ];
 
