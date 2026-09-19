@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
-import { ChevronLeft, ChevronRight, ToggleLeft, ToggleRight, X, Moon, Plus, Save, Trash2, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ToggleLeft, ToggleRight, X, Moon, Plus, Save, Trash2, Info, Pencil } from 'lucide-react';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -721,13 +721,22 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
                     </span>
                     <span className="text-sm font-medium text-amber-700">${o.rate}</span>
                   </button>
-                  <button
-                    onClick={() => deleteDateOverride(o.id, o.date)}
-                    className="text-gray-300 hover:text-red-500 transition-colors"
-                    title="Remove custom price"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => openDayEditor(o.date)}
+                      className="text-gray-300 hover:text-blue-500 transition-colors"
+                      title="Edit custom price"
+                    >
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                    <button
+                      onClick={() => deleteDateOverride(o.id, o.date)}
+                      className="text-gray-300 hover:text-red-500 transition-colors"
+                      title="Remove custom price"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
