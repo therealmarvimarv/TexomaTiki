@@ -711,18 +711,23 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
             <div className="space-y-1 max-h-48 overflow-y-auto">
               {[...overrides].sort((a, b) => a.date.localeCompare(b.date)).map(o => (
                 <div key={o.id} className="flex items-center justify-between py-1">
-                  <span className="text-sm text-gray-700">
-                    {new Date(o.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </span>
-                  <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => openDayEditor(o.date)}
+                    className="flex items-center gap-2 text-left hover:bg-amber-50 rounded px-1 -mx-1 transition-colors"
+                    title="Edit this custom price"
+                  >
+                    <span className="text-sm text-gray-700">
+                      {new Date(o.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
                     <span className="text-sm font-medium text-amber-700">${o.rate}</span>
-                    <button
-                      onClick={() => deleteDateOverride(o.id, o.date)}
-                      className="text-gray-300 hover:text-red-500 transition-colors"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                  </button>
+                  <button
+                    onClick={() => deleteDateOverride(o.id, o.date)}
+                    className="text-gray-300 hover:text-red-500 transition-colors"
+                    title="Remove custom price"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               ))}
             </div>
