@@ -428,14 +428,9 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
         {/* Pricing Calendar Tips */}
         <div className="flex items-start gap-2.5 rounded-lg border border-blue-100 bg-blue-50/60 px-3.5 py-3">
           <Info className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" strokeWidth={1.75} />
-          <div className="text-xs text-gray-600 space-y-1">
-            <p className="font-semibold text-gray-700">Pricing Calendar Tips</p>
-            <ul className="space-y-0.5 leading-relaxed">
-              <li>Click a nightly price on any date to set a custom price for that specific date.</li>
-              <li>Use the moon/minimum-stay control on a date to set a custom minimum stay starting on that date.</li>
-              <li>Leave the minimum-stay field blank or set it to 0 to remove the custom override.</li>
-              <li>Date-specific overrides take priority over seasonal, day-of-week, and default settings.</li>
-            </ul>
+          <div className="text-xs text-gray-600 space-y-0.5">
+            <p>Click nightly price to set custom price</p>
+            <p>Click moon/min to set custom min stay</p>
           </div>
         </div>
 
@@ -633,6 +628,9 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
                 />
               </div>
             </div>
+            <p className="text-xs text-gray-400">
+              Date-specific overrides take priority over seasonal, day-of-week, and default settings.
+            </p>
             <div className="flex gap-2">
               <button
                 onClick={saveDateOverride}
