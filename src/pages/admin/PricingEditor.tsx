@@ -121,17 +121,11 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
       return { id: found?.id, day_of_week: i, rate: found ? String(found.rate) : '' };
     }));
 
-    const rawOverrides = (overrideRes.data ?? []).map(r => ({
+    setOverrides((overrideRes.data ?? []).map(r => ({
       id: r.id,
       date: r.date,
       rate: Number(r.rate),
-    }));
-    const seenDates = new Set<string>();
-    setOverrides(rawOverrides.filter(o => {
-      if (seenDates.has(o.date)) return false;
-      seenDates.add(o.date);
-      return true;
-    }));
+    })));
 
     setAvailOverrides((availRes.data ?? []).map(r => ({
       id: r.id,
@@ -214,16 +208,18 @@ export default function PricingEditor({ propertyId, basePrice, taxRate }: { prop
     const rate = parseFloat(selectedDay.rate);
     if (isNaN(rate) || rate <= 0) return;
 
-    const { data } = await supabase
-      .from('date_price_overrides')
-      .upsert({ property_id: propertyId, date: selectedDay.date, rate }, { onConflict: 'property_id,date' })
-      .select()
-      .maybeSingle();
-    if (data) {
-      setOverrides(prev => {
-        const filtered = prev.filter(o => o.date !== selectedDay.date);
-        return [...filtered, { id: data.id, date: data.date, rate: Number(data.rate) }];
-      });
+    if (selectedDay.existingId) {
+      await supabase.from('date_price_overrides').update({ rate }).eq('id', selectedDay.existingId);
+      setOverrides(prev => prev.map(o => o.id === selectedDay.existingId ? { ...o, rate } : o));
+    } else {
+      const { data } = await supabase
+        .from('date_price_overrides')
+        .upsert({ property_id: propertyId, date: selectedDay.date, rate }, { onConflict: 'property_id,date' })
+        .select()
+        .maybeSingle();
+      if (data) {
+        setOverrides(prev => [...prev.filter(o => o.date !== selectedDay.date), { id: data.id, date: data.date, rate: Number(data.rate) }]);
+      }
     }
     setSelectedDay(null);
     flash('Price saved');
