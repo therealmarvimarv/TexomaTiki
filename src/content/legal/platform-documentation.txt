@@ -1139,6 +1139,22 @@ Each area can contain:
 - features or amenities associated with that area
 Areas can also be reordered using the drag handle.
 
+## Bedroom Areas on the Homepage
+
+Bedroom areas created in the Photo Tour can also supply the bedroom cards displayed in the Where You’ll Sleep section on the homepage.
+
+For each matching bedroom area:
+
+Area Title — the Photo Tour area title is used as the bedroom name shown on the homepage.
+First Photo — the first photo in that Photo Tour area is used as the bedroom card image on the homepage.
+Photo Order — if the photos are reordered, the new first photo becomes the image displayed on the homepage.
+Room Name Changes — if the Photo Tour area title is changed, the bedroom name shown on the homepage changes with it.
+View Photos — selecting the bedroom card on the homepage takes the guest directly to that bedroom’s corresponding section in the Photo Tour.
+
+For this reason, make sure each bedroom Photo Tour area has the correct title and that the photo you want representing the room is positioned first in that area.
+
+This keeps the bedroom information on the homepage connected to the property’s Photo Tour without requiring the bedroom title or cover image to be managed separately.
+
 ## Managing Photos Within an Area
 
 Each Photo Tour Area has its own photo gallery.
