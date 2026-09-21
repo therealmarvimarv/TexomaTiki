@@ -1145,11 +1145,11 @@ Bedroom areas created in the Photo Tour can also supply the bedroom cards displa
 
 For each matching bedroom area:
 
-Area Title — the Photo Tour area title is used as the bedroom name shown on the homepage.
-First Photo — the first photo in that Photo Tour area is used as the bedroom card image on the homepage.
-Photo Order — if the photos are reordered, the new first photo becomes the image displayed on the homepage.
-Room Name Changes — if the Photo Tour area title is changed, the bedroom name shown on the homepage changes with it.
-View Photos — selecting the bedroom card on the homepage takes the guest directly to that bedroom’s corresponding section in the Photo Tour.
+- Area Title — the Photo Tour area title is used as the bedroom name shown on the homepage.
+- First Photo — the first photo in that Photo Tour area is used as the bedroom card image on the homepage.
+- Photo Order — if the photos are reordered, the new first photo becomes the image displayed on the homepage.
+- Room Name Changes — if the Photo Tour area title is changed, the bedroom name shown on the homepage changes with it.
+- View Photos — selecting the bedroom card on the homepage takes the guest directly to that bedroom’s corresponding section in the Photo Tour.
 
 For this reason, make sure each bedroom Photo Tour area has the correct title and that the photo you want representing the room is positioned first in that area.
 
