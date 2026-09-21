@@ -30,7 +30,7 @@ async function fetchProperty(id: string): Promise<Property> {
 
   if (error || !prop) throw new Error('Property not found');
 
-  const [imagesRes, highlightsRes, sleepingRes, reviewsRes, amenitiesRes] = await Promise.all([
+  const [imagesRes, highlightsRes, sleepingRes, reviewsRes, amenitiesRes, photoSectionsRes, sectionImagesRes] = await Promise.all([
     supabase.from('property_images').select('*').eq('property_id', id).is('section_id', null).order('sort_order'),
     supabase.from('highlights').select('*').eq('property_id', id).order('sort_order'),
     supabase.from('sleeping_arrangements').select('*').eq('property_id', id).order('sort_order'),
@@ -39,6 +39,8 @@ async function fetchProperty(id: string): Promise<Property> {
       .from('property_amenities')
       .select('amenity_id, amenities(id, name, icon, category_id, amenity_categories(name))')
       .eq('property_id', id),
+    supabase.from('photo_sections').select('*').eq('property_id', id).order('sort_order'),
+    supabase.from('property_images').select('*').eq('property_id', id).not('section_id', 'is', null).order('sort_order'),
   ]);
 
   const amenitiesByCategory: Record<string, { id: string; name: string; icon: string }[]> = {};
@@ -48,6 +50,25 @@ async function fetchProperty(id: string): Promise<Property> {
     const categoryName = (amenity as any).amenity_categories?.name ?? 'Other';
     if (!amenitiesByCategory[categoryName]) amenitiesByCategory[categoryName] = [];
     amenitiesByCategory[categoryName].push({ id: amenity.id, name: amenity.name, icon: amenity.icon });
+  }
+
+  const photoSectionLookup: Record<string, { title: string; firstPhotoUrl?: string }> = {};
+  for (const sec of photoSectionsRes.data ?? []) {
+    const sectionPhotos = (sectionImagesRes.data ?? []).filter(i => i.section_id === sec.id);
+    photoSectionLookup[sec.slug] = {
+      title: sec.title,
+      firstPhotoUrl: sectionPhotos.length > 0 ? sectionPhotos[0].url : undefined,
+    };
+  }
+
+  function getSectionId(roomName: string, index: number): string {
+    const lower = roomName.toLowerCase();
+    if (lower.includes('bedroom') || lower.includes('bed room')) {
+      const match = lower.match(/(\d+)/);
+      const num = match ? match[1] : String(index + 1);
+      return `section-bedroom-${num}`;
+    }
+    return 'section-additional';
   }
 
   return {
@@ -85,13 +106,17 @@ async function fetchProperty(id: string): Promise<Property> {
     safetyNotesTitle: prop.safety_notes_title ?? undefined,
     images: (imagesRes.data ?? []).map((i) => ({ id: i.id, url: i.url, sortOrder: i.sort_order })),
     highlights: (highlightsRes.data ?? []).map((h) => ({ id: h.id, icon: h.icon, text: h.text, subtitle: h.subtitle ?? undefined, sortOrder: h.sort_order })),
-    sleepingArrangements: (sleepingRes.data ?? []).map((s) => ({
-      id: s.id,
-      roomName: s.room_name,
-      bedType: s.bed_type,
-      imageUrl: s.image_url ?? undefined,
-      sortOrder: s.sort_order,
-    })),
+    sleepingArrangements: (sleepingRes.data ?? []).map((s, i) => {
+      const sectionId = getSectionId(s.room_name, i);
+      const photoSection = photoSectionLookup[sectionId];
+      return {
+        id: s.id,
+        roomName: photoSection ? photoSection.title : s.room_name,
+        bedType: s.bed_type,
+        imageUrl: photoSection ? photoSection.firstPhotoUrl : (s.image_url ?? undefined),
+        sortOrder: s.sort_order,
+      };
+    }),
     reviews: (reviewsRes.data ?? []).map((r) => ({
       id: r.id,
       guestName: r.guest_name,
