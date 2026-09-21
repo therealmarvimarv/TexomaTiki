@@ -115,6 +115,7 @@ async function fetchProperty(id: string): Promise<Property> {
         bedType: s.bed_type,
         imageUrl: photoSection ? photoSection.firstPhotoUrl : (s.image_url ?? undefined),
         sortOrder: s.sort_order,
+        sectionId: photoSection ? sectionId : undefined,
       };
     }),
     reviews: (reviewsRes.data ?? []).map((r) => ({

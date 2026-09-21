@@ -66,6 +66,7 @@ export interface SleepingArrangement {
   bedType: string;
   imageUrl?: string;
   sortOrder: number;
+  sectionId?: string;
 }
 
 export interface Review {

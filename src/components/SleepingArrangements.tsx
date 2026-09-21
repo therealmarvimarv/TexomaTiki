@@ -5,7 +5,7 @@ interface Props {
   arrangements: SleepingArrangement[];
 }
 
-// Map room names to photo section IDs
+// Fallback map room names to photo section IDs (only used when no matched section slug is provided)
 function getSectionId(roomName: string, index: number): string {
   const lower = roomName.toLowerCase();
   if (lower.includes('bedroom') || lower.includes('bed room')) {
@@ -28,7 +28,7 @@ export default function SleepingArrangements({ arrangements }: Props) {
       <h2 className="text-2xl font-semibold mb-6">Where you'll sleep</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {arrangements.map((arrangement, index) => {
-          const sectionId = getSectionId(arrangement.roomName, index);
+          const sectionId = arrangement.sectionId ?? getSectionId(arrangement.roomName, index);
           return (
             <button
               key={arrangement.id}
