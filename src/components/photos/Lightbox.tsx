@@ -66,7 +66,7 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext }: Pro
           key={index}
           src={photo.src}
           alt={photo.alt}
-          className="max-h-[583px] max-w-[1036px] w-full h-full object-contain rounded-xl select-none"
+          className="max-h-[583px] max-w-[1036px] w-auto h-auto object-contain rounded-xl select-none"
           draggable={false}
         />
 
