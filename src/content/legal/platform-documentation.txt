@@ -2239,25 +2239,54 @@ If settings have just been saved, refresh the page if the status has not updated
 
 ## Payment Mode
 
-The system includes four payment modes.
+The Payment Mode controls both **when the guest pays** and **whether the booking requires administrator approval before payment**.
+
+The four available modes are:
+
+- Manual Test
+- Stripe Test
+- Manual Live
+- Stripe Live
+
+The easiest way to understand the difference is:
+
+**Manual modes = Request first → Admin reviews → Payment after approval**
+
+**Stripe modes = Available dates → Guest goes directly to checkout**
+
+> IMPORTANT: "Manual" does not mean the booking or payment has to be handled outside the platform. It means the guest's request must be reviewed by the administrator before the guest proceeds with payment.
 
 ### Manual Test
 
-Use Manual Test when testing the booking-request workflow without collecting an online payment.
+Manual Test is used to test the **request-and-approval booking workflow** without processing a real payment.
 
-Guests can submit booking requests, but Stripe Checkout is not used.
+When a guest selects available dates and submits the booking:
 
-This is useful for testing booking-management workflows without processing any payment.
+1. The guest sends a booking request instead of going directly to Stripe Checkout.
+2. The requested dates are held while the booking is waiting for administrator review.
+3. The administrator reviews the booking request.
+4. The administrator can approve or decline the request.
+5. If the request is approved, the booking moves forward to the payment step.
+6. The guest receives the applicable automated email with a payment link to complete payment.
+7. The payment is completed using the test payment workflow, so no real money is charged.
+
+Use Manual Test when you want to test the complete administrator-review process before allowing the guest to complete payment.
+
+> TIP: Manual Test is useful for properties where the owner wants to review the guest, dates, occupancy, pets, special requests, or other booking details before allowing payment.
 
 ### Stripe Test
 
-Use Stripe Test while developing or testing the complete online payment flow.
+Stripe Test is used to test the **immediate checkout workflow** without charging real money.
 
-Guests are sent through Stripe Checkout using test credentials only.
+When a guest selects dates:
 
-No real money is charged.
+1. The platform checks whether the requested dates are available.
+2. If the dates are available and the booking meets the applicable rules, the guest can continue directly to Stripe Checkout.
+3. The guest does not wait for administrator approval before reaching the payment page.
+4. Stripe Test credentials are used, so the checkout behaves like a real payment without charging a real card.
+5. After the test payment succeeds, the platform processes the booking through the normal online-payment workflow.
 
-Stripe test cards can be used to verify:
+Stripe Test can be used to verify:
 
 - checkout
 - successful payments
@@ -2266,23 +2295,82 @@ Stripe test cards can be used to verify:
 - webhook processing
 - payment-related emails
 - refunds and other supported payment workflows
-This should normally remain selected while the property website is still being prepared or tested.
+
+Use Stripe Test when you want to test the guest experience of selecting available dates and proceeding directly to payment.
+
+> TIP: Stripe Test is the best mode for testing the complete online checkout experience before switching the property to Stripe Live.
+
+### Testing a Stripe Checkout Payment
+
+When the Payment Mode is set to Stripe Test, Stripe Checkout uses test payment information. Do not enter a real credit or debit card.
+
+Use the following Stripe test card:
+
+**Card Number**
+
+4242 4242 4242 4242
+
+**Expiration Date**
+
+Enter any future expiration date.
+
+Example:
+
+12/30
+
+**Security Code (CVC)**
+
+Enter any 3-digit number.
+
+Example:
+
+123
+
+**ZIP / Postal Code**
+
+If requested, enter any valid ZIP or postal code.
+
+> IMPORTANT: The card number 4242 4242 4242 4242 is a Stripe test card. It does not process a real charge and should only be used while the platform is in Stripe Test mode.
+
+Complete the checkout just as a guest would. After the test payment succeeds, return to the administration area and confirm that the booking, payment status, notifications, and other applicable booking activity updated correctly.
+
+> WARNING: Do not use the Stripe test card after switching the property to Stripe Live. Stripe Live processes real payment methods and real charges.
 
 ### Manual Live
 
-Use Manual Live when the property is operating in a live environment but online Stripe payment collection should not be used.
+Manual Live uses the same **request-and-approval workflow** as Manual Test, but it is intended for real guest bookings and real payments.
 
-Guests submit booking requests without being charged through Stripe Checkout.
+When a guest submits a booking:
 
-Live Stripe credentials may remain stored in the system, but they are not used while this mode is selected.
+1. The guest sends a booking request instead of going directly to checkout.
+2. The requested dates are held while the administrator reviews the request.
+3. The administrator approves or declines the request.
+4. If the request is declined, the booking does not proceed to payment.
+5. If the request is approved, the guest receives the applicable automated email with a payment link.
+6. The guest can then complete payment using the live payment workflow.
+7. A completed live Stripe payment is a real charge.
+
+Use Manual Live when the property owner wants to review each booking request before allowing the guest to pay.
+
+> IMPORTANT: Manual Live gives the administrator control over whether a booking request is accepted before the guest is allowed to complete payment.
 
 ### Stripe Live
 
-Use Stripe Live only when the property is ready to accept real bookings and real payments.
+Stripe Live is the **immediate live checkout workflow**.
 
-Guests are directed to Stripe Checkout using the configured live Stripe credentials.
+When a guest selects dates:
 
-> WARNING: Stripe Live processes real charges. Use this mode only when the property is ready to accept real guest payments.
+1. The platform checks whether the dates are available.
+2. The platform applies the property's booking, pricing, minimum-stay, guest-count, and other applicable rules.
+3. If the stay qualifies, the guest can proceed directly to Stripe Checkout.
+4. Administrator approval is not required before checkout.
+5. The guest enters a real payment method.
+6. Stripe processes a real charge.
+7. The booking and payment records are updated through the live payment workflow.
+
+Use Stripe Live when guests should be able to book available dates and pay immediately without waiting for the administrator to manually approve the request first.
+
+> WARNING: Stripe Live processes real payment methods and real charges. Only enable Stripe Live after the property, pricing, availability, emails, Stripe credentials, and webhook configuration have been fully tested.
 
 Before switching to Stripe Live, confirm that:
 
@@ -2291,9 +2379,25 @@ Before switching to Stripe Live, confirm that:
 - the live webhook signing secret is configured
 - the live webhook destination is active in Stripe
 - the website is ready for real guests
+
 The Test credentials can remain saved. There is no need to delete them when switching to Stripe Live.
 
 This makes it easy to switch back to Stripe Test later if additional testing is required.
+
+### Manual vs. Stripe at a Glance
+
+**Manual Test / Manual Live**
+
+Guest selects dates → Booking request submitted → Dates held → Administrator reviews → Approve or decline → Approved guest receives payment link → Guest completes payment
+
+**Stripe Test / Stripe Live**
+
+Guest selects dates → Availability and booking rules are checked → Guest proceeds directly to Stripe Checkout → Payment is completed → Booking continues through the payment workflow
+
+The difference between **Test** and **Live** is whether real money is processed.
+
+- **Test** modes are for testing and do not process real charges.
+- **Live** modes are for actual guest bookings and process real payments.
 
 ## Stripe Test Credentials
 
