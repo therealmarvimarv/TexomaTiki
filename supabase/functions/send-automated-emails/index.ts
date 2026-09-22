@@ -215,18 +215,18 @@ async function sendEmail(
   to: string,
   subject: string,
   html: string,
-  bookingId: string,
+  bookingId: string | null,
   templateKey: string,
 ): Promise<{ ok: boolean; error?: string }> {
   if (!to) return { ok: false, error: "No recipient" };
   if (!cfg.provider || cfg.provider === "disabled") {
-    await logSend(bookingId, templateKey, to, subject, "skipped", "Email provider disabled");
+    await logSend(bookingId, templateKey, to, "skipped", subject, "Email provider disabled");
     return { ok: false, error: "disabled" };
   }
 
   if (cfg.provider === "resend") {
     if (!cfg.resendApiKey || !cfg.fromEmail) {
-      await logSend(bookingId, templateKey, to, subject, "skipped", "Resend not configured");
+      await logSend(bookingId, templateKey, to, "skipped", subject, "Resend not configured");
       return { ok: false, error: "Resend not configured" };
     }
     const res = await fetch("https://api.resend.com/emails", {
@@ -236,10 +236,10 @@ async function sendEmail(
     });
     if (!res.ok) {
       const err = await res.text();
-      await logSend(bookingId, templateKey, to, subject, "failed", err.slice(0, 200));
+      await logSend(bookingId, templateKey, to, "failed", subject, err.slice(0, 200));
       return { ok: false, error: err };
     }
-    await logSend(bookingId, templateKey, to, subject, "sent");
+    await logSend(bookingId, templateKey, to, "sent", subject);
     return { ok: true };
   }
 
@@ -250,7 +250,7 @@ async function sendEmail(
       !cfg.smtpPassword && "smtp_password",
     ].filter(Boolean).join(", ");
     if (missing) {
-      await logSend(bookingId, templateKey, to, subject, "skipped", `Missing: ${missing}`);
+      await logSend(bookingId, templateKey, to, "skipped", subject, `Missing: ${missing}`);
       return { ok: false, error: `Missing SMTP config: ${missing}` };
     }
     try {
@@ -261,11 +261,11 @@ async function sendEmail(
         connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 15000,
       });
       await transporter.sendMail({ from: cfg.smtpFrom || cfg.smtpUsername, to, subject, html });
-      await logSend(bookingId, templateKey, to, subject, "sent");
+      await logSend(bookingId, templateKey, to, "sent", subject);
       return { ok: true };
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      await logSend(bookingId, templateKey, to, subject, "failed", msg);
+      await logSend(bookingId, templateKey, to, "failed", subject, msg);
       return { ok: false, error: msg };
     }
   }
@@ -274,13 +274,14 @@ async function sendEmail(
 }
 
 async function logSend(
-  bookingId: string,
+  bookingId: string | null,
   templateKey: string,
   recipient: string,
-  subject: string,
   status: string,
+  subject: string,
   errorMessage?: string,
 ) {
+  if (!bookingId) return;
   try {
     await supabase.from("notification_logs").insert({
       related_type: "booking",
@@ -288,7 +289,7 @@ async function logSend(
       channel: "email",
       provider: "automated",
       recipient,
-      subject,
+      subject: subject || null,
       status,
       template_key: templateKey || null,
       error_message: errorMessage ?? null,
@@ -531,7 +532,7 @@ async function run(isTest: boolean, testAdminEmail?: string): Promise<{
           await new Promise(r => setTimeout(r, 600));
         }
         const res = await sendEmail(cfg, to, tpl.subject, tpl.html, booking.id, automation.template_key ?? "automation");
-        if (!res.ok && res.error !== "disabled") allOk = false;
+      if (!res.ok && res.error !== "disabled") allOk = false;
       }
 
       if (!isTest) {
@@ -555,6 +556,112 @@ async function run(isTest: boolean, testAdminEmail?: string): Promise<{
   return result;
 }
 
+// ── Test runner (per-automation) ─────────────────────────────────────────────
+
+async function runTest(automationId: string): Promise<{
+  ok: boolean;
+  sent: number;
+  automation_name?: string;
+  error?: string;
+}> {
+  const { data: autoRow, error: autoErr } = await supabase
+    .from("email_automations")
+    .select("id,property_id,name,template_id,template_key,recipient_type,trigger_type,offset_days,send_time,is_active")
+    .eq("id", automationId)
+    .maybeSingle();
+
+  if (autoErr || !autoRow) {
+    return { ok: false, sent: 0, error: "Automation not found." };
+  }
+
+  const automation = autoRow as Automation;
+
+  const cfg = await loadEmailConfig();
+
+  if (!cfg.adminEmail) {
+    return { ok: false, sent: 0, error: "No admin email configured. Set the admin email in Email Settings." };
+  }
+  if (!cfg.provider || cfg.provider === "disabled") {
+    return { ok: false, sent: 0, error: "Email provider is disabled. Configure SMTP or Resend in Email Settings." };
+  }
+
+  let account: Record<string, string> = {};
+  try {
+    const { data } = await supabase
+      .from("account_settings")
+      .select("owner_name,owner_email,owner_phone,business_name,business_address,support_email,timezone,property_address,check_in_time,check_out_time,suggested_door_code,listing_name,listing_address,listing_city,listing_state,listing_zip,listing_country,listing_manager_name,listing_manager_role,manager_email,manager_phone,primary_guest_contact_name,primary_guest_contact_email,primary_guest_contact_phone")
+      .eq("property_id", PROPERTY_ID)
+      .maybeSingle();
+    if (data) account = data as Record<string, string>;
+  } catch { /* ok */ }
+
+  const { data: bookings, error: bookErr } = await supabase
+    .from("bookings")
+    .select("id,property_id,guest_name,guest_email,guest_phone,check_in,check_out,guests,adults,children,infants,pets,total_price,amount_total,amount_subtotal,amount_fees,payment_status,special_requests,status")
+    .eq("property_id", PROPERTY_ID)
+    .eq("status", "confirmed")
+    .is("archived_at", null)
+    .not("guest_email", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  let booking: Booking;
+  let bookingIdForLog: string | null;
+
+  if (bookErr || !bookings?.length) {
+    const now = new Date();
+    const checkInDate = new Date(now);
+    checkInDate.setDate(checkInDate.getDate() + 14);
+    const checkOutDate = new Date(checkInDate);
+    checkOutDate.setDate(checkOutDate.getDate() + 5);
+
+    booking = {
+      id: "TEST-BOOKING",
+      property_id: PROPERTY_ID,
+      guest_name: "Test Guest",
+      guest_email: "test@example.com",
+      guest_phone: "(555) 555-0100",
+      check_in: checkInDate.toISOString().split("T")[0],
+      check_out: checkOutDate.toISOString().split("T")[0],
+      guests: 2,
+      adults: 2,
+      children: 0,
+      infants: 0,
+      pets: 0,
+      total_price: 1000,
+      amount_total: 100000,
+      amount_subtotal: 80000,
+      amount_fees: 20000,
+      payment_status: "paid",
+      confirmation_code: "TEST-BOOKING",
+      special_requests: "",
+      status: "confirmed",
+    };
+    bookingIdForLog = null;
+  } else {
+    booking = bookings[0] as Booking;
+    bookingIdForLog = booking.id;
+  }
+
+  const vars = buildVars(booking, cfg, account);
+  const tpl = await resolveTemplate(automation, vars);
+
+  if (!tpl) {
+    return { ok: false, sent: 0, error: "Assigned template not found or inactive. Assign an active template to this automation." };
+  }
+
+  const res = await sendEmail(cfg, cfg.adminEmail, tpl.subject, tpl.html, bookingIdForLog, automation.template_key ?? "automation_test");
+
+  if (!res.ok) {
+    const reason = res.error === "disabled"
+      ? "Email provider is disabled."
+      : res.error ?? "Email send failed.";
+    return { ok: false, sent: 0, error: reason };
+  }
+
+  return { ok: true, sent: 1, automation_name: automation.name };
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 Deno.serve(async (req: Request) => {
@@ -568,9 +675,13 @@ Deno.serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-  // Auth check for manual/test invocations from the UI
   const authHeader = req.headers.get("Authorization");
-  const isScheduled = !authHeader || authHeader.startsWith("Bearer " + SUPABASE_SERVICE_ROLE_KEY);
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return json({ error: "Unauthorized" }, 401);
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  const isScheduled = token === SUPABASE_SERVICE_ROLE_KEY;
 
   let isTest = false;
   let testAdminEmail: string | undefined;
@@ -584,10 +695,8 @@ Deno.serve(async (req: Request) => {
   } catch { /* ok */ }
 
   if (!isScheduled) {
-    // Must be authenticated admin
     try {
       const anonClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY") ?? "");
-      const token = authHeader!.replace("Bearer ", "");
       const { data, error } = await anonClient.auth.getUser(token);
       if (error || !data?.user) return json({ error: "Unauthorized" }, 401);
     } catch {
@@ -595,7 +704,16 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  void testAutomationId; // reserved for future per-automation test
+  if (isTest && testAutomationId) {
+    try {
+      const result = await runTest(testAutomationId);
+      return json(result);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("[send-automated-emails] test error:", msg);
+      return json({ ok: false, sent: 0, error: msg }, 500);
+    }
+  }
 
   try {
     const result = await run(isTest, testAdminEmail);

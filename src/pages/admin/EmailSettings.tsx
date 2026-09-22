@@ -1490,8 +1490,8 @@ function AutomationsSection({ token }: { token: string }) {
         body: JSON.stringify({ test: true, automation_id: a.id }),
       });
       const data = await res.json();
-      if (data.ok) flash({ type: 'ok', text: `Test run: ${data.sent} sent, ${data.skipped} skipped. (sent to admin only)` });
-      else flash({ type: 'err', text: data.error ?? 'Test failed.' });
+      if (data.ok && data.sent > 0) flash({ type: 'ok', text: `Test email sent to admin for "${a.name}".` });
+      else flash({ type: 'err', text: data.error ?? 'Test failed — no email was sent.' });
     } catch { flash({ type: 'err', text: 'Request failed.' }); }
     setTesting(null);
   }
