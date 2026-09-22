@@ -2490,7 +2490,8 @@ Do not use this when simply switching temporarily back to Stripe Test.
 
 Changing the Payment Mode is enough to determine which credential set the system uses.
 
-### Testing a Stripe Checkout Payment
+
+## Testing a Stripe Checkout Payment
 
 When the Payment Mode is set to Stripe Test, Stripe Checkout uses test payment information. Do not enter a real credit or debit card.
 
