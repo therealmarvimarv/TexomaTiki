@@ -10,9 +10,10 @@ interface DocSection {
 }
 
 interface DocBlock {
-  type: 'heading' | 'paragraph' | 'bullets' | 'numbers' | 'video';
+  type: 'heading' | 'subheading' | 'paragraph' | 'bullets' | 'numbers' | 'video' | 'callout';
   text?: string;
   items?: string[];
+  calloutType?: 'TIP' | 'IMPORTANT' | 'WARNING' | 'NOTE';
 }
 
 const slugify = (s: string) =>
@@ -49,10 +50,31 @@ function parseDocument(raw: string): DocSection[] {
       continue;
     }
 
+    if (trimmed.startsWith('### ')) {
+      flushList();
+      if (current) {
+        current.blocks.push({ type: 'subheading', text: trimmed.slice(4).trim() });
+      }
+      continue;
+    }
+
     if (trimmed.startsWith('## ')) {
       flushList();
       if (current) {
         current.blocks.push({ type: 'heading', text: trimmed.slice(3).trim() });
+      }
+      continue;
+    }
+
+    const calloutMatch = trimmed.match(/^>\s+(TIP|IMPORTANT|WARNING|NOTE):\s*(.*)$/);
+    if (calloutMatch) {
+      flushList();
+      if (current) {
+        current.blocks.push({
+          type: 'callout',
+          calloutType: calloutMatch[1] as DocBlock['calloutType'],
+          text: calloutMatch[2].trim(),
+        });
       }
       continue;
     }
@@ -122,18 +144,45 @@ export default function PlatformDocumentation() {
     setMobileNavOpen(false);
   };
 
+  const renderInline = (text: string) => {
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <strong key={i} className="font-semibold text-gray-900">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return part;
+    });
+  };
+
+  const calloutStyles: Record<string, string> = {
+    TIP: 'border-blue-200 bg-blue-50 text-blue-900',
+    IMPORTANT: 'border-amber-200 bg-amber-50 text-amber-900',
+    WARNING: 'border-red-200 bg-red-50 text-red-900',
+    NOTE: 'border-gray-200 bg-gray-50 text-gray-800',
+  };
+
   const renderBlock = (block: DocBlock, idx: number) => {
     switch (block.type) {
       case 'heading':
         return (
-          <h3 key={idx} className="text-lg font-semibold text-gray-900 mt-8 mb-3">
+          <h3 key={idx} className="text-xl font-bold text-gray-900 mt-10 mb-4 tracking-tight">
             {block.text}
           </h3>
+        );
+      case 'subheading':
+        return (
+          <h4 key={idx} className="text-base font-semibold text-gray-900 mt-6 mb-2">
+            {block.text}
+          </h4>
         );
       case 'paragraph':
         return (
           <p key={idx} className="text-gray-700 leading-relaxed mb-4">
-            {block.text}
+            {renderInline(block.text ?? '')}
           </p>
         );
       case 'bullets':
@@ -142,7 +191,7 @@ export default function PlatformDocumentation() {
             {block.items?.map((item, i) => (
               <li key={i} className="flex gap-2.5 text-gray-700 leading-relaxed">
                 <span className="text-gray-400 mt-1 flex-shrink-0">•</span>
-                <span>{item}</span>
+                <span>{renderInline(item)}</span>
               </li>
             ))}
           </ul>
@@ -155,11 +204,22 @@ export default function PlatformDocumentation() {
                 <span className="text-gray-500 font-medium mt-0.5 flex-shrink-0 min-w-[1.25rem]">
                   {i + 1}.
                 </span>
-                <span>{item}</span>
+                <span>{renderInline(item)}</span>
               </li>
             ))}
           </ol>
         );
+      case 'callout': {
+        const style = calloutStyles[block.calloutType ?? 'NOTE'];
+        return (
+          <div key={idx} className={`rounded-xl border px-4 py-3 mb-5 ${style}`}>
+            <p className="text-xs font-bold uppercase tracking-wide mb-1">
+              {block.calloutType}
+            </p>
+            <p className="text-sm leading-relaxed">{renderInline(block.text ?? '')}</p>
+          </div>
+        );
+      }
       case 'video':
         return (
           <div
