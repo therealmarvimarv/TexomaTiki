@@ -1,438 +1,394 @@
-# Tiki Cottage - Live Preview & Feature Overview
+# Tiki Cottage â€” Vacation Rental Management Platform
 
-## 🎯 What You're Getting
+**Release:** V1.0.0  
+**Status:** Canonical production baseline  
+**Application type:** Single-property direct-booking and property-management platform
 
-A complete, production-ready vacation rental booking system that looks and feels like Airbnb but runs 100% on your own server.
+Tiki Cottage is a self-managed vacation-rental platform with a public guest website and a protected administrator dashboard. It supports direct booking, Stripe payments, calendar synchronization, pricing, property content, automated email communication, cleaning, maintenance, branding, and day-to-day booking operations.
 
-## 🖼️ Visual Layout Structure
+This README describes the **current V1.0.0 implementation**. Older documentation that references Express, Prisma, MySQL, PM2, Nginx, local file uploads, or `/api/...` REST endpoints is legacy and does not describe the active application.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  [Sticky Nav: Photos | Amenities | Reviews | Location] [Reserve]│
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌──────────────────┐  ┌────┬────┐                             │
-│  │                  │  │    │    │                             │
-│  │   Hero Image     │  ├────┼────┤                             │
-│  │   (Large)        │  │    │    │                             │
-│  │                  │  └────┴────┘                             │
-│  └──────────────────┘  [Show all photos]                        │
-│                                                                  │
-├──────────────────────────────────┬──────────────────────────────┤
-│                                  │  ┌────────────────────────┐ │
-│  Tiki Cottage Lake Texoma        │  │  $175 night            │ │
-│  Entire home in Gordonville, TX  │  │                        │ │
-│  ⭐ 4.79 · 126 reviews            │  │  [Check-in] [Checkout] │ │
-│  6 guests · 3 beds · 3 baths     │  │  [Guests ▼]            │ │
-│  ─────────────────────────────   │  │                        │ │
-│                                  │  │  $175 x 2 nights  $350 │ │
-│  Host: Edwin (Superhost)         │  │  Cleaning fee     $75  │ │
-│  • 5 years hosting               │  │  Taxes            $35  │ │
-│  • 100% response rate            │  │  ─────────────────────│ │
-│  ─────────────────────────────   │  │  Total           $460  │ │
-│                                  │  │                        │ │
-│  🛏️  Comfy bed for better sleep  │  │  [Reserve]            │ │
-│  💼 Dedicated workspace          │  │  You won't be charged │ │
-│  🌊 Private hot tub              │  │  yet                  │ │
-│  🚗 Free parking                 │  └────────────────────────┘ │
-│  📶 Wifi                         │         (Sticky)            │
-│  🐕 Pets allowed                 │                             │
-│  ─────────────────────────────   │                             │
-│                                  │                             │
-│  Description                     │                             │
-│  Welcome to Tiki Cottage...      │                             │
-│  [Show more ▼]                   │                             │
-│  ─────────────────────────────   │                             │
-│                                  │                             │
-│  Where you'll sleep              │                             │
-│  ┌──────┐ ┌──────┐ ┌──────┐    │                             │
-│  │Bed 1 │ │Bed 2 │ │Bed 3 │    │                             │
-│  │Queen │ │Queen │ │Full  │    │                             │
-│  └──────┘ └──────┘ └──────┘    │                             │
-│  ─────────────────────────────   │                             │
-│                                  │                             │
-│  What this place offers          │                             │
-│  📶 Wifi        🍴 Kitchen       │                             │
-│  🧺 Washer      ❄️ AC            │                             │
-│  [Show all 14 amenities]         │                             │
-│  ─────────────────────────────   │                             │
-│                                  │                             │
-│  ⭐ 4.79 · 126 reviews           │                             │
-│  Cleanliness  ████████░░ 4.9    │                             │
-│  Accuracy     ████████░░ 4.9    │                             │
-│  Check-in     ██████████ 5.0    │                             │
-│                                  │                             │
-│  [Sarah] February 2024           │                             │
-│  "Amazing place! The hot tub..." │                             │
-│  [Show all reviews]              │                             │
-│  ─────────────────────────────   │                             │
-│                                  │                             │
-│  Where you'll be                 │                             │
-│  [Interactive Map]               │                             │
-│  Sherwood Shores, small rural... │                             │
-│  ─────────────────────────────   │                             │
-│                                  │                             │
-│  Things to know                  │                             │
-│  House Rules | Cancellation | Safety                          │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+---
+
+## Current Technology Stack
+
+- **Frontend:** React 18, TypeScript, Vite 5
+- **Styling:** Tailwind CSS 3
+- **Routing:** React Router 6
+- **Backend:** Bolt Database / PostgreSQL 15 / PostgREST
+- **Authentication:** Bolt Database Auth
+- **Server-side logic:** Bolt Database Edge Functions running on Deno
+- **Storage:** Bolt Database Storage
+- **Hosting:** Netlify
+- **Payments:** Stripe Checkout, webhooks, refunds
+- **Email:** SMTP or Resend
+- **Calendar:** iCal import/export
+- **Secrets:** Bolt Database Vault
+- **Scheduled backend work:** pg_cron + pg_net
+
+---
+
+## Application Architecture
+
+```text
+Guest / Admin Browser
+        |
+        v
+React + Vite SPA
+        |
+        +--> Bolt Database queries
+        +--> Bolt Database Edge Functions
+        +--> Bolt Database Auth
+        +--> Bolt Database Storage
+        |
+        +--> Stripe
+        +--> SMTP / Resend
+        +--> External iCal feeds
 ```
 
-## 📱 Pages Built
+The active property application does **not** require a traditional Express/Node API server.
 
-### 1. Property Listing Page (`/`)
-- **URL**: `https://yourdomain.com`
-- **Features**:
-  - Hero gallery (1 large + 4 grid images)
-  - Sticky navigation bar
-  - Property summary with stats
-  - Host profile section
-  - Expandable description
-  - Sleeping arrangements cards
-  - Amenities grid with modal
-  - Reviews with rating breakdown
-  - Location map
-  - Sticky booking card
+---
 
-### 2. Booking Success Page (`/booking/success`)
-- **URL**: `https://yourdomain.com/booking/success?session_id=xxx`
-- **Features**:
-  - Confirmation message
-  - Booking details display
-  - Return to property link
+## Public Guest Experience
 
-### 3. Admin Login (`/admin/login`)
-- **URL**: `https://yourdomain.com/admin/login`
-- **Credentials**: admin@tikicottage.com / admin123
-- **Features**:
-  - Secure authentication
-  - Clean login form
+V1.0.0 includes:
 
-### 4. Admin Dashboard (`/admin`)
-- **URL**: `https://yourdomain.com/admin`
-- **Features**:
-  - Property editor
-  - Photo upload & management
-  - Pricing configuration
-  - Policy editing
-  - Booking management
-  - iCal sync controls
+- Property listing homepage
+- Responsive hero photo grid
+- Shared photo lightbox
+- Dedicated Photo Tour
+- Amenities
+- Host information
+- Property highlights
+- Sleeping arrangements / â€œWhere Youâ€™ll Sleepâ€
+- Neighborhood information
+- Local recommendations
+- Reviews
+- FAQs
+- Things to Know
+- Contact/inquiry form
+- Date availability
+- Guest selector for adults, children, infants, and pets
+- Dynamic pricing quotes
+- Minimum-night validation
+- Booking-request workflow
+- Stripe Checkout workflow
+- Booking success/cancel/request-success pages
+- Public privacy and terms pages
+- Dynamic branding, logo, favicon, SEO title, and meta description
 
-## 🎨 Design System
+---
 
-### Colors
-```
-Primary CTA:     Linear gradient from pink (#ec4899) to orange (#f97316)
-Background:      White (#ffffff)
-Text Primary:    Near-black (#111827)
-Text Secondary:  Gray (#6b7280)
-Borders:         Light gray (#e5e7eb)
-Hover States:    Darker gradient variations
-```
+## Administrator Dashboard
 
-### Typography
-```
-Font Stack:      system-ui, -apple-system, "Segoe UI", Helvetica, Arial
-Headings:        28-32px, font-weight: 600
-Section Titles:  22-24px, font-weight: 600
-Body Text:       16px, font-weight: 400
-Small Text:      14px
-Line Height:     1.5 (body), 1.2 (headings)
-```
+The protected admin application includes:
 
-### Spacing
-```
-Container:       max-width: 1120px
-Horizontal:      24px (desktop), 16px (mobile)
-Vertical:        32-40px between sections
-Grid Gap:        16px
-Card Padding:    24px
-```
+- **Overview**
+- **Calendar**
+  - booking events
+  - owner blocks
+  - imported iCal activity
+  - cleaning activity
+  - availability editor
+  - calendar sync
+- **Bookings**
+  - review / approve / decline
+  - confirmation
+  - cancellation
+  - manual payment recording
+  - partial and full Stripe refunds
+  - internal notes
+  - payment notes
+  - archive controls
+- **Cleaning**
+- **Maintenance**
+- **Property**
+  - Basic Info
+  - Highlights
+  - Amenities
+  - Neighborhood
+  - Contact
+  - Photos
+  - Pricing
+  - Things to Know
+  - Sections & Content
+- **Email**
+  - provider settings
+  - templates
+  - automations
+  - provider test
+  - template test
+  - automation test
+  - notification logs
+- **Payments**
+- **Account**
+  - profile
+  - owner/business information
+  - listing information
+  - branding
+  - SEO
+  - timezone
+  - currency
+  - date format
+  - system status
+  - security
+  - support information
+  - platform privacy, terms, and documentation
 
-### Components
-```
-Border Radius:   12px (cards), 8px (buttons), 16px (modals)
-Shadows:         0 1px 3px rgba(0,0,0,0.1)
-Transitions:     all 0.3s ease
-```
+---
 
-## 🔧 API Endpoints Available
+## Booking & Payment Modes
 
-### Public Endpoints
-```
-GET  /api/properties/default-property          - Get property details
-GET  /api/properties/:id/availability          - Check date availability
-GET  /api/properties/:id/ical.ics              - Export iCal feed
-POST /api/bookings/calculate                   - Calculate pricing
-POST /api/bookings/create                      - Create booking
-GET  /api/bookings/:id                         - Get booking details
-```
+The system supports four payment modes:
 
-### Admin Endpoints (Requires Auth)
-```
-POST /api/auth/login                           - Admin login
-POST /api/auth/logout                          - Admin logout
-GET  /api/auth/me                              - Get current user
-GET  /api/admin/properties/:id                 - Get property (full)
-PUT  /api/admin/properties/:id                 - Update property
-POST /api/admin/properties/:id/images          - Upload image
-DELETE /api/admin/images/:id                   - Delete image
-PUT  /api/admin/images/reorder                 - Reorder images
-GET  /api/admin/bookings                       - List all bookings
-POST /api/admin/ical/sync                      - Sync iCal feeds
-GET  /api/admin/amenities                      - Get all amenities
-```
+- `test_manual`
+- `test_stripe`
+- `live_manual`
+- `live_stripe`
 
-### Webhooks
-```
-POST /api/webhooks/stripe                      - Stripe payment webhook
-```
+### Manual flow
 
-## 📊 Database Tables Created
+Guest request â†’ `pending_review` â†’ administrator review â†’ approve or decline.
 
-```
-users                    - Admin users
-properties               - Property listings
-property_images          - Photo gallery (sortable)
-highlights              - Feature highlights (icons + text)
-amenity_categories      - Amenity groupings
-amenities               - Individual amenities
-property_amenities      - Property-amenity links
-sleeping_arrangements   - Bedroom details
-reviews                 - Guest reviews with ratings
-pricing_rules           - Seasonal pricing (future)
-bookings                - Reservations
-blocked_dates           - Unavailable dates
-ical_sources            - External calendar URLs
-```
+### Stripe flow
 
-## 🎯 Key Features Implemented
+Guest selects valid dates â†’ Stripe Checkout â†’ `pending_payment` â†’ Stripe webhook â†’ `confirmed`.
 
-### ✅ Frontend Features
-- [x] Responsive design (mobile-first)
-- [x] Airbnb-inspired layout
-- [x] Hero image gallery with lightbox
-- [x] Sticky navigation with smooth scroll
-- [x] Sticky booking card (desktop) / bottom bar (mobile)
-- [x] Real-time price calculation
-- [x] Date picker with blocked dates
-- [x] Guest selector
-- [x] Expandable description
-- [x] Modal amenities view
-- [x] Modal reviews view
-- [x] Rating breakdown bars
-- [x] Interactive map embed
-- [x] Photo gallery arrows & keyboard nav
-- [x] ESC key to close modals
-- [x] Accessibility (ARIA labels)
+The system also supports:
 
-### ✅ Backend Features
-- [x] RESTful API with Express
-- [x] Prisma ORM with MySQL
-- [x] JWT authentication
-- [x] Secure httpOnly cookies
-- [x] Stripe Checkout integration
-- [x] Stripe webhook handling
-- [x] Double-booking prevention
-- [x] 10-minute pending holds
-- [x] iCal import (Airbnb, Booking.com, VRBO)
-- [x] Automatic sync every 30 minutes
-- [x] iCal export endpoint
-- [x] Date de-duplication
-- [x] File upload handling
-- [x] Image storage & serving
-- [x] CORS configuration
+- checkout expiration
+- payment failure handling
+- payment-conflict handling
+- date-conflict rechecks
+- full refunds
+- partial refunds
+- cumulative refund tracking
+- separate test/live Stripe credentials
 
-### ✅ Admin Panel Features
-- [x] Secure login
-- [x] Property editor
-- [x] Image upload & delete
-- [x] Drag-drop reordering (data structure ready)
-- [x] Pricing configuration
-- [x] Policy editing
-- [x] Booking list view
-- [x] Manual iCal sync button
-- [x] Status indicators
+Refunds and cancellations are separate operations. A refund does not automatically cancel the booking or release its dates.
 
-### ✅ Deployment Features
-- [x] Nginx configuration
-- [x] PM2 ecosystem file
-- [x] SSL setup script
-- [x] Database setup script
-- [x] Deployment script
-- [x] Environment templates
-- [x] Comprehensive documentation
+---
 
-## 🚀 How to Test Locally
+## Pricing Engine
 
-### 1. Start Backend (In one terminal)
-```bash
-cd backend
-npm install
-npx prisma generate
-npx prisma db push  # Requires MySQL running
-npm run prisma:seed
-npm run dev
-```
+Nightly pricing precedence:
 
-### 2. Start Frontend (In another terminal)
-```bash
-npm install
-npm run dev
-```
+1. Date-specific price override
+2. Active seasonal pricing preset with highest priority
+3. Day-of-week rate
+4. Base nightly rate
 
-### 3. Open Browser
-- Frontend: http://localhost:5173
-- API Health: http://localhost:3001/api/health
+Minimum-night precedence:
 
-## 📦 What's Included in Each File
+1. Date-specific minimum-night override
+2. Seasonal minimum nights
+3. Property default minimum nights
 
-### Frontend Structure
-```
-src/
-├── api/
-│   └── client.ts              - API wrapper functions
-├── components/
-│   ├── Amenities.tsx          - Amenities grid + modal
-│   ├── BookingCard.tsx        - Sticky booking form
-│   ├── Description.tsx        - Expandable description
-│   ├── HostSection.tsx        - Host info + highlights
-│   ├── Location.tsx           - Map + neighborhood
-│   ├── PhotoGallery.tsx       - Lightbox modal
-│   ├── PropertyHero.tsx       - Hero gallery
-│   ├── PropertySummary.tsx    - Title + stats + rating
-│   ├── Reviews.tsx            - Reviews list + modal
-│   ├── SleepingArrangements.tsx - Bedroom cards
-│   ├── StickyNav.tsx          - Top navigation bar
-│   └── ThingsToKnow.tsx       - Policies section
-├── pages/
-│   ├── PropertyPage.tsx       - Main listing page
-│   ├── BookingSuccess.tsx     - Confirmation page
-│   └── admin/
-│       ├── AdminLogin.tsx     - Login form
-│       ├── AdminDashboard.tsx - Dashboard layout
-│       ├── PropertyEditor.tsx - Property CMS
-│       └── BookingsManager.tsx - Bookings table
-├── types/
-│   └── index.ts               - TypeScript interfaces
-├── App.tsx                    - Router setup
-└── main.tsx                   - App entry point
-```
+The quote engine also supports:
 
-### Backend Structure
-```
-backend/
-├── prisma/
-│   ├── schema.prisma          - Database schema
-│   └── seed.ts                - Seed data
-├── src/
-│   ├── routes/
-│   │   ├── auth.ts            - Login/logout
-│   │   ├── properties.ts      - Property endpoints
-│   │   ├── bookings.ts        - Booking endpoints
-│   │   ├── admin.ts           - Admin endpoints
-│   │   └── webhooks.ts        - Stripe webhooks
-│   ├── services/
-│   │   ├── ical-sync.ts       - Import calendars
-│   │   └── ical-export.ts     - Export calendar
-│   ├── middleware/
-│   │   └── auth.ts            - JWT verification
-│   ├── config.ts              - Environment config
-│   └── server.ts              - Express app
-└── uploads/                   - Image storage
-```
+- cleaning fees
+- pet fees
+- additional guest fees
+- custom fees
+- per-stay fees
+- per-night fees
+- per-guest fees
+- tax calculation
+- guest-facing fee visibility
 
-### Deployment Structure
-```
-deploy/
-├── nginx.conf                 - Nginx configuration
-├── ecosystem.config.js        - PM2 configuration
-├── setup.sh                   - Server setup
-├── database-setup.sh          - MySQL setup
-├── ssl-setup.sh               - Let's Encrypt SSL
-├── deploy.sh                  - Deployment script
-└── DEPLOYMENT_GUIDE.md        - Full instructions
-```
+Client-side quotes are recalculated server-side before booking/payment actions.
 
-## 🎨 Color Palette Used
+---
 
-```css
-/* Primary Gradient (CTAs) */
-background: linear-gradient(to right, #ec4899, #f97316);
+## Email System
 
-/* Text Colors */
---text-primary: #111827;
---text-secondary: #6b7280;
---text-muted: #9ca3af;
+Supported providers:
 
-/* Backgrounds */
---bg-white: #ffffff;
---bg-gray-50: #f9fafb;
---bg-gray-100: #f3f4f6;
+- SMTP
+- Resend
 
-/* Borders */
---border-gray: #e5e7eb;
---border-gray-dark: #d1d5db;
+V1.0.0 supports:
 
-/* Interactive States */
---hover-bg: #f3f4f6;
---focus-ring: #ec4899;
-```
+- system templates
+- custom templates
+- event-based automations
+- scheduled/date-based automations
+- admin and guest recipients
+- property/account template variables
+- notification logs
 
-## 🔐 Security Features
+### Test tools
 
-- ✅ HTTPS only (production)
-- ✅ httpOnly cookies
-- ✅ JWT token authentication
-- ✅ bcrypt password hashing
-- ✅ CORS protection
-- ✅ SQL injection prevention (Prisma)
-- ✅ XSS protection headers
-- ✅ Stripe webhook signature verification
-- ✅ File upload validation
-- ✅ Input sanitization
+- **Provider Test** â€” verifies provider delivery
+- **Template Test** â€” renders a selected template with sample variables
+- **Automation Test** â€” tests the selected automation and its assigned template
 
-## 📈 Performance Optimizations
+Automation Test sends only to the configured admin email. It uses a real confirmed booking when available and falls back to temporary in-memory sample booking data when no eligible booking exists. The sample test does not create a booking, block dates, invoke Stripe, or create normal automation send-history records.
 
-- ✅ Vite production builds
-- ✅ Code splitting
-- ✅ Lazy loading images
-- ✅ PM2 clustering (2 instances)
-- ✅ Nginx gzip compression
-- ✅ Static asset caching (1 year)
-- ✅ Database indexes
-- ✅ Efficient queries with Prisma
+---
 
-## 🎯 Next Steps
+## Calendar & iCal
 
-1. **Deploy to your server** - Follow `deploy/DEPLOYMENT_GUIDE.md`
-2. **Configure Stripe** - Add your API keys
-3. **Upload photos** - Replace placeholder images
-4. **Customize content** - Edit property details in admin
-5. **Test booking flow** - Make a test reservation
-6. **Set up SSL** - Run ssl-setup.sh
-7. **Go live!** - Point your domain to the server
+V1.0.0 includes:
 
-## 📞 Testing the Application
+- token-protected iCal export
+- confirmed booking export
+- owner-block export
+- external iCal import
+- Airbnb / VRBO / Booking.com / Other source support
+- per-source sync
+- Sync All
+- enable/disable import sources
+- owner blocks
+- availability overrides
 
-### Test Booking Flow
-1. Visit homepage
-2. Select dates
-3. Choose number of guests
-4. Click "Reserve"
-5. Enter guest details
-6. Redirects to Stripe (test mode)
-7. Use test card: 4242 4242 4242 4242
-8. Redirects to success page
+The export feed is generated dynamically and does not require an export cron job.
 
-### Test Admin Panel
-1. Visit /admin/login
-2. Login with: admin@tikicottage.com / admin123
-3. Edit property details
-4. Upload photos
-5. View bookings
-6. Sync calendars
+External iCal import is manually triggered in V1.0.0.
 
-## 🎉 You're All Set!
+---
 
-The application is **fully functional** and ready for deployment. All features are implemented, tested, and production-ready.
+## Photos & Media
+
+Property photo uploads support:
+
+- JPEG
+- PNG
+- WebP
+- maximum source size of 25 MB
+- maximum 3000 px longest dimension
+- no upscaling
+- JPEG/WebP quality 0.85
+- PNG preserved losslessly
+- image-orientation handling
+- sequential processing/uploads
+- cleanup of temporary browser resources
+
+The shared Lightbox preserves natural image aspect ratio within a maximum rendered size of approximately **1036 Ã— 583 px**.
+
+---
+
+## Security Model
+
+- Email/password authentication
+- No public admin self-registration
+- `admin_users` allowlist
+- Row Level Security
+- Admin-protected write operations
+- Stripe webhook signature verification
+- Stripe livemode consistency checks
+- Payment amount verification
+- Payment-event idempotency
+- iCal import SSRF protections
+- Token-protected iCal export
+- Sensitive Stripe/email credentials stored in Vault
+- Public availability exposed through a controlled view rather than direct booking-table access
+
+---
+
+## Canonical Fresh-Client Edge Functions
+
+A fresh V1.0.0 property deployment uses **16 canonical Edge Functions**:
+
+1. `create-booking-request`
+2. `booking-lookup`
+3. `payment-config-public`
+4. `send-notifications`
+5. `send-automated-emails`
+6. `create-checkout-session`
+7. `stripe-webhook`
+8. `ical-export`
+9. `admin-booking-action`
+10. `email-settings-status`
+11. `email-settings-update`
+12. `payment-settings-status`
+13. `payment-settings-update`
+14. `create-checkout-session-for-booking`
+15. `ical-export-token`
+16. `ical-import`
+
+Two additional email-template functions may exist in the master live environment:
+
+- `email-templates-update`
+- `email-templates-reset`
+
+They are **not part of the canonical fresh-client V1 deployment** and are not used by the current frontend.
+
+Platform-only `platform-*` functions are also separate from fresh client deployments.
+
+---
+
+## Storage Buckets
+
+- `branding` â€” logo, favicon, host/branding assets
+- `property-photos` â€” listing and Photo Tour images
+
+---
+
+## Current Deployment Model
+
+### Frontend
+
+Hosted on Netlify.
+
+### Backend
+
+Bolt Database provides:
+
+- PostgreSQL
+- Auth
+- Storage
+- Edge Functions
+- Vault
+- database functions / RPCs
+- scheduled backend jobs
+
+Each client deployment is isolated with its own application/database configuration.
+
+---
+
+## V1.0.0 Known Limits
+
+V1.0.0 intentionally does not provide:
+
+- multi-property management inside one property application
+- public admin self-registration
+- guest accounts/guest portal
+- guest self-service booking modification/cancellation
+- automatic recurring iCal import
+- dynamic pricing optimization
+- built-in SMS delivery
+- multi-language/i18n
+- PWA/offline mode
+- built-in analytics platform
+- automatic refunds without administrator action
+
+---
+
+## Documentation
+
+The detailed technical baseline for this release is:
+
+`V1.0.0_Complete_System_Inventory_and_Architecture.md`
+
+Administrator-facing platform documentation is also available inside the protected Account area.
+
+---
+
+## Versioning
+
+This repository uses semantic versioning for release tracking.
+
+- `1.0.0` â€” canonical V1 production baseline
+- Patch releases (`1.0.x`) â€” bug fixes and small corrections
+- Minor releases (`1.x.0`) â€” backward-compatible feature additions
+- Major releases (`x.0.0`) â€” substantial or breaking platform changes
+
+Maintain release changes in `CHANGELOG.md`.
+
+---
+
+## License
+
+Proprietary. All rights reserved.
