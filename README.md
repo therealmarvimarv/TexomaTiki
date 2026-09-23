@@ -1,269 +1,394 @@
-# Tiki Cottage - Vacation Rental Booking System
+# Tiki Cottage â€” Vacation Rental Management Platform
 
-A complete, production-ready vacation rental booking website built with React, Node.js, Express, Prisma, and MySQL. Designed for self-hosting on dedicated servers with full control over your data.
+**Release:** V1.0.0  
+**Status:** Canonical production baseline  
+**Application type:** Single-property direct-booking and property-management platform
 
-## Features
+Tiki Cottage is a self-managed vacation-rental platform with a public guest website and a protected administrator dashboard. It supports direct booking, Stripe payments, calendar synchronization, pricing, property content, automated email communication, cleaning, maintenance, branding, and day-to-day booking operations.
+
+This README describes the **current V1.0.0 implementation**. Older documentation that references Express, Prisma, MySQL, PM2, Nginx, local file uploads, or `/api/...` REST endpoints is legacy and does not describe the active application.
+
+---
+
+## Current Technology Stack
+
+- **Frontend:** React 18, TypeScript, Vite 5
+- **Styling:** Tailwind CSS 3
+- **Routing:** React Router 6
+- **Backend:** Bolt Database / PostgreSQL 15 / PostgREST
+- **Authentication:** Bolt Database Auth
+- **Server-side logic:** Bolt Database Edge Functions running on Deno
+- **Storage:** Bolt Database Storage
+- **Hosting:** Netlify
+- **Payments:** Stripe Checkout, webhooks, refunds
+- **Email:** SMTP or Resend
+- **Calendar:** iCal import/export
+- **Secrets:** Bolt Database Vault
+- **Scheduled backend work:** pg_cron + pg_net
+
+---
+
+## Application Architecture
+
+```text
+Guest / Admin Browser
+        |
+        v
+React + Vite SPA
+        |
+        +--> Bolt Database queries
+        +--> Bolt Database Edge Functions
+        +--> Bolt Database Auth
+        +--> Bolt Database Storage
+        |
+        +--> Stripe
+        +--> SMTP / Resend
+        +--> External iCal feeds
+```
+
+The active property application does **not** require a traditional Express/Node API server.
+
+---
+
+## Public Guest Experience
+
+V1.0.0 includes:
+
+- Property listing homepage
+- Responsive hero photo grid
+- Shared photo lightbox
+- Dedicated Photo Tour
+- Amenities
+- Host information
+- Property highlights
+- Sleeping arrangements / â€œWhere Youâ€™ll Sleepâ€
+- Neighborhood information
+- Local recommendations
+- Reviews
+- FAQs
+- Things to Know
+- Contact/inquiry form
+- Date availability
+- Guest selector for adults, children, infants, and pets
+- Dynamic pricing quotes
+- Minimum-night validation
+- Booking-request workflow
+- Stripe Checkout workflow
+- Booking success/cancel/request-success pages
+- Public privacy and terms pages
+- Dynamic branding, logo, favicon, SEO title, and meta description
+
+---
+
+## Administrator Dashboard
+
+The protected admin application includes:
+
+- **Overview**
+- **Calendar**
+  - booking events
+  - owner blocks
+  - imported iCal activity
+  - cleaning activity
+  - availability editor
+  - calendar sync
+- **Bookings**
+  - review / approve / decline
+  - confirmation
+  - cancellation
+  - manual payment recording
+  - partial and full Stripe refunds
+  - internal notes
+  - payment notes
+  - archive controls
+- **Cleaning**
+- **Maintenance**
+- **Property**
+  - Basic Info
+  - Highlights
+  - Amenities
+  - Neighborhood
+  - Contact
+  - Photos
+  - Pricing
+  - Things to Know
+  - Sections & Content
+- **Email**
+  - provider settings
+  - templates
+  - automations
+  - provider test
+  - template test
+  - automation test
+  - notification logs
+- **Payments**
+- **Account**
+  - profile
+  - owner/business information
+  - listing information
+  - branding
+  - SEO
+  - timezone
+  - currency
+  - date format
+  - system status
+  - security
+  - support information
+  - platform privacy, terms, and documentation
+
+---
+
+## Booking & Payment Modes
+
+The system supports four payment modes:
+
+- `test_manual`
+- `test_stripe`
+- `live_manual`
+- `live_stripe`
+
+### Manual flow
+
+Guest request â†’ `pending_review` â†’ administrator review â†’ approve or decline.
+
+### Stripe flow
+
+Guest selects valid dates â†’ Stripe Checkout â†’ `pending_payment` â†’ Stripe webhook â†’ `confirmed`.
+
+The system also supports:
+
+- checkout expiration
+- payment failure handling
+- payment-conflict handling
+- date-conflict rechecks
+- full refunds
+- partial refunds
+- cumulative refund tracking
+- separate test/live Stripe credentials
+
+Refunds and cancellations are separate operations. A refund does not automatically cancel the booking or release its dates.
+
+---
+
+## Pricing Engine
+
+Nightly pricing precedence:
+
+1. Date-specific price override
+2. Active seasonal pricing preset with highest priority
+3. Day-of-week rate
+4. Base nightly rate
+
+Minimum-night precedence:
+
+1. Date-specific minimum-night override
+2. Seasonal minimum nights
+3. Property default minimum nights
+
+The quote engine also supports:
+
+- cleaning fees
+- pet fees
+- additional guest fees
+- custom fees
+- per-stay fees
+- per-night fees
+- per-guest fees
+- tax calculation
+- guest-facing fee visibility
+
+Client-side quotes are recalculated server-side before booking/payment actions.
+
+---
+
+## Email System
+
+Supported providers:
+
+- SMTP
+- Resend
+
+V1.0.0 supports:
+
+- system templates
+- custom templates
+- event-based automations
+- scheduled/date-based automations
+- admin and guest recipients
+- property/account template variables
+- notification logs
+
+### Test tools
+
+- **Provider Test** â€” verifies provider delivery
+- **Template Test** â€” renders a selected template with sample variables
+- **Automation Test** â€” tests the selected automation and its assigned template
+
+Automation Test sends only to the configured admin email. It uses a real confirmed booking when available and falls back to temporary in-memory sample booking data when no eligible booking exists. The sample test does not create a booking, block dates, invoke Stripe, or create normal automation send-history records.
+
+---
+
+## Calendar & iCal
+
+V1.0.0 includes:
+
+- token-protected iCal export
+- confirmed booking export
+- owner-block export
+- external iCal import
+- Airbnb / VRBO / Booking.com / Other source support
+- per-source sync
+- Sync All
+- enable/disable import sources
+- owner blocks
+- availability overrides
+
+The export feed is generated dynamically and does not require an export cron job.
+
+External iCal import is manually triggered in V1.0.0.
+
+---
+
+## Photos & Media
+
+Property photo uploads support:
+
+- JPEG
+- PNG
+- WebP
+- maximum source size of 25 MB
+- maximum 3000 px longest dimension
+- no upscaling
+- JPEG/WebP quality 0.85
+- PNG preserved losslessly
+- image-orientation handling
+- sequential processing/uploads
+- cleanup of temporary browser resources
+
+The shared Lightbox preserves natural image aspect ratio within a maximum rendered size of approximately **1036 Ã— 583 px**.
+
+---
+
+## Security Model
+
+- Email/password authentication
+- No public admin self-registration
+- `admin_users` allowlist
+- Row Level Security
+- Admin-protected write operations
+- Stripe webhook signature verification
+- Stripe livemode consistency checks
+- Payment amount verification
+- Payment-event idempotency
+- iCal import SSRF protections
+- Token-protected iCal export
+- Sensitive Stripe/email credentials stored in Vault
+- Public availability exposed through a controlled view rather than direct booking-table access
+
+---
+
+## Canonical Fresh-Client Edge Functions
+
+A fresh V1.0.0 property deployment uses **16 canonical Edge Functions**:
+
+1. `create-booking-request`
+2. `booking-lookup`
+3. `payment-config-public`
+4. `send-notifications`
+5. `send-automated-emails`
+6. `create-checkout-session`
+7. `stripe-webhook`
+8. `ical-export`
+9. `admin-booking-action`
+10. `email-settings-status`
+11. `email-settings-update`
+12. `payment-settings-status`
+13. `payment-settings-update`
+14. `create-checkout-session-for-booking`
+15. `ical-export-token`
+16. `ical-import`
+
+Two additional email-template functions may exist in the master live environment:
+
+- `email-templates-update`
+- `email-templates-reset`
+
+They are **not part of the canonical fresh-client V1 deployment** and are not used by the current frontend.
+
+Platform-only `platform-*` functions are also separate from fresh client deployments.
+
+---
+
+## Storage Buckets
+
+- `branding` â€” logo, favicon, host/branding assets
+- `property-photos` â€” listing and Photo Tour images
+
+---
+
+## Current Deployment Model
 
 ### Frontend
-- Airbnb-inspired user interface
-- Responsive design (mobile-first)
-- Photo gallery with lightbox
-- Real-time availability checking
-- Dynamic pricing calculator
-- Sticky booking card
-- Smooth scroll navigation
-- Review display with ratings
-- Interactive map
+
+Hosted on Netlify.
 
 ### Backend
-- RESTful API with Express
-- MySQL database with Prisma ORM
-- Stripe payment processing
-- Webhook handling for payment confirmation
-- iCal import from Airbnb, Booking.com, VRBO
-- iCal export for calendar sync
-- Automatic calendar sync (30-minute intervals)
-- Double-booking prevention
-- 10-minute booking holds
 
-### Admin Panel
-- Secure authentication
-- Property editor
-- Image upload and management
-- Pricing configuration
-- Booking management
-- Manual iCal sync trigger
-- Drag-and-drop photo reordering
+Bolt Database provides:
 
-## Tech Stack
+- PostgreSQL
+- Auth
+- Storage
+- Edge Functions
+- Vault
+- database functions / RPCs
+- scheduled backend jobs
 
-**Frontend:**
-- React 18
-- TypeScript
-- Vite
-- React Router
-- Tailwind CSS
-- Lucide Icons
+Each client deployment is isolated with its own application/database configuration.
 
-**Backend:**
-- Node.js
-- Express
-- TypeScript
-- Prisma ORM
-- MySQL
-- Stripe
-- iCal.js
-- node-cron
+---
 
-**Deployment:**
-- Nginx (reverse proxy)
-- PM2 (process manager)
-- Let's Encrypt (SSL)
+## V1.0.0 Known Limits
 
-## Quick Start (Development)
+V1.0.0 intentionally does not provide:
 
-### Prerequisites
-- Node.js 20+
-- MySQL 8+
+- multi-property management inside one property application
+- public admin self-registration
+- guest accounts/guest portal
+- guest self-service booking modification/cancellation
+- automatic recurring iCal import
+- dynamic pricing optimization
+- built-in SMS delivery
+- multi-language/i18n
+- PWA/offline mode
+- built-in analytics platform
+- automatic refunds without administrator action
 
-### Backend Setup
+---
 
-```bash
-cd backend
-npm install
-```
+## Documentation
 
-Create `backend/.env`:
-```env
-DATABASE_URL="mysql://user:password@localhost:3306/tiki_cottage"
-JWT_SECRET="your-secret-key"
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
-FRONTEND_URL="http://localhost:5173"
-PORT=3001
-NODE_ENV="development"
-```
+The detailed technical baseline for this release is:
 
-Run migrations and seed:
-```bash
-npx prisma generate
-npx prisma db push
-npm run prisma:seed
-```
+`V1.0.0_Complete_System_Inventory_and_Architecture.md`
 
-Start backend:
-```bash
-npm run dev
-```
+Administrator-facing platform documentation is also available inside the protected Account area.
 
-### Frontend Setup
+---
 
-```bash
-npm install
-```
+## Versioning
 
-Create `.env`:
-```env
-VITE_API_URL=http://localhost:3001
-VITE_STRIPE_PUBLIC_KEY=pk_test_...
-```
+This repository uses semantic versioning for release tracking.
 
-Start frontend:
-```bash
-npm run dev
-```
+- `1.0.0` â€” canonical V1 production baseline
+- Patch releases (`1.0.x`) â€” bug fixes and small corrections
+- Minor releases (`1.x.0`) â€” backward-compatible feature additions
+- Major releases (`x.0.0`) â€” substantial or breaking platform changes
 
-Visit `http://localhost:5173`
+Maintain release changes in `CHANGELOG.md`.
 
-## Production Deployment
-
-See [DEPLOYMENT_GUIDE.md](deploy/DEPLOYMENT_GUIDE.md) for complete instructions.
-
-### Quick Deploy to GoDaddy
-
-1. Upload files to `/var/www/tikicottage`
-2. Run setup scripts:
-   ```bash
-   cd /var/www/tikicottage/deploy
-   chmod +x *.sh
-   ./setup.sh
-   ./database-setup.sh
-   ./ssl-setup.sh
-   ./deploy.sh
-   ```
-3. Configure Stripe webhooks
-4. Access admin panel at `https://yourdomain.com/admin/login`
-
-## Admin Credentials
-
-Default credentials (change immediately):
-- Email: `admin@tikicottage.com`
-- Password: `admin123`
-
-## API Endpoints
-
-### Public
-- `GET /api/properties/:id` - Get property details
-- `GET /api/properties/:id/availability` - Check availability
-- `GET /api/properties/:id/ical.ics` - Export iCal feed
-- `POST /api/bookings/calculate` - Calculate pricing
-- `POST /api/bookings/create` - Create booking
-- `GET /api/bookings/:id` - Get booking details
-
-### Admin (requires authentication)
-- `POST /api/auth/login` - Login
-- `POST /api/auth/logout` - Logout
-- `GET /api/auth/me` - Get current user
-- `GET /api/admin/properties/:id` - Get property for editing
-- `PUT /api/admin/properties/:id` - Update property
-- `POST /api/admin/properties/:id/images` - Upload image
-- `DELETE /api/admin/images/:id` - Delete image
-- `PUT /api/admin/images/reorder` - Reorder images
-- `GET /api/admin/bookings` - List all bookings
-- `POST /api/admin/ical/sync` - Manually sync iCal feeds
-
-### Webhooks
-- `POST /api/webhooks/stripe` - Stripe payment webhooks
-
-## Database Schema
-
-Main tables:
-- `users` - Admin users
-- `properties` - Property listings
-- `property_images` - Photo gallery
-- `highlights` - Feature highlights
-- `amenities` - Available amenities
-- `sleeping_arrangements` - Bedroom details
-- `reviews` - Guest reviews
-- `bookings` - Reservations
-- `blocked_dates` - Unavailable dates
-- `ical_sources` - External calendar URLs
-- `pricing_rules` - Seasonal pricing
-
-## iCal Integration
-
-### Import (from external platforms)
-Pre-configured URLs:
-- Airbnb
-- Booking.com
-- VRBO
-
-Syncs every 30 minutes automatically. Manual sync available in admin panel.
-
-### Export (to external platforms)
-Feed URL: `https://yourdomain.com/api/properties/default-property/ical.ics`
-
-Add this URL to Airbnb, Booking.com, and VRBO to sync your WordPress bookings to those platforms.
-
-## Stripe Integration
-
-1. Create Stripe account
-2. Get API keys (Developers → API keys)
-3. Add to environment variables
-4. Set up webhook endpoint: `https://yourdomain.com/api/webhooks/stripe`
-5. Listen for event: `checkout.session.completed`
-6. Add webhook secret to backend .env
-
-## File Upload
-
-Images are stored in `backend/uploads/` directory.
-
-Supported formats: JPG, PNG, GIF
-Max size: 10MB per image
-
-Served by Nginx with 1-year cache headers.
-
-## Environment Variables
-
-### Backend
-- `DATABASE_URL` - MySQL connection string
-- `JWT_SECRET` - JWT signing secret
-- `STRIPE_SECRET_KEY` - Stripe secret key
-- `STRIPE_WEBHOOK_SECRET` - Stripe webhook signing secret
-- `FRONTEND_URL` - Frontend URL for CORS
-- `PORT` - Backend port (default: 3001)
-- `NODE_ENV` - Environment (development/production)
-
-### Frontend
-- `VITE_API_URL` - Backend API URL
-- `VITE_STRIPE_PUBLIC_KEY` - Stripe publishable key
-
-## Security Features
-
-- HTTPS only in production
-- HTTP-only cookies for authentication
-- JWT token-based auth
-- CORS protection
-- Input validation
-- SQL injection prevention (Prisma)
-- XSS protection headers
-- CSRF protection
-- Rate limiting (configurable)
-- Secure password hashing (bcrypt)
-
-## Performance
-
-- Clustered Node.js with PM2 (2 instances)
-- Nginx gzip compression
-- Static asset caching (1 year)
-- Image lazy loading
-- Code splitting
-- Production builds optimized
-
-## Browser Support
-
-- Chrome/Edge (latest 2 versions)
-- Firefox (latest 2 versions)
-- Safari (latest 2 versions)
-- Mobile browsers (iOS Safari, Chrome)
+---
 
 ## License
 
-Proprietary - All rights reserved
-
-## Support
-
-For deployment issues, check:
-- [DEPLOYMENT_GUIDE.md](deploy/DEPLOYMENT_GUIDE.md)
-- Backend logs: `pm2 logs tikicottage-backend`
-- Nginx logs: `/var/log/nginx/error.log`
+Proprietary. All rights reserved.
