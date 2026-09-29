@@ -103,6 +103,7 @@ export default function PhotoNavTabs({ tabs, activeId }: Props) {
                   <img
                     src={tab.thumb}
                     alt={tab.label}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />
                 </div>

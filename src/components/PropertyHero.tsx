@@ -11,8 +11,13 @@ interface Props {
 export default function PropertyHero({ images, title }: Props) {
   const navigate = useNavigate();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const heroImage = images[0];
   const gridImages = images.slice(1, 5);
+
+  function handleImageLoad(idx: number) {
+    setLoadedImages(prev => new Set(prev).add(idx));
+  }
 
   function goToPhotos() {
     navigate('/photos');
@@ -26,11 +31,14 @@ export default function PropertyHero({ images, title }: Props) {
   return (
     <div className="relative">
       <div className="grid grid-cols-4 gap-2 h-[480px] rounded-xl overflow-hidden">
-        <div className="col-span-4 md:col-span-2 relative group cursor-pointer" onClick={() => setLightboxIndex(0)}>
+        <div className="col-span-4 md:col-span-2 relative group cursor-pointer bg-gray-200" onClick={() => setLightboxIndex(0)}>
           <img
             src={heroImage?.url || '/placeholder.jpg'}
             alt={title}
-            className="w-full h-full object-cover"
+            loading="eager"
+            fetchPriority="high"
+            onLoad={() => handleImageLoad(0)}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${loadedImages.has(0) ? 'opacity-100' : 'opacity-0'}`}
           />
           <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
 
@@ -40,13 +48,14 @@ export default function PropertyHero({ images, title }: Props) {
           {gridImages.map((img, idx) => (
             <div
               key={img.id}
-              className="relative group cursor-pointer"
+              className="relative group cursor-pointer bg-gray-200"
               onClick={() => setLightboxIndex(idx + 1)}
             >
               <img
                 src={img.url || '/placeholder.jpg'}
                 alt={`${title} ${idx + 2}`}
-                className="w-full h-full object-cover"
+                onLoad={() => handleImageLoad(idx + 1)}
+                className={`w-full h-full object-cover transition-opacity duration-300 ${loadedImages.has(idx + 1) ? 'opacity-100' : 'opacity-0'}`}
               />
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity" />
             </div>

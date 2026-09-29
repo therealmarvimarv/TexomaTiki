@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface LightboxPhoto {
@@ -15,6 +15,8 @@ interface Props {
 }
 
 export default function Lightbox({ photos, index, onClose, onPrev, onNext }: Props) {
+  const [loaded, setLoaded] = useState(false);
+
   const handleKey = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -34,6 +36,22 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext }: Pro
   }, [handleKey]);
 
   const photo = photos[index];
+
+  // Reset loaded state when index changes
+  useEffect(() => {
+    setLoaded(false);
+  }, [index]);
+
+  // Preload previous and next images
+  useEffect(() => {
+    if (photos.length <= 1) return;
+    const prevIdx = (index - 1 + photos.length) % photos.length;
+    const nextIdx = (index + 1) % photos.length;
+    const prevImg = new Image();
+    prevImg.src = photos[prevIdx].src;
+    const nextImg = new Image();
+    nextImg.src = photos[nextIdx].src;
+  }, [index, photos]);
 
   return (
     <div
@@ -59,38 +77,48 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext }: Pro
 
       {/* Image area */}
       <div
-        className="flex-1 flex items-center justify-center relative px-14 sm:px-20 pb-6"
+        className="flex-1 flex items-center justify-center relative px-3 sm:px-20 pb-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <img
-          key={index}
-          src={photo.src}
-          alt={photo.alt}
-          className="max-h-[583px] max-w-[1036px] w-auto h-auto object-contain rounded-xl select-none"
-          draggable={false}
-        />
+        <div className="relative flex items-center justify-center min-h-[50vh] sm:min-h-[583px]">
+          {/* Loading placeholder */}
+          {!loaded && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-white/20 border-t-white/60 rounded-full animate-spin" />
+            </div>
+          )}
 
-        {/* Prev */}
-        {photos.length > 1 && (
-          <button
-            onClick={onPrev}
-            className="absolute left-3 sm:left-5 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/25 transition-colors"
-            aria-label="Previous photo"
-          >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
-        )}
+          <img
+            key={index}
+            src={photo.src}
+            alt={photo.alt}
+            onLoad={() => setLoaded(true)}
+            className={`max-h-[72vh] max-w-full sm:max-h-[583px] sm:max-w-[1036px] w-auto h-auto object-contain rounded-xl select-none transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+            draggable={false}
+          />
 
-        {/* Next */}
-        {photos.length > 1 && (
-          <button
-            onClick={onNext}
-            className="absolute right-3 sm:right-5 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/25 transition-colors"
-            aria-label="Next photo"
-          >
-            <ChevronRight className="w-6 h-6 text-white" />
-          </button>
-        )}
+          {/* Prev */}
+          {photos.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onPrev(); }}
+              className="absolute top-1/2 -translate-y-1/2 left-3 sm:left-5 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/25 transition-colors"
+              aria-label="Previous photo"
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </button>
+          )}
+
+          {/* Next */}
+          {photos.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onNext(); }}
+              className="absolute top-1/2 -translate-y-1/2 right-3 sm:right-5 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/25 transition-colors"
+              aria-label="Next photo"
+            >
+              <ChevronRight className="w-6 h-6 text-white" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Caption */}

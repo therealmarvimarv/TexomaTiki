@@ -143,8 +143,33 @@ export default function PhotoTourPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-gray-400 text-sm">Loading photos…</div>
+      <div className="min-h-screen bg-white">
+        <PhotoTopBar
+          saved={saved}
+          onToggleSave={() => setSaved(s => !s)}
+          onShare={handleShare}
+        />
+        <div className="max-w-5xl mx-auto px-4 sm:px-8 py-10 space-y-16">
+          {/* Tab thumbnail placeholders */}
+          <div className="flex gap-4 py-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex flex-col items-center gap-1.5 flex-shrink-0">
+                <div className="w-20 h-14 sm:w-24 sm:h-16 rounded-xl bg-gray-200 animate-pulse" />
+                <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+          {/* Large 16:9 placeholder */}
+          <div className="space-y-2">
+            <div className="w-full aspect-[16/9] rounded-2xl bg-gray-200 animate-pulse" />
+            {/* 2-column 4:3 placeholders */}
+            <div className="grid grid-cols-2 gap-2">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="aspect-[4/3] rounded-2xl bg-gray-200 animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

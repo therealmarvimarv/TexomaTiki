@@ -26,6 +26,7 @@ export default function PhotoGrid({ photos, featured = false, onPhotoClick }: Pr
           <img
             src={hero.src}
             alt={hero.alt}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:opacity-95 transition-opacity duration-200"
           />
         </div>
@@ -56,6 +57,7 @@ export default function PhotoGrid({ photos, featured = false, onPhotoClick }: Pr
               <img
                 src={photo.src}
                 alt={photo.alt}
+                loading="lazy"
                 className="w-full h-full object-cover group-hover:opacity-95 transition-opacity duration-200"
               />
             </div>
@@ -81,6 +83,7 @@ function PhotoTile({
       <img
         src={photo.src}
         alt={photo.alt}
+        loading="lazy"
         className="w-full h-full object-cover group-hover:opacity-95 transition-opacity duration-200"
       />
     </div>

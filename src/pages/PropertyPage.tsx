@@ -169,9 +169,79 @@ export default function PropertyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white">
-        <div className="w-10 h-10 border-4 border-gray-200 border-t-gray-700 rounded-full animate-spin" />
-        <p className="text-sm text-gray-400">Loading property…</p>
+      <div className="min-h-screen bg-white">
+        <div className="h-16 bg-white border-b border-gray-100 animate-pulse" />
+        <div className="max-w-7xl mx-auto px-6 md:px-24 py-8">
+          {/* Hero placeholder */}
+          <div className="h-[480px] rounded-xl bg-gray-200 animate-pulse mb-8" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+            <div className="lg:col-span-7 space-y-6">
+              {/* Title/subtitle bars */}
+              <div className="space-y-3">
+                <div className="h-8 w-2/3 bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-1/2 bg-gray-200 rounded animate-pulse" />
+              </div>
+              {/* Property detail icons */}
+              <div className="flex gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-5 w-20 bg-gray-200 rounded animate-pulse" />
+                ))}
+              </div>
+              {/* Host row */}
+              <div className="flex items-center gap-3 pt-2">
+                <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse" />
+                <div className="space-y-2">
+                  <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
+                </div>
+              </div>
+              {/* Description lines */}
+              <div className="space-y-2 pt-2">
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
+              </div>
+              {/* Sleeping arrangements */}
+              <div className="space-y-3 pt-4">
+                <div className="h-6 w-48 bg-gray-200 rounded animate-pulse" />
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl">
+                    <div className="w-16 h-16 rounded-lg bg-gray-200 animate-pulse" />
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Amenities */}
+              <div className="space-y-3 pt-4">
+                <div className="h-6 w-32 bg-gray-200 rounded animate-pulse" />
+                <div className="grid grid-cols-2 gap-3">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded bg-gray-200 animate-pulse" />
+                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* Booking card skeleton */}
+            <div className="lg:col-span-5">
+              <div className="border border-gray-100 rounded-2xl p-6 space-y-4">
+                <div className="h-8 w-1/3 bg-gray-200 rounded animate-pulse" />
+                <div className="h-10 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-10 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-12 w-full bg-gray-200 rounded-xl animate-pulse" />
+                <div className="space-y-2 pt-2">
+                  <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4 w-2/3 bg-gray-200 rounded animate-pulse" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
