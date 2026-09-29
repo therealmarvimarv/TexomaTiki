@@ -19,10 +19,25 @@ This project follows semantic versioning:
 - Updated the canonical `ultimate_client_database_bootstrap.sql` so future fresh client deployments automatically receive the 15-minute iCal import scheduler.
 - Preserved existing manual Sync All, per-source sync, iCal parsing, blocked-date handling, and iCal export behavior.
 
+### Improved
+
+- Replaced the guest property page loading spinner with a full-page skeleton loading experience that mirrors the property layout while data loads.
+- Replaced the Photo Tour loading message with a structured skeleton layout including the top bar, photo navigation placeholders, and image-grid placeholders.
+- Prioritized the primary property hero image with eager loading and high fetch priority.
+- Added smooth fade-in loading transitions to the property hero images.
+- Added lazy loading to Photo Tour section images and navigation thumbnails to reduce unnecessary image loading.
+- Improved Lightbox image loading with a subtle placeholder and fade-in transition.
+- Added adjacent-image preloading in the Lightbox so previous and next photos load more smoothly while browsing.
+- Improved mobile Lightbox sizing so photos use nearly the full available viewport width while preserving their aspect ratio.
+- Moved Lightbox navigation arrows inside the image area on mobile for a larger and more natural photo-viewing experience.
+- Preserved existing desktop Lightbox dimensions and behavior.
+
 ### Notes
 
 - External calendar feeds are checked every 15 minutes.
 - Actual reservation visibility may still depend on how quickly Airbnb, Vrbo, Booking.com, or another external platform publishes the reservation to its iCal feed.
+- No database, storage, booking, pricing, calendar UI, or admin photo-management changes were required for the loading and image-performance improvements.
+- Existing photo upload compression and optimization behavior remains unchanged.
 
 ## [1.0.0] - 2026-09-22
 
