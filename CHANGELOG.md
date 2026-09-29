@@ -9,11 +9,20 @@ This project follows semantic versioning:
 
 ---
 
-## [1.0.1] - 2026-09-25
+## [1.0.1] - 2026-09-28
 
 ### Fixed
-- Sample text
-- Sample text
+
+- Added automatic iCal import synchronization every 15 minutes.
+- Added a secure scheduled service-role execution path to the `ical-import` Edge Function while preserving the existing authenticated admin Sync All flow.
+- Added the `run_ical_import` pg_cron job using the same secure `client_config` + Vault scheduler pattern as automated emails.
+- Updated the canonical `ultimate_client_database_bootstrap.sql` so future fresh client deployments automatically receive the 15-minute iCal import scheduler.
+- Preserved existing manual Sync All, per-source sync, iCal parsing, blocked-date handling, and iCal export behavior.
+
+### Notes
+
+- External calendar feeds are checked every 15 minutes.
+- Actual reservation visibility may still depend on how quickly Airbnb, Vrbo, Booking.com, or another external platform publishes the reservation to its iCal feed.
 
 ## [1.0.0] - 2026-09-22
 
