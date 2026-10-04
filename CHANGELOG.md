@@ -9,6 +9,22 @@ This project follows semantic versioning:
 
 ---
 
+## [1.0.1] - 2026-10-2
+
+### Improved
+
+- Added automatic WebP conversion for all newly uploaded property photos.
+- Optimized images using WebP encoding at 85% quality to improve loading performance and reduce file sizes.
+- Preserved proportional image resizing with a maximum dimension of 3000px, the existing 25 MB upload limit, image orientation, and aspect ratio.
+- Updated the upload process to save converted photos with the `.webp` extension and `image/webp` content type.
+- Added conversion validation and error handling to prevent unoptimized originals from being uploaded when conversion fails.
+- Preserved existing photo-management functionality, including sorting, deletion, gallery display, Photo Tour section assignments, and sequential uploads.
+- Implemented and successfully tested automatic WebP conversion in both the Master Template and the existing client deployment.
+
+### Notes
+
+- No database schema, storage bucket, Edge Function or unrelated application changes were required.
+
 ## [1.0.1] - 2026-09-28
 
 ### Fixed
