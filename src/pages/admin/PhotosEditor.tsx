@@ -6,14 +6,9 @@ const STORAGE_BUCKET = 'property-photos';
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
 const MAX_SIZE = 25 * 1024 * 1024; // 25MB
 const MAX_DIMENSION = 3000;
-const JPEG_QUALITY = 0.85;
+const WEBP_QUALITY = 0.85;
 
-async function optimizeImage(file: File): Promise<{ blob: Blob; contentType: string; ext: string }> {
-  const isPng = file.type === 'image/png';
-  const isWebp = file.type === 'image/webp';
-  const outputType = isPng ? 'image/png' : isWebp ? 'image/webp' : 'image/jpeg';
-  const ext = isPng ? 'png' : isWebp ? 'webp' : 'jpg';
-
+async function optimizeImage(file: File): Promise<{ blob: Blob; ext: string }> {
   let bitmap: ImageBitmap | null = null;
   let objectUrl: string | null = null;
   let img: HTMLImageElement | null = null;
@@ -58,15 +53,16 @@ async function optimizeImage(file: File): Promise<{ blob: Blob; contentType: str
   const blob: Blob = await new Promise((resolve, reject) => {
     canvas.toBlob(
       b => (b ? resolve(b) : reject(new Error('toBlob failed'))),
-      outputType,
-      isPng ? undefined : JPEG_QUALITY,
+      'image/webp',
+      WEBP_QUALITY,
     );
   });
 
   if (bitmap) bitmap.close();
   if (objectUrl) URL.revokeObjectURL(objectUrl);
 
-  return { blob, contentType: outputType, ext };
+  if (blob.type !== 'image/webp') throw new Error('WebP conversion failed');
+  return { blob, ext: 'webp' };
 }
 
 interface Photo {
@@ -306,7 +302,7 @@ export default function PhotosEditor({ propertyId }: { propertyId: string }) {
         continue;
       }
 
-      let optimized: { blob: Blob; contentType: string; ext: string };
+      let optimized: { blob: Blob; ext: string };
       try {
         optimized = await optimizeImage(file);
       } catch {
@@ -319,7 +315,7 @@ export default function PhotosEditor({ propertyId }: { propertyId: string }) {
 
       const { error: storageErr } = await supabase.storage
         .from(STORAGE_BUCKET)
-        .upload(path, optimized.blob, { contentType: optimized.contentType, upsert: false });
+        .upload(path, optimized.blob, { contentType: 'image/webp', upsert: false });
 
       if (storageErr) {
         flashErr(`Upload failed: ${storageErr.message}`);
