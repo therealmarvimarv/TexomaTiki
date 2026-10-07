@@ -9,6 +9,21 @@ This project follows semantic versioning:
 
 ---
 
+## [1.0.1] - 2026-10-06
+
+### Improved
+
+- Completed the one-time migration of all 64 existing property photos from JPEG/JPG to optimized WebP.
+- Converted all legacy property photos using WebP quality `0.85` with proportional resizing capped at 3000px while preserving image orientation and aspect ratio.
+- Updated all 64 `property_images` records to reference the new WebP files without changing image IDs, section assignments, sort order, source, or other metadata.
+- Verified all 64 converted files as valid WebP images before updating their database references.
+- Preserved all original JPEG files in the `property-photos` storage bucket for rollback protection.
+- Preserved the `property_images_backup_webp_migration` rollback table containing all 64 original image records.
+- Confirmed the migration left 64 total property images, 64 WebP references, and 0 remaining JPEG/JPG references in `property_images`.
+- Removed all temporary migration Edge Functions, config entries, scripts, and migration tooling after completion.
+- Verified the live property page, Photo Tour, and Lightbox after migration with no visual or functional issues.
+- Automatic WebP conversion remains active for all new property photo uploads.
+
 ## [1.0.1] - 2026-10-2
 
 ### Improved
