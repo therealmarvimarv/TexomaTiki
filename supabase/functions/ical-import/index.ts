@@ -28,7 +28,7 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
-  // ── Auth: admin JWT or scheduled service-role invocation ──────────────────
+  // ── Auth: admin JWT, scheduled service-role, or scheduler token ───────────
   const authHeader = req.headers.get("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -39,7 +39,20 @@ Deno.serve(async (req: Request) => {
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const token = authHeader.replace("Bearer ", "");
-  const isScheduled = token === SUPABASE_SERVICE_ROLE_KEY;
+
+  // Check if this is a scheduled invocation via shared scheduler token
+  const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    auth: { persistSession: false },
+  });
+  const { data: schedulerConfig } = await adminClient
+    .from("scheduler_config")
+    .select("value")
+    .eq("key", "ical_scheduler_token")
+    .maybeSingle();
+
+  const SCHEDULER_TOKEN = schedulerConfig?.value;
+  const isScheduled = token === SUPABASE_SERVICE_ROLE_KEY ||
+    (SCHEDULER_TOKEN !== undefined && token === SCHEDULER_TOKEN);
 
   if (!isScheduled) {
     const anonClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!);
