@@ -23,6 +23,10 @@ This project follows semantic versioning:
 - Verified the automatic `run_ical_import` cron job runs successfully every 15 minutes.
 - Verified a real scheduled execution returned HTTP 200 and successfully synchronized both Airbnb and Vrbo calendar feeds with no sync errors.
 
+> **⚠️ LEGACY ICAL SCHEDULER EXCEPTION — DO NOT OVERWRITE**
+>
+> **This production client intentionally uses a different verified-working iCal scheduler/authentication implementation than the current master template. Do not automatically replace, refactor, or “sync” this client’s iCal implementation to match the master. Future client deployments should use the proven master-template iCal implementation.**
+
 ### Improved
 
 - Simplified the automatic iCal scheduler architecture to use a single Vault-managed scheduler secret.
