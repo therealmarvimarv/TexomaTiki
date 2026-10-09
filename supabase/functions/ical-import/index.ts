@@ -1,10 +1,9 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-// iCal import is admin-only. Only authenticated admin users can trigger a sync
-// or create/edit/delete import sources. Scheduled cron invocations authenticate
-// with the project service role key or scheduler token. Manual admin calls
-// authenticate with a user JWT.
+// iCal import is admin-only. Scheduled cron invocations authenticate with a
+// Vault-stored scheduler token verified via verify_ical_scheduler_token RPC.
+// Manual admin calls authenticate with a user JWT.
 //
 // SECURITY:
 // - Only http:// and https:// feed URLs are allowed.
@@ -30,7 +29,7 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
-  // ── Auth: scheduled service-role invocation, scheduler token, OR admin JWT ─
+  // ── Auth: scheduled Vault-token invocation OR admin JWT ───────────────────
   const authHeader = req.headers.get("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -45,18 +44,15 @@ Deno.serve(async (req: Request) => {
   const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false },
   });
-  const { data: schedulerConfig } = await adminClient
-    .from("scheduler_config")
-    .select("value")
-    .eq("key", "ical_scheduler_token")
-    .maybeSingle();
 
-  const SCHEDULER_TOKEN = schedulerConfig?.value;
-  const trimmedServiceKey = SUPABASE_SERVICE_ROLE_KEY.trim();
-  const isScheduled = token === trimmedServiceKey ||
-    (SCHEDULER_TOKEN !== undefined && token === SCHEDULER_TOKEN);
+  // Scheduled auth: verify the token against the Vault secret via RPC
+  const { data: isScheduled, error: verifyErr } = await adminClient.rpc(
+    "verify_ical_scheduler_token",
+    { p_token: token },
+  );
+  const scheduled = verifyErr ? false : Boolean(isScheduled);
 
-  if (!isScheduled) {
+  if (!scheduled) {
     const anonClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!);
     const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
     if (authError || !user) {
@@ -69,17 +65,6 @@ Deno.serve(async (req: Request) => {
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   try {
-    // One-time: store trimmed service role key in Vault for pg_cron access
-    if (isScheduled) {
-      const trimmedKey = SUPABASE_SERVICE_ROLE_KEY.trim();
-      const { error: vaultErr } = await supabase.rpc("store_scheduler_secret", {
-        secret_name: "edge_service_role_key",
-        secret_value: trimmedKey,
-        secret_description: "Service role key for scheduled edge function invocation",
-      });
-      if (vaultErr) console.error("[ical-import] vault store error:", vaultErr.message);
-    }
-
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
     const sourceId: string | undefined = body.source_id;
 
