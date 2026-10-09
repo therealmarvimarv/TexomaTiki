@@ -9,6 +9,31 @@ This project follows semantic versioning:
 
 ---
 
+## [1.0.1] - 2026-10-08
+
+### Fixed
+
+- Fixed automatic iCal synchronization so external calendar feeds are now imported automatically every 15 minutes without requiring Admin Sync All.
+- Replaced the failed scheduled iCal authentication configuration that relied on unavailable database settings.
+- Added `public.run_ical_import()` as the dedicated scheduled iCal import function.
+- Added secure Vault-based scheduler authentication using the `edge_service_role_key` secret.
+- Added `public.verify_ical_scheduler_token()` to securely validate scheduled iCal requests without exposing the stored secret.
+- Preserved the existing authenticated Admin Sync All workflow using the signed-in administrator's session JWT.
+- Preserved all existing iCal feed parsing, blocked-date synchronization, calendar source handling, and iCal export functionality.
+- Verified the automatic `run_ical_import` cron job runs successfully every 15 minutes.
+- Verified a real scheduled execution returned HTTP 200 and successfully synchronized both Airbnb and Vrbo calendar feeds with no sync errors.
+
+### Improved
+
+- Simplified the automatic iCal scheduler architecture to use a single Vault-managed scheduler secret.
+- Removed the temporary `scheduler_config` table.
+- Removed the temporary custom `ical_scheduler_token`.
+- Removed the obsolete `public.run_scheduled_ical_import()` function.
+- Removed the obsolete `public.store_scheduler_secret()` helper function.
+- Removed the previous scheduler-token lookup logic from the `ical-import` server function.
+- Confirmed no remaining references to the removed temporary scheduler infrastructure.
+- Confirmed the automated email scheduler, bookings, payments, pricing, UI, calendar source URLs, and iCal export were not modified by the final iCal cleanup.
+
 ## [1.0.1] - 2026-10-06
 
 ### Improved
