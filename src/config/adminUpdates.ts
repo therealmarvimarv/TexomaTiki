@@ -16,7 +16,7 @@ export interface AdminUpdateNotice {
 
 export const CURRENT_ADMIN_UPDATE: AdminUpdateNotice = {
   version: '1.0.1',
-  maxAppearances: 3,
+  maxAppearances: 2,
 
   eyebrow: "WHAT'S NEW",
 
