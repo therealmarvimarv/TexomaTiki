@@ -27,6 +27,7 @@ import WhatsNewModal from '../../components/admin/WhatsNewModal';
 import {
   CURRENT_ADMIN_UPDATE,
   getAdminUpdateStorageKey,
+  getAdminUpdateLoginStorageKey,
 } from '../../config/adminUpdates';
 
 import {
@@ -223,11 +224,6 @@ export default function AdminDashboard() {
   const [ready, setReady] = useState(false);
   const [denied, setDenied] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const [adminUserId, setAdminUserId] = useState<string | null>(
-    null
-  );
-
   const [showWhatsNew, setShowWhatsNew] = useState(false);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -262,22 +258,47 @@ export default function AdminDashboard() {
         return;
       }
 
-      setAdminUserId(uid);
+      const appearanceStorageKey =
+        getAdminUpdateStorageKey(
+          uid,
+          CURRENT_ADMIN_UPDATE.version
+        );
 
-      const storageKey = getAdminUpdateStorageKey(
-        uid,
-        CURRENT_ADMIN_UPDATE.version
-      );
+      const loginStorageKey =
+        getAdminUpdateLoginStorageKey(
+          uid,
+          CURRENT_ADMIN_UPDATE.version
+        );
 
       const appearanceCount = Number(
-        localStorage.getItem(storageKey) || '0'
+        localStorage.getItem(appearanceStorageKey) || '0'
       );
 
-      setShowWhatsNew(
+      const currentLoginMarker =
+        data.session.user.last_sign_in_at ?? '';
+
+      const lastLoginShown =
+        localStorage.getItem(loginStorageKey);
+
+      const shouldShow =
         appearanceCount <
-          CURRENT_ADMIN_UPDATE.maxAppearances
-      );
+          CURRENT_ADMIN_UPDATE.maxAppearances &&
+        currentLoginMarker !== '' &&
+        lastLoginShown !== currentLoginMarker;
 
+      if (shouldShow) {
+        localStorage.setItem(
+          appearanceStorageKey,
+          String(appearanceCount + 1)
+        );
+
+        localStorage.setItem(
+          loginStorageKey,
+          currentLoginMarker
+        );
+      }
+
+      setShowWhatsNew(shouldShow);
       setReady(true);
     });
   }, [navigate]);
@@ -296,43 +317,23 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!mobileOpen) return;
 
-    const previousOverflow = document.body.style.overflow;
+    const previousOverflow =
+      document.body.style.overflow;
 
     document.body.style.overflow = 'hidden';
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow =
+        previousOverflow;
     };
   }, [mobileOpen]);
 
-  const markCurrentUpdateSeen = () => {
-    if (adminUserId) {
-      const storageKey = getAdminUpdateStorageKey(
-        adminUserId,
-        CURRENT_ADMIN_UPDATE.version
-      );
-
-      const currentCount = Number(
-        localStorage.getItem(storageKey) || '0'
-      );
-
-      if (
-        currentCount <
-        CURRENT_ADMIN_UPDATE.maxAppearances
-      ) {
-        localStorage.setItem(
-          storageKey,
-          String(currentCount + 1)
-        );
-      }
-    }
-
+  const dismissWhatsNew = () => {
     setShowWhatsNew(false);
   };
 
   const goToPricing = () => {
-    markCurrentUpdateSeen();
-
+    setShowWhatsNew(false);
     navigate('/admin/calendar?tab=pricing');
   };
 
@@ -373,7 +374,7 @@ export default function AdminDashboard() {
       {showWhatsNew && (
         <WhatsNewModal
           update={CURRENT_ADMIN_UPDATE}
-          onDismiss={markCurrentUpdateSeen}
+          onDismiss={dismissWhatsNew}
           onGoToPricing={goToPricing}
         />
       )}
@@ -381,7 +382,9 @@ export default function AdminDashboard() {
       {/* Desktop sidebar */}
       <aside
         className={`hidden lg:flex fixed inset-y-0 left-0 z-40 bg-white border-r border-gray-200 flex-col transition-all duration-200 ${
-          sidebarCollapsed ? 'w-[72px]' : 'w-[220px]'
+          sidebarCollapsed
+            ? 'w-[72px]'
+            : 'w-[220px]'
         }`}
       >
         {/* Texoma Tiki branding */}
@@ -539,7 +542,9 @@ export default function AdminDashboard() {
                   <NavLink
                     key={item.to}
                     item={item}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() =>
+                      setMobileOpen(false)
+                    }
                   />
                 ))}
               </div>
@@ -551,12 +556,16 @@ export default function AdminDashboard() {
                   <NavLink
                     key={item.to}
                     item={item}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() =>
+                      setMobileOpen(false)
+                    }
                   />
                 ))}
 
                 <AccountNavItem
-                  onNavigate={() => setMobileOpen(false)}
+                  onNavigate={() =>
+                    setMobileOpen(false)
+                  }
                 />
               </div>
             </nav>
