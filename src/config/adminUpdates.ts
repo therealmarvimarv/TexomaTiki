@@ -54,3 +54,10 @@ export function getAdminUpdateStorageKey(
 ): string {
   return `adminUpdateAppearances:${version}:${userId}`;
 }
+
+export function getAdminUpdateLoginStorageKey(
+  userId: string,
+  version: string
+): string {
+  return `adminUpdateLastLoginShown:${version}:${userId}`;
+}
