@@ -30,23 +30,23 @@ For this release, the notice explains that Pricing moved from Property to Calend
 
 The notice may appear once on each of the first two eligible administrator logins. After it is dismissed, it will not appear again while moving between admin sections during that same login.
 
-Select Go to Pricing to open Calendar â†’ Pricing directly.
+Select Go to Pricing to open Calendar -> Pricing directly.
 
 A temporary NEW badge may also appear beside Pricing in the Calendar section to help identify its new location.
 
-*Help videos coming soon*
+Help videos coming soon
 
 # Calendar
 
-The Calendar section is where you manage your propertyâ€™s booking activity, availability rules, pricing, blocked dates, and calendar synchronization with external booking platforms.
+The Calendar section is where you manage your property's booking activity, availability rules, pricing, blocked dates, and calendar synchronization with external booking platforms.
 
 At the top of this section, you will see four tabs:
 
 Calendar | Availability | Pricing | Calendar Sync
 
-Each tab handles a different part of your propertyâ€™s calendar, availability, pricing, or synchronization management.
+Each tab handles a different part of your property's calendar, availability, pricing, or synchronization management.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Calendar Tab
 
@@ -58,13 +58,13 @@ From this calendar, you can quickly see bookings, payment activity, owner blocks
 
 The legend above the calendar identifies the different types of activity:
 
-- Confirmed â€” confirmed guest reservations
-- Pending Review â€” booking requests waiting for your review
-- Pending Payment â€” approved reservations waiting for payment
-- Payment Conflict â€” a booking with a payment-related issue that may require attention
-- Owner Block â€” dates you have manually blocked for personal use or another reason
-- iCal Import â€” unavailable dates imported from an external booking platform
-- Cleaning â€” scheduled cleaning activity
+- Confirmed - confirmed guest reservations
+- Pending Review - booking requests waiting for your review
+- Pending Payment - approved reservations waiting for payment
+- Payment Conflict - a booking with a payment-related issue that may require attention
+- Owner Block - dates you have manually blocked for personal use or another reason
+- iCal Import - unavailable dates imported from an external booking platform
+- Cleaning - scheduled cleaning activity
 
 These colors make it easy to scan the month and understand what is happening without opening each individual item.
 
@@ -91,7 +91,7 @@ Select Today to quickly return to the current month.
 
 The refresh control can be used to refresh the calendar information when needed.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Availability Tab
 
@@ -105,7 +105,7 @@ This area contains settings for:
 
 After changing availability settings, select Save availability to save your changes.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Minimum Nights
 
@@ -127,7 +127,7 @@ the guest must select a stay of at least three nights.
 
 Use this setting to establish the minimum length of stay you want to accept.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Maximum Nights
 
@@ -141,7 +141,7 @@ there is no maximum stay restriction from this setting.
 
 You can use a maximum-night limit if you do not want guests booking unusually long stays.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Minimum Notice
 
@@ -155,7 +155,7 @@ a guest generally must book at least one day before their requested arrival.
 
 This can help prevent last-minute reservations when you need time to prepare the property.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Advance Booking
 
@@ -171,7 +171,7 @@ Dates beyond that booking window will not yet be available for new reservations.
 
 This allows you to control how far ahead you want to commit the property.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Owner Blocks
 
@@ -195,7 +195,7 @@ Once dates are blocked, guests will not be able to book those dates through the 
 
 Use this feature whenever you need to intentionally remove dates from availability.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Pricing Tab
 
@@ -203,8 +203,8 @@ The Pricing tab controls the property's nightly rates, date-specific pricing, se
 
 Inside Pricing, there are two tabs:
 
-- Rates â€” nightly pricing, calendar overrides, seasonal pricing, and minimum-stay controls.
-- Fees â€” additional charges applied to reservations.
+- Rates - nightly pricing, calendar overrides, seasonal pricing, and minimum-stay controls.
+- Fees - additional charges applied to reservations.
 
 The pricing system uses a specific order of precedence so that more specific pricing rules override more general ones.
 
@@ -228,8 +228,8 @@ Choose how the starting nightly price is presented to guests before they select 
 
 There are two options:
 
-- Default rate â€” displays the property's default nightly rate.
-- Nightly avg â€” displays the average of the configured day-of-week rates.
+- Default rate - displays the property's default nightly rate.
+- Nightly avg - displays the average of the configured day-of-week rates.
 
 When calculating the nightly average, all seven days of the week are considered. If a particular weekday does not have its own custom rate, the default nightly rate is used for that day when calculating the average.
 
@@ -351,7 +351,7 @@ The same rule works in the opposite direction. A date-specific or seasonal minim
 
 These minimum-stay rules are enforced in both the guest booking experience and the checkout process.
 
-> IMPORTANT: Minimum-stay priority is based on the guestâ€™s check-in date: specific date override â†’ seasonal minimum â†’ property default.
+> IMPORTANT: Minimum-stay priority is based on the guest's check-in date: specific date override -> seasonal minimum -> property default.
 
 **Seasonal Pricing**
 
@@ -391,13 +391,13 @@ The easiest way to understand this section is to think of pricing as layers.
 
 **Nightly Price**
 
-Specific date â†’ Season â†’ Day of week â†’ Default
+Specific date -> Season -> Day of week -> Default
 
 The system always uses the most specific applicable price.
 
 **Minimum Stay**
 
-Specific check-in date â†’ Season â†’ Property default
+Specific check-in date -> Season -> Property default
 
 The system always uses the most specific applicable minimum-stay rule.
 
@@ -407,13 +407,13 @@ Pricing and minimum-stay rules are related, but they are resolved independently.
 
 Once the guest selects actual reservation dates, the system calculates the stay using the applicable nightly rate for those dates.
 
-That means seasonal rates and custom date prices are reflected in the actual reservation quote and checkoutâ€”not merely displayed in the admin calendar.
+That means seasonal rates and custom date prices are reflected in the actual reservation quote and checkout - not merely displayed in the admin calendar.
 
 The applicable fees and taxes are then added to produce the final booking total.
 
 **Before Launch**
 
-Before accepting reservations, review Calendar â†’ Pricing and confirm:
+Before accepting reservations, review Calendar -> Pricing and confirm:
 
 - the default nightly rate is correct
 - the tax rate is correct
@@ -425,11 +425,11 @@ Before accepting reservations, review Calendar â†’ Pricing and confirm:
 - custom minimum-stay overrides are intentional
 - overlapping seasonal presets have the correct priority
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Fees
 
-The Fees tab controls additional charges that can be added to a guestâ€™s booking total.
+The Fees tab controls additional charges that can be added to a guest's booking total.
 
 Fees are separate from the nightly rate and can be configured for common charges such as cleaning, pets, additional guests, and other property-specific costs.
 
@@ -449,7 +449,7 @@ Choose how the fee should be applied. For example, Per stay charges the cleaning
 
 **Apply to guest quote**
 
-Turn this on when the cleaning fee should be included in the guestâ€™s booking quote and final calculated total.
+Turn this on when the cleaning fee should be included in the guest's booking quote and final calculated total.
 
 **Pet Fee**
 
@@ -505,7 +505,7 @@ Custom fees can be useful for charges associated with property-specific services
 
 **How Fees Affect the Guest Quote**
 
-Fees with Apply to guest quote enabled are included when the system calculates the guestâ€™s reservation price, subject to any conditions attached to that fee.
+Fees with Apply to guest quote enabled are included when the system calculates the guest's reservation price, subject to any conditions attached to that fee.
 
 For example:
 
@@ -534,7 +534,7 @@ Before launch, confirm:
 - the additional-guest threshold is correct
 - custom fees are still necessary and accurate
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Calendar Sync Tab
 
@@ -547,7 +547,7 @@ There are two main parts:
 - iCal Export Feed
 - Import Calendars
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### iCAL EXPORT FEED
 
@@ -581,7 +581,7 @@ Select Regenerate token only when necessary.
 
 Do not regenerate the token unless you have a reason to replace the existing calendar-feed URL.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Import Calendars
 
@@ -637,7 +637,7 @@ Only delete a source if you no longer want this property to synchronize availabi
 
 Select Sync All to request synchronization for all enabled imported calendars.
 
-*Help videos coming soon*
+Help videos coming soon
 
 > IMPORTANT: Calendar synchronization with external booking platforms is not necessarily instantaneous. This system checks enabled import feeds automatically every 15 minutes, but external platforms control when they publish new reservations to their feeds and when they refresh this property's export feed. Always monitor your calendars when managing the same property across multiple booking platforms.
 
@@ -659,7 +659,7 @@ From this area, you can:
 - Archive completed or inactive booking records
 - Export booking information to CSV
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Booking List
 
@@ -681,7 +681,7 @@ Each booking row provides a quick summary including:
 
 Select View to open the complete booking record.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Active, Archived & All
 
@@ -703,7 +703,7 @@ Shows both active and archived booking records together.
 
 Archiving does not delete a booking. It simply removes it from the normal active-booking view.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Booking Status Filters
 
@@ -734,7 +734,7 @@ Pending Payment can be used to identify approved bookings where payment has not 
 
 Refunded allows you to review reservations that have been refunded.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Export Csv
 
@@ -747,7 +747,7 @@ This can be useful for:
 - Accounting
 - Reviewing booking history outside the Platform
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Viewing A Booking
 
@@ -755,7 +755,7 @@ Selecting View opens the full booking record.
 
 The booking detail page is divided into several sections so you can review the complete reservation before taking administrative action.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Guest Info
 
@@ -780,7 +780,7 @@ The guest breakdown may separately display:
 
 Review this information when confirming occupancy requirements, pet policies, or communicating with the guest.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Stay Info
 
@@ -799,7 +799,7 @@ This may include:
 
 A dash indicates that the corresponding event has not occurred.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Payment Details
 
@@ -825,7 +825,7 @@ Depending on the reservation, you may see:
 
 This section should be reviewed before confirming payment-related information with a guest.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Payment Status
 
@@ -841,7 +841,7 @@ Examples may include:
 
 > IMPORTANT: Booking status and payment status are separate. A booking can have a booking status of Pending Payment while its payment status is still Pending. Always review both when determining the current state of a reservation.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Payment Due / Expiration
 
@@ -849,11 +849,11 @@ When a guest has been sent a payment link, the booking may display a payment dea
 
 For example:
 
-Payment link sent â€” awaiting guest payment. Link expires [date/time].
+Payment link sent - awaiting guest payment. Link expires [date/time].
 
 If the guest does not complete payment before the expiration time, the booking may move into an expired state according to the configured payment workflow.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Stripe Details
 
@@ -870,7 +870,7 @@ These values help identify the transaction if payment troubleshooting is ever re
 
 Most property owners will not need to manually change these values.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Payment Notes
 
@@ -891,7 +891,7 @@ Examples could include:
 
 Use this area for payment-specific notes rather than general booking notes.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Internal Notes
 
@@ -909,7 +909,7 @@ You can use them for information such as:
 
 Enter the note and select Add note.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Admin Actions
 
@@ -928,7 +928,7 @@ Possible actions include:
 
 Always review the booking and payment information before taking an action.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Confirm Booking
 
@@ -942,7 +942,7 @@ Confirming a booking:
 
 Only confirm a booking after reviewing the reservation details and payment situation.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Decline Booking
 
@@ -959,7 +959,7 @@ Before declining, review:
 
 Once declined, the booking remains in your records with a declined status.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Cancel Booking
 
@@ -969,7 +969,7 @@ Cancelling a booking releases the reservation dates so they can become available
 
 > IMPORTANT: Cancelling a booking and refunding a payment are separate actions. If a paid booking is cancelled, review whether a refund is also required under your cancellation policy.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Record Manual Payment
 
@@ -979,7 +979,7 @@ Examples may include payment received through an approved offline or manual paym
 
 Before recording a manual payment, confirm that the payment was actually received and verify the correct amount.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Partial Refund
 
@@ -996,7 +996,7 @@ Before processing a partial refund:
 
 After processing, the booking/payment record may show a Partially Refunded status and the refunded amount.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Full Refund
 
@@ -1013,7 +1013,7 @@ Once processed successfully, the payment status will update to reflect the refun
 
 Refund processing time to the guest's bank or card may depend on the payment provider and financial institution.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ### Refund Emails
 
@@ -1026,7 +1026,7 @@ These emails use the configured Booking Refunded email templates.
 
 You can review those templates and their automation status from the Email section.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Archive
 
@@ -1044,7 +1044,7 @@ The record can be restored when appropriate.
 
 Use Archive for bookings you no longer need appearing in your normal active workflow.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Important Booking Reminders
 
@@ -1065,12 +1065,12 @@ The Cleaning page is used to track property turnovers, assign cleaners, and foll
 
 At the top of the page, cleaning tasks can be filtered by status:
 
-- All â€” displays every cleaning task.
-- Needed â€” cleaning is required but has not yet been scheduled or started.
-- Scheduled â€” the cleaning task has been scheduled.
-- In Progress â€” cleaning is currently underway.
-- Completed â€” the cleaning task has been finished.
-- Skipped â€” the cleaning task was intentionally skipped.
+- All - displays every cleaning task.
+- Needed - cleaning is required but has not yet been scheduled or started.
+- Scheduled - the cleaning task has been scheduled.
+- In Progress - cleaning is currently underway.
+- Completed - the cleaning task has been finished.
+- Skipped - the cleaning task was intentionally skipped.
 
 These filters make it easy to focus on the cleaning tasks that currently need attention.
 
@@ -1113,7 +1113,7 @@ Choose the current status of the cleaning task. A new task can begin as Needed a
 
 Available statuses include:
 
-Needed â†’ Scheduled â†’ In Progress â†’ Completed
+Needed -> Scheduled -> In Progress -> Completed
 
 A task can also be marked Skipped when appropriate.
 
@@ -1139,7 +1139,7 @@ Using the status filters, the property owner or manager can quickly see:
 
 This helps keep turnovers organized between guest stays and provides a clear record of cleaning activity.
 
-*Help videos coming soon*
+Help videos coming soon
 
 # Maintenance
 
@@ -1147,18 +1147,18 @@ The Maintenance page is used to track repairs, supply needs, and other property-
 
 At the top of the page, three summary cards give you a quick overview of maintenance activity:
 
-- Open tasks â€” tasks that still need attention.
-- Urgent â€” tasks marked with urgent priority.
-- Total tasks â€” the total number of maintenance tasks in the system.
+- Open tasks - tasks that still need attention.
+- Urgent - tasks marked with urgent priority.
+- Total tasks - the total number of maintenance tasks in the system.
 
 You can also filter the task list by status:
 
-- Active â€” shows tasks that are currently open or in progress.
-- All â€” shows all maintenance tasks.
-- Open â€” tasks that have not yet been started.
-- In Progress â€” tasks currently being worked on.
-- Completed â€” finished tasks.
-- Archived â€” older tasks that have been moved out of the active workflow.
+- Active - shows tasks that are currently open or in progress.
+- All - shows all maintenance tasks.
+- Open - tasks that have not yet been started.
+- In Progress - tasks currently being worked on.
+- Completed - finished tasks.
+- Archived - older tasks that have been moved out of the active workflow.
 
 ## Adding a Maintenance Task
 
@@ -1204,7 +1204,7 @@ As work progresses, tasks can be updated from Open to In Progress and then Compl
 
 The priority and status filters make it easier to quickly identify what needs attention and what has already been handled.
 
-*Help videos coming soon*
+Help videos coming soon
 
 # Property
 
@@ -1221,7 +1221,7 @@ It contains eight tabs:
 - Things to Know
 - Sections & Content
 
-Pricing is managed separately under Calendar â†’ Pricing.
+Pricing is managed separately under Calendar -> Pricing.
 
 ## Basic Information
 
@@ -1251,10 +1251,10 @@ Use accurate coordinates so the map is positioned correctly.
 
 The following fields describe the property's accommodations:
 
-- Max Guests â€” maximum number of guests the property can accommodate.
-- Bedrooms â€” total number of bedrooms.
-- Beds â€” total number of beds.
-- Bathrooms â€” total number of bathrooms.
+- Max Guests - maximum number of guests the property can accommodate.
+- Bedrooms - total number of bedrooms.
+- Beds - total number of beds.
+- Bathrooms - total number of bathrooms.
 
 These details are used on the live website to help guests quickly understand the size and capacity of the property.
 
@@ -1291,7 +1291,7 @@ You can:
 - Replace the current host photo
 - Remove the current photo
 
-Recommended image size is approximately 500 Ã— 500 pixels, and supported formats include PNG, JPEG, and WebP.
+Recommended image size is approximately 500 x 500 pixels, and supported formats include PNG, JPEG, and WebP.
 
 ### Updating the Live Website
 
@@ -1299,7 +1299,7 @@ Changes made in Basic Info affect information presented on the public property w
 
 Before launch, it is a good idea to review the live website after making significant changes to confirm that the property title, description, capacity, map location, and host information appear as expected.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Highlights
 
@@ -1333,11 +1333,11 @@ A lower number appears first.
 
 For example:
 
-**0 â†’ first**
+**0 -> first**
 
-**1 â†’ second**
+**1 -> second**
 
-**2 â†’ third**
+**2 -> third**
 
 ### Choosing Highlights
 
@@ -1362,7 +1362,7 @@ After changing an icon, heading, subtitle, or sort order, click Save.
 
 The updated highlights will then appear in the corresponding highlights area of the public property website.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Amenities
 
@@ -1412,11 +1412,11 @@ After checking, unchecking, or adding amenities, click Save in the upper-right c
 
 The updated selections will then be reflected in the property's amenities section on the public website.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Neighborhood
 
-The Neighborhood tab controls the nearby places and local points of interest shown to guests in the propertyâ€™s location section on the public website.
+The Neighborhood tab controls the nearby places and local points of interest shown to guests in the property's location section on the public website.
 
 This section helps guests quickly understand what is nearby and how far important places are from the property.
 
@@ -1497,11 +1497,11 @@ After adding, editing, re-categorizing, or removing neighborhood places, click S
 
 The updated information will then be reflected in the neighborhood/location area of the public property website.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Contact
 
-The Contact tab controls the contact information shown in the public websiteâ€™s Get In Touch section.
+The Contact tab controls the contact information shown in the public website's Get In Touch section.
 
 This is where guests can find the best way to reach the property owner or manager with questions before or after booking.
 
@@ -1513,7 +1513,7 @@ Use an address that is actively monitored so guest questions and inquiries can b
 
 ### Phone Number
 
-Enter the phone number that should appear with the propertyâ€™s contact information.
+Enter the phone number that should appear with the property's contact information.
 
 Make sure the number is current and belongs to the person or team responsible for guest communication.
 
@@ -1539,7 +1539,7 @@ The updated information will then appear in the Get In Touch section of the publ
 
 Before launching a new property, verify that all contact information is correct and that both the email address and phone number are actively monitored.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Photos
 
@@ -1553,8 +1553,8 @@ The Main Page section controls the primary photos displayed in the main gallery 
 
 You can add photos in two ways:
 
-- Upload â€” upload an image from your device.
-- Add URL â€” add an image using an image URL.
+- Upload - upload an image from your device.
+- Add URL - add an image using an image URL.
 
 Supported source image types include:
 
@@ -1595,13 +1595,13 @@ Areas can also be reordered using the drag handle.
 
 ### Bedroom Areas on the Homepage
 
-Bedroom areas in the Photo Tour also supply the bedroom cards displayed in the **Where Youâ€™ll Sleep** section on the homepage.
+Bedroom areas in the Photo Tour also supply the bedroom cards displayed in the **Where You'll Sleep** section on the homepage.
 
-- **Area Title** â€” the Photo Tour area title is used as the bedroom name shown on the homepage.
-- **First Photo** â€” the first photo in that Photo Tour area is used as the bedroom card image on the homepage.
-- **Photo Order** â€” if the photos are reordered, the new first photo becomes the image displayed on the homepage.
-- **Room Name Changes** â€” if the Photo Tour area title is changed, the bedroom name shown on the homepage changes with it.
-- **View Photos** â€” selecting the bedroom card on the homepage takes the guest directly to that bedroomâ€™s corresponding section in the Photo Tour.
+- **Area Title** - the Photo Tour area title is used as the bedroom name shown on the homepage.
+- **First Photo** - the first photo in that Photo Tour area is used as the bedroom card image on the homepage.
+- **Photo Order** - if the photos are reordered, the new first photo becomes the image displayed on the homepage.
+- **Room Name Changes** - if the Photo Tour area title is changed, the bedroom name shown on the homepage changes with it.
+- **View Photos** - selecting the bedroom card on the homepage takes the guest directly to that bedroom's corresponding section in the Photo Tour.
 
 > TIP: For bedroom areas, make sure the title is correct and place the photo you want representing the room first. The homepage uses those Photo Tour settings automatically.
 
@@ -1645,7 +1645,7 @@ Be careful when deleting an area, since it may contain multiple photos and assoc
 
 ### Image Upload Optimization
 
-Uploaded property photos are automatically converted to WebP before they are saved. The conversion uses approximately 85% WebP quality, preserves the imageâ€™s orientation and aspect ratio, limits the longest edge to 3000 pixels, and does not upscale smaller images.
+Uploaded property photos are automatically converted to WebP before they are saved. The conversion uses approximately 85% WebP quality, preserves the image's orientation and aspect ratio, limits the longest edge to 3000 pixels, and does not upscale smaller images.
 
 If conversion fails, the original file is not silently uploaded in its place. The upload stops so the image can be corrected or retried.
 
@@ -1662,7 +1662,7 @@ Before publishing a new property, review the entire Photos section and confirm:
 - feature tags are accurate
 - outdated or duplicate photos have been removed
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Things to Know
 
@@ -1674,8 +1674,8 @@ This area can be used for important information guests should know before bookin
 
 Use the Show on Homepage toggle to control whether the Things to Know section appears on the public website.
 
-- On â€” the section is displayed to guests.
-- Off â€” the entire section is hidden from the public website.
+- On - the section is displayed to guests.
+- Off - the entire section is hidden from the public website.
 
 The content can still be edited while the section is hidden.
 
@@ -1733,7 +1733,7 @@ The accompanying Description can then contain whatever information belongs under
 
 This provides useful starter content while still allowing each property to completely customize the section when needed.
 
-The default wording is there as a starting pointâ€”it does not prevent the property owner from replacing it.
+The default wording is there as a starting point - it does not prevent the property owner from replacing it.
 
 ### Customizing the Content
 
@@ -1758,7 +1758,7 @@ The saved content will then be reflected in the Things to Know section on the pu
 
 Before launching a property, review this area and confirm that all information is accurate, clear, and relevant to guests.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Sections & Content
 
@@ -1819,9 +1819,9 @@ Each FAQ consists of a question and an answer.
 
 Each FAQ item includes controls to:
 
-- Edit â€” change the question or answer
-- Hide â€” keep the FAQ saved but prevent it from appearing publicly
-- Delete â€” permanently remove the FAQ
+- Edit - change the question or answer
+- Hide - keep the FAQ saved but prevent it from appearing publicly
+- Delete - permanently remove the FAQ
 
 An Active indicator shows that the FAQ is currently available for display.
 
@@ -1993,7 +1993,7 @@ For example:
 
 **FAQs OFF**
 
-> â†’ No FAQ section is shown, even if individual FAQs are Active.
+> -> No FAQ section is shown, even if individual FAQs are Active.
 
 ### Individual Item
 
@@ -2003,7 +2003,7 @@ For example:
 
 **FAQs ON + one FAQ hidden**
 
-> â†’ The FAQ section appears, but that particular question does not.
+> -> The FAQ section appears, but that particular question does not.
 
 This allows owners to prepare, temporarily hide, or selectively display content without deleting it.
 
@@ -2021,11 +2021,11 @@ Review Sections & Content and confirm:
 - local recommendations are current
 - featured recommendations are intentional
 
-*Help videos coming soon*
+Help videos coming soon
 
 # Email
 
-The Email section controls the platformâ€™s outgoing email provider, notification templates, automated email rules, guest inquiries, and delivery logs.
+The Email section controls the platform's outgoing email provider, notification templates, automated email rules, guest inquiries, and delivery logs.
 
 At the top of the page, the status bar shows whether email is configured and which admin email address is currently being used.
 
@@ -2065,7 +2065,7 @@ The page includes guidance for commonly used secure SMTP configurations.
 
 Use this setting when required by the email provider.
 
-The correct combination of port and security settings should match the providerâ€™s SMTP instructions.
+The correct combination of port and security settings should match the provider's SMTP instructions.
 
 ### From Email
 
@@ -2099,7 +2099,7 @@ The test message is sent to the configured admin email address.
 
 This is an important setup step for every new property before relying on automated guest or admin notifications.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Templates
 
@@ -2195,7 +2195,7 @@ Shows placeholders that can be inserted into the email.
 
 Click Create Template when finished.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Automations
 
@@ -2203,7 +2203,7 @@ The Automations tab controls when emails are sent and who receives them.
 
 An automation connects:
 
-Trigger â†’ Recipient â†’ Template
+Trigger -> Recipient -> Template
 
 The platform contains system automations for important reservation events and also supports custom time-based automations.
 
@@ -2220,13 +2220,13 @@ Each automation shows information such as:
 
 Depending on the automation, controls may include:
 
-Edit â€” change the automation settings.
+Edit - change the automation settings.
 
-Test â€” send or verify the automation without waiting for the normal trigger.
+Test - send or verify the automation without waiting for the normal trigger.
 
-Delete â€” remove the automation.
+Delete - remove the automation.
 
-Active toggle â€” enable or disable the automation.
+Active toggle - enable or disable the automation.
 
 Inactive automations do not run.
 
@@ -2328,7 +2328,7 @@ This scheduling system supports reservation-relative timing such as:
 
 This makes it possible to create messages such as arrival instructions, reminders, checkout information, or follow-up messages without manually sending them for every booking.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Recommended Email Setup for a New Property
 
@@ -2348,19 +2348,19 @@ Once these steps are complete, the email system can handle both reservation-rela
 
 ## Inquiries
 
-The Inquiries tab displays messages submitted through the public websiteâ€™s guest contact form.
+The Inquiries tab displays messages submitted through the public website's guest contact form.
 
 Each inquiry can contain guest contact information and the message submitted by the guest.
 
-The page explains that replies are handled through the propertyâ€™s normal email inbox.
+The page explains that replies are handled through the property's normal email inbox.
 
-Inquiry emails use the guestâ€™s email address as the Reply-To address, allowing the property owner or manager to reply directly from their email account.
+Inquiry emails use the guest's email address as the Reply-To address, allowing the property owner or manager to reply directly from their email account.
 
 The refresh control can be used to check for updated inquiry information.
 
 If there are no inquiries, the page displays No inquiries yet.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Logs
 
@@ -2393,7 +2393,7 @@ Failed entries should be reviewed when troubleshooting email configuration or de
 
 Use the refresh control to load the latest notification activity.
 
-*Help videos coming soon*
+Help videos coming soon
 
 # Payments
 
@@ -2417,11 +2417,11 @@ It shows:
 
 A status such as:
 
-**Stripe Test â€” ready**
+**Stripe Test - ready**
 
 or:
 
-**Stripe Live â€” ready**
+**Stripe Live - ready**
 
 indicates that the credentials required for that payment mode are configured.
 
@@ -2440,9 +2440,9 @@ The four available modes are:
 
 The easiest way to understand the difference is:
 
-**Manual modes = Request first â†’ Admin reviews â†’ Payment after approval**
+**Manual modes = Request first -> Admin reviews -> Payment after approval**
 
-**Stripe modes = Available dates â†’ Guest goes directly to checkout**
+**Stripe modes = Available dates -> Guest goes directly to checkout**
 
 > IMPORTANT: "Manual" does not mean the booking or payment has to be handled outside the platform. It means the guest's request must be reviewed by the administrator before the guest proceeds with payment.
 
@@ -2578,11 +2578,11 @@ This makes it easy to switch back to Stripe Test later if additional testing is 
 
 **Manual Test / Manual Live**
 
-Guest selects dates â†’ Booking request submitted â†’ Dates held â†’ Administrator reviews â†’ Approve or decline â†’ Approved guest receives payment link â†’ Guest completes payment
+Guest selects dates -> Booking request submitted -> Dates held -> Administrator reviews -> Approve or decline -> Approved guest receives payment link -> Guest completes payment
 
 **Stripe Test / Stripe Live**
 
-Guest selects dates â†’ Availability and booking rules are checked â†’ Guest proceeds directly to Stripe Checkout â†’ Payment is completed â†’ Booking continues through the payment workflow
+Guest selects dates -> Availability and booking rules are checked -> Guest proceeds directly to Stripe Checkout -> Payment is completed -> Booking continues through the payment workflow
 
 The difference between **Test** and **Live** is whether real money is processed.
 
@@ -2684,7 +2684,7 @@ The same application webhook URL can be used when configuring Stripe, but test a
 
 In Stripe, create the webhook destination under:
 
-**Developers â†’ Webhooks**
+**Developers -> Webhooks**
 
 Configure the endpoint to listen for the payment events required by the platform, including:
 
@@ -2749,7 +2749,7 @@ The value is entered in minutes.
 
 The supported range is:
 
-**30â€“1440 minutes**
+**30-1440 minutes**
 
 The default is typically 30 minutes.
 
@@ -2801,7 +2801,7 @@ The recommended workflow for a new property is:
 7. Configure the live webhook and live signing secret.
 8. Leave the site in Stripe Test while the property is still being prepared.
 9. When the property is ready for real bookings, select Stripe Live and click Save Settings.
-10. Refresh the page and confirm the status shows Stripe Live â€” ready.
+10. Refresh the page and confirm the status shows Stripe Live - ready.
 
 Once Stripe Live is selected, real customer payment methods will result in real charges.
 
@@ -2840,9 +2840,9 @@ Before selecting Stripe Live, confirm:
 
 Then select Stripe Live, save the settings, refresh the page, and confirm that the status shows:
 
-**Stripe Live â€” ready**
+**Stripe Live - ready**
 
-*Help videos coming soon*
+Help videos coming soon
 
 # Account
 
@@ -2862,11 +2862,11 @@ The Profile section contains information about the currently logged-in administr
 
 ### Full Name
 
-Enter the administratorâ€™s name.
+Enter the administrator's name.
 
 ### Phone
 
-Enter the administratorâ€™s contact phone number.
+Enter the administrator's contact phone number.
 
 ### Login Email
 
@@ -2876,7 +2876,7 @@ The login email is tied to the authentication account and is not changed through
 
 ### Role
 
-Shows the administratorâ€™s assigned account role.
+Shows the administrator's assigned account role.
 
 The account creation date is also displayed for reference.
 
@@ -2896,7 +2896,7 @@ Fields include:
 
 The business/company information can be left blank when it does not apply.
 
-This information is separate from the administratorâ€™s own login profile, allowing the platform user and the property owner/business to be represented independently.
+This information is separate from the administrator's own login profile, allowing the platform user and the property owner/business to be represented independently.
 
 ## Listing Info
 
@@ -2926,7 +2926,7 @@ Fields include:
 - Manager Email
 - Manager Phone
 
-This information can also be used by email templates through the platformâ€™s template variables.
+This information can also be used by email templates through the platform's template variables.
 
 ### Primary Guest Contact
 
@@ -2966,7 +2966,7 @@ This field is for email-template content only. Entering a value here does not it
 
 Click Save after updating these values.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## Preferences
 
@@ -2974,7 +2974,7 @@ The Preferences section controls regional and formatting settings used by the pl
 
 ### Timezone
 
-Select the propertyâ€™s local timezone.
+Select the property's local timezone.
 
 This is particularly important for scheduled platform functions and time-based email automations.
 
@@ -3035,7 +3035,7 @@ Individual tagline items can be removed and replaced as needed.
 
 Choose the accent color used for the tagline presentation.
 
-The selected color is also applied to the first selected badgeâ€™s icon and label.
+The selected color is also applied to the first selected badge's icon and label.
 
 ### Homepage Badges
 
@@ -3085,7 +3085,7 @@ This may appear in search-engine results depending on how the search engine choo
 
 Click Save after changing branding, homepage-header, badge, or SEO settings.
 
-*Help videos coming soon*
+Help videos coming soon
 
 ## System Status
 
@@ -3168,7 +3168,7 @@ Before launching a newly configured property, review the Account page and confir
 - primary guest contact information is correct
 - email-template property information is complete
 - check-in and check-out times are correct
-- timezone is set to the propertyâ€™s actual local timezone
+- timezone is set to the property's actual local timezone
 - currency and date format are correct
 - logo and favicon are configured
 - homepage tagline and badges accurately represent the property
@@ -3177,4 +3177,4 @@ Before launching a newly configured property, review the Account page and confir
 - password-reset email can be accessed
 - support information is available when needed
 
-*Help videos coming soon*
+Help videos coming soon
