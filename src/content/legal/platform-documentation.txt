@@ -1,4 +1,4 @@
-VACATION RENTAL MANAGEMENT PLATFORM DOCUMENTATION
+**VACATION RENTAL MANAGEMENT PLATFORM DOCUMENTATION**
 
 Use the navigation menu on the left side of the Documentation page to jump directly to a section.
 
@@ -34,7 +34,7 @@ Select Go to Pricing to open Calendar â†’ Pricing directly.
 
 A temporary NEW badge may also appear beside Pricing in the Calendar section to help identify its new location.
 
-Help videos coming soon
+*Help videos coming soon*
 
 # Calendar
 
@@ -46,7 +46,7 @@ Calendar | Availability | Pricing | Calendar Sync
 
 Each tab handles a different part of your propertyâ€™s calendar, availability, pricing, or synchronization management.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Calendar Tab
 
@@ -65,6 +65,7 @@ The legend above the calendar identifies the different types of activity:
 - Owner Block â€” dates you have manually blocked for personal use or another reason
 - iCal Import â€” unavailable dates imported from an external booking platform
 - Cleaning â€” scheduled cleaning activity
+
 These colors make it easy to scan the month and understand what is happening without opening each individual item.
 
 ### Viewing Calendar Details
@@ -79,6 +80,7 @@ Depending on the type of item, the details may show information such as:
 - External booking platform
 - Cleaning information
 - Other relevant details
+
 For example, selecting an imported calendar event may show the date, the source listing, and the platform it came from.
 
 ### Calendar Navigation
@@ -89,7 +91,7 @@ Select Today to quickly return to the current month.
 
 The refresh control can be used to refresh the calendar information when needed.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Availability Tab
 
@@ -100,9 +102,10 @@ This area contains settings for:
 - Length of stay
 - Booking limits
 - Owner blocks
+
 After changing availability settings, select Save availability to save your changes.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Minimum Nights
 
@@ -112,19 +115,19 @@ For example:
 
 If Minimum Nights is set to:
 
-1 night
+**1 night**
 
 a guest may book a stay of one night or longer.
 
 If you change it to:
 
-3 nights
+**3 nights**
 
 the guest must select a stay of at least three nights.
 
 Use this setting to establish the minimum length of stay you want to accept.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Maximum Nights
 
@@ -132,13 +135,13 @@ Maximum nights controls the longest stay a guest may request.
 
 If this is set to:
 
-No limit
+**No limit**
 
 there is no maximum stay restriction from this setting.
 
 You can use a maximum-night limit if you do not want guests booking unusually long stays.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Minimum Notice
 
@@ -146,13 +149,13 @@ Minimum notice controls how close to check-in a guest is allowed to make a booki
 
 For example, if Minimum Notice is set to:
 
-1 day
+**1 day**
 
 a guest generally must book at least one day before their requested arrival.
 
 This can help prevent last-minute reservations when you need time to prepare the property.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Advance Booking
 
@@ -160,7 +163,7 @@ Advance booking determines how far into the future guests are allowed to make re
 
 For example, if this is set to:
 
-6 months
+**6 months**
 
 guests can book dates up to six months into the future.
 
@@ -168,7 +171,7 @@ Dates beyond that booking window will not yet be available for new reservations.
 
 This allows you to control how far ahead you want to commit the property.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Owner Blocks
 
@@ -181,9 +184,10 @@ Use an Owner Block when the property should not be available for booking because
 - Private stays
 - Repairs
 - Other reasons you want to reserve the property
+
 Select:
 
-+ Add block
+**+ Add block**
 
 to create a new blocked period.
 
@@ -191,7 +195,7 @@ Once dates are blocked, guests will not be able to book those dates through the 
 
 Use this feature whenever you need to intentionally remove dates from availability.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Pricing Tab
 
@@ -201,6 +205,7 @@ Inside Pricing, there are two tabs:
 
 - Rates â€” nightly pricing, calendar overrides, seasonal pricing, and minimum-stay controls.
 - Fees â€” additional charges applied to reservations.
+
 The pricing system uses a specific order of precedence so that more specific pricing rules override more general ones.
 
 ### Rates
@@ -209,19 +214,23 @@ The pricing system uses a specific order of precedence so that more specific pri
 
 The Base settings card contains the property's standard pricing information.
 
-Default nightly rate
+**Default nightly rate**
+
 This is the fallback nightly price. If no more specific pricing rule applies to a date, the default nightly rate is used.
 
-Tax rate
+**Tax rate**
+
 Enter the percentage of tax that should be applied to applicable bookings.
 
-Displayed price on booking card
+**Displayed price on booking card**
+
 Choose how the starting nightly price is presented to guests before they select stay dates.
 
 There are two options:
 
 - Default rate â€” displays the property's default nightly rate.
 - Nightly avg â€” displays the average of the configured day-of-week rates.
+
 When calculating the nightly average, all seven days of the week are considered. If a particular weekday does not have its own custom rate, the default nightly rate is used for that day when calculating the average.
 
 This displayed amount is primarily an introductory price shown before dates are selected. Once guests choose actual stay dates, the reservation is priced using the rates that apply to those specific dates.
@@ -241,6 +250,7 @@ Separate rates can be configured for:
 - Thursday
 - Friday
 - Saturday
+
 For example, this allows weekday pricing and weekend pricing to be different.
 
 If a weekday does not have its own custom rate, the system falls back to the Default nightly rate.
@@ -257,8 +267,8 @@ The Pricing Calendar shows the nightly rate currently applying to each date.
 
 The calendar also provides two important date-specific controls:
 
-Click nightly price to set custom price
-Click moon/min to set custom min stay
+- Click nightly price to set custom price
+- Click moon/min to set custom min stay
 
 These controls allow individual dates to override broader pricing or minimum-stay rules.
 
@@ -281,11 +291,8 @@ A date-specific price has the highest pricing priority.
 When determining the nightly price for a selected date, the system uses this order:
 
 1. Custom date price
-â†“
 2. Seasonal pricing
-â†“
 3. Day-of-week rate
-â†“
 4. Default nightly rate
 
 This means a custom price entered directly on a calendar date takes priority over every broader pricing rule.
@@ -303,6 +310,7 @@ You can edit it by:
 - clicking the saved date/price
 - clicking the pencil icon
 - clicking that date's nightly price again on the calendar
+
 The existing value is loaded into the editor so it can be changed and saved.
 
 The X removes the custom date price.
@@ -332,9 +340,7 @@ Minimum-night rules have their own precedence separate from nightly pricing.
 For a guest's check-in date, the system uses:
 
 1. Custom minimum stay for that specific date
-â†“
 2. Seasonal minimum stay
-â†“
 3. Property-wide/default minimum stay
 
 For example, if the normal property minimum is 2 nights and a season requires 4 nights, a guest checking in during that season must stay at least 4 nights.
@@ -361,12 +367,14 @@ A seasonal preset can be used for periods such as:
 - summer or winter pricing
 - slower travel periods
 - other date ranges requiring different rates
+
 A seasonal preset can include its own:
 
 - date range
 - nightly rate
 - minimum-night requirement
 - priority
+
 Seasonal presets can also be activated, deactivated, edited, or deleted.
 
 **Overlapping Seasonal Presets**
@@ -416,7 +424,8 @@ Before accepting reservations, review Calendar â†’ Pricing and confirm:
 - custom calendar prices are intentional
 - custom minimum-stay overrides are intentional
 - overlapping seasonal presets have the correct priority
-Help videos coming soon
+
+*Help videos coming soon*
 
 ### Fees
 
@@ -430,26 +439,32 @@ The page includes Standard Fees and Custom Fees.
 
 Use the Cleaning section to configure the cleaning charge for a reservation.
 
-Amount (USD)
+**Amount (USD)**
+
 Enter the cleaning fee amount.
 
-Fee Type
+**Fee Type**
+
 Choose how the fee should be applied. For example, Per stay charges the cleaning fee once for the entire reservation rather than once per night.
 
-Apply to guest quote
+**Apply to guest quote**
+
 Turn this on when the cleaning fee should be included in the guestâ€™s booking quote and final calculated total.
 
 **Pet Fee**
 
 Use the Pets section to configure a charge for reservations that include pets.
 
-Amount (USD)
+**Amount (USD)**
+
 Enter the pet fee.
 
-Fee Type
+**Fee Type**
+
 Choose how the pet fee should be calculated.
 
-Apply to guest quote
+**Apply to guest quote**
+
 When enabled, the fee is included in the quote only when the guest indicates that pets are included in the reservation.
 
 This allows the pet fee to remain configured without charging guests who are not bringing pets.
@@ -460,18 +475,22 @@ The Additional guests section allows an extra charge to be applied when the numb
 
 This is useful when additional occupants create extra costs for supplies, utilities, cleaning, or general property use.
 
-Amount (USD)
+**Amount (USD)**
+
 Enter the amount charged for each additional guest.
 
-Fee Type
+**Fee Type**
+
 The fee can be configured as Per guest per stay, allowing the system to calculate the charge based on the number of additional guests.
 
-For each guest after
+**For each guest after**
+
 Set the guest-count threshold.
 
 For example, if the threshold is set to 4, the additional-guest fee begins when the reservation exceeds four applicable guests.
 
-Apply to guest quote
+**Apply to guest quote**
+
 When enabled, the additional-guest fee is automatically included when the guest count exceeds the configured threshold.
 
 **Custom Fees**
@@ -493,6 +512,7 @@ For example:
 - a standard cleaning fee can apply to the stay
 - a pet fee applies when pets are selected
 - an additional-guest fee applies when the guest count exceeds its threshold
+
 The applicable fees are added to the nightly accommodation charges as part of the booking total.
 
 **Keeping Fees Guest-Friendly**
@@ -513,7 +533,8 @@ Before launch, confirm:
 - pet-fee behavior is correct
 - the additional-guest threshold is correct
 - custom fees are still necessary and accurate
-Help videos coming soon
+
+*Help videos coming soon*
 
 ## Calendar Sync Tab
 
@@ -525,7 +546,8 @@ There are two main parts:
 
 - iCal Export Feed
 - Import Calendars
-Help videos coming soon
+
+*Help videos coming soon*
 
 ### iCAL EXPORT FEED
 
@@ -559,7 +581,7 @@ Select Regenerate token only when necessary.
 
 Do not regenerate the token unless you have a reason to replace the existing calendar-feed URL.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Import Calendars
 
@@ -572,6 +594,7 @@ For example, you can import a calendar from:
 - Airbnb
 - VRBO
 - Other compatible booking platforms
+
 Imported reservations or blocked dates will appear on your main Calendar as iCal Import activity.
 
 ### Add Source
@@ -614,7 +637,7 @@ Only delete a source if you no longer want this property to synchronize availabi
 
 Select Sync All to request synchronization for all enabled imported calendars.
 
-Help videos coming soon
+*Help videos coming soon*
 
 > IMPORTANT: Calendar synchronization with external booking platforms is not necessarily instantaneous. This system checks enabled import feeds automatically every 15 minutes, but external platforms control when they publish new reservations to their feeds and when they refresh this property's export feed. Always monitor your calendars when managing the same property across multiple booking platforms.
 
@@ -635,7 +658,8 @@ From this area, you can:
 - Add internal notes
 - Archive completed or inactive booking records
 - Export booking information to CSV
-Help videos coming soon
+
+*Help videos coming soon*
 
 ## Booking List
 
@@ -654,9 +678,10 @@ Each booking row provides a quick summary including:
 - Payment status
 - Date the booking was created
 - View button
+
 Select View to open the complete booking record.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Active, Archived & All
 
@@ -678,7 +703,7 @@ Shows both active and archived booking records together.
 
 Archiving does not delete a booking. It simply removes it from the normal active-booking view.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Booking Status Filters
 
@@ -696,6 +721,7 @@ Available filters may include:
 - Payment Failed
 - Payment Conflict
 - Refunded
+
 The number beside each status shows how many bookings currently match that category.
 
 This allows you to quickly focus on bookings that need attention.
@@ -708,7 +734,7 @@ Pending Payment can be used to identify approved bookings where payment has not 
 
 Refunded allows you to review reservations that have been refunded.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Export Csv
 
@@ -720,7 +746,8 @@ This can be useful for:
 - Reporting
 - Accounting
 - Reviewing booking history outside the Platform
-Help videos coming soon
+
+*Help videos coming soon*
 
 ## Viewing A Booking
 
@@ -728,7 +755,7 @@ Selecting View opens the full booking record.
 
 The booking detail page is divided into several sections so you can review the complete reservation before taking administrative action.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Guest Info
 
@@ -743,15 +770,17 @@ This may include:
 - Total guest count
 - Number of pets
 - Guest breakdown
+
 The guest breakdown may separately display:
 
 - Adults
 - Children
 - Infants
 - Pets
+
 Review this information when confirming occupancy requirements, pet policies, or communicating with the guest.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Stay Info
 
@@ -767,9 +796,10 @@ This may include:
 - Cancellation date
 - Decline date
 - Refund date
+
 A dash indicates that the corresponding event has not occurred.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Payment Details
 
@@ -792,9 +822,10 @@ Depending on the reservation, you may see:
 - Date/time paid
 - Date/time refunded
 - Payment due date/time
+
 This section should be reviewed before confirming payment-related information with a guest.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Payment Status
 
@@ -807,9 +838,10 @@ Examples may include:
 - Paid
 - Refunded
 - Partially Refunded
+
 > IMPORTANT: Booking status and payment status are separate. A booking can have a booking status of Pending Payment while its payment status is still Pending. Always review both when determining the current state of a reservation.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Payment Due / Expiration
 
@@ -821,7 +853,7 @@ Payment link sent â€” awaiting guest payment. Link expires [date/time].
 
 If the guest does not complete payment before the expiration time, the booking may move into an expired state according to the configured payment workflow.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Stripe Details
 
@@ -833,11 +865,12 @@ This section can include technical payment references such as:
 - Payment Intent ID
 - Customer ID
 - Session expiration time
+
 These values help identify the transaction if payment troubleshooting is ever required.
 
 Most property owners will not need to manually change these values.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Payment Notes
 
@@ -855,9 +888,10 @@ Examples could include:
 - Payment follow-up information
 - Special payment circumstances
 - Notes relating to an offline payment
+
 Use this area for payment-specific notes rather than general booking notes.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Internal Notes
 
@@ -872,9 +906,10 @@ You can use them for information such as:
 - Property preparation instructions
 - Administrative reminders
 - Follow-up information
+
 Enter the note and select Add note.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Admin Actions
 
@@ -890,9 +925,10 @@ Possible actions include:
 - Record Manual Payment
 - Partial Refund
 - Full Refund
+
 Always review the booking and payment information before taking an action.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Confirm Booking
 
@@ -903,9 +939,10 @@ Confirming a booking:
 - Confirms the reservation
 - Blocks the reservation dates on the calendar
 - Can create the associated cleaning task
+
 Only confirm a booking after reviewing the reservation details and payment situation.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Decline Booking
 
@@ -919,9 +956,10 @@ Before declining, review:
 - Pets
 - Special requests
 - Any other relevant booking information
+
 Once declined, the booking remains in your records with a declined status.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Cancel Booking
 
@@ -931,7 +969,7 @@ Cancelling a booking releases the reservation dates so they can become available
 
 > IMPORTANT: Cancelling a booking and refunding a payment are separate actions. If a paid booking is cancelled, review whether a refund is also required under your cancellation policy.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Record Manual Payment
 
@@ -941,7 +979,7 @@ Examples may include payment received through an approved offline or manual paym
 
 Before recording a manual payment, confirm that the payment was actually received and verify the correct amount.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Partial Refund
 
@@ -955,9 +993,10 @@ Before processing a partial refund:
 - Review the applicable cancellation/refund policy
 - Determine the correct amount to refund
 - Verify the refund amount before submitting
+
 After processing, the booking/payment record may show a Partially Refunded status and the refunded amount.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Full Refund
 
@@ -969,11 +1008,12 @@ Before processing:
 - Confirm the payment
 - Review the cancellation/refund policy
 - Make sure a full refund is appropriate
+
 Once processed successfully, the payment status will update to reflect the refund.
 
 Refund processing time to the guest's bank or card may depend on the payment provider and financial institution.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ### Refund Emails
 
@@ -981,11 +1021,12 @@ When a refund is processed through the supported refund workflow, the Platform c
 
 - The guest
 - The administrator
+
 These emails use the configured Booking Refunded email templates.
 
 You can review those templates and their automation status from the Email section.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Archive
 
@@ -1003,7 +1044,7 @@ The record can be restored when appropriate.
 
 Use Archive for bookings you no longer need appearing in your normal active workflow.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Important Booking Reminders
 
@@ -1030,6 +1071,7 @@ At the top of the page, cleaning tasks can be filtered by status:
 - In Progress â€” cleaning is currently underway.
 - Completed â€” the cleaning task has been finished.
 - Skipped â€” the cleaning task was intentionally skipped.
+
 These filters make it easy to focus on the cleaning tasks that currently need attention.
 
 ## Automatic Cleaning Tasks From Confirmed Bookings
@@ -1044,6 +1086,7 @@ The owner or manager can then open that cleaning task to:
 - update the cleaning status
 - add notes or special instructions
 - track the task through completion
+
 The + Add task button is mainly for situations where a cleaning task needs to be created manually, such as an extra cleaning, owner-use turnover, maintenance-related cleanup, or another cleaning that is not tied to a confirmed guest booking.
 
 ## Adding a Cleaning Task
@@ -1052,16 +1095,20 @@ Click + Add task in the upper-right corner to create a new cleaning task.
 
 The New cleaning task form includes:
 
-Task date
+**Task date**
+
 Select the date the cleaning should take place.
 
-Checkout date
+**Checkout date**
+
 Enter the associated guest checkout date. This helps connect the cleaning task with the turnover taking place after a guest's stay.
 
-Assigned to
+**Assigned to**
+
 Enter the name of the cleaner or person responsible for completing the task.
 
-Status
+**Status**
+
 Choose the current status of the cleaning task. A new task can begin as Needed and then be updated as the cleaning progresses.
 
 Available statuses include:
@@ -1070,7 +1117,8 @@ Needed â†’ Scheduled â†’ In Progress â†’ Completed
 
 A task can also be marked Skipped when appropriate.
 
-Notes
+**Notes**
+
 Use this area for any additional cleaning instructions or information the cleaner or property manager may need.
 
 Examples might include special turnover instructions, areas requiring extra attention, supply reminders, or other notes related to that cleaning.
@@ -1088,9 +1136,10 @@ Using the status filters, the property owner or manager can quickly see:
 - which cleanings are currently being worked on
 - which cleanings have been completed
 - which tasks were skipped
+
 This helps keep turnovers organized between guest stays and provides a clear record of cleaning activity.
 
-Help videos coming soon
+*Help videos coming soon*
 
 # Maintenance
 
@@ -1101,6 +1150,7 @@ At the top of the page, three summary cards give you a quick overview of mainten
 - Open tasks â€” tasks that still need attention.
 - Urgent â€” tasks marked with urgent priority.
 - Total tasks â€” the total number of maintenance tasks in the system.
+
 You can also filter the task list by status:
 
 - Active â€” shows tasks that are currently open or in progress.
@@ -1109,32 +1159,39 @@ You can also filter the task list by status:
 - In Progress â€” tasks currently being worked on.
 - Completed â€” finished tasks.
 - Archived â€” older tasks that have been moved out of the active workflow.
+
 ## Adding a Maintenance Task
 
 Click + Add task in the upper-right corner to create a new maintenance task.
 
 The New task form includes:
 
-Title
+**Title**
+
 Enter a short name for the issue or task.
 
 Example:
 
 Fix leaky faucet in bathroom
 
-Description
+**Description**
+
 Add details about the issue, where it is located, and what needs to be done.
 
-Priority
+**Priority**
+
 Choose the importance of the task. This helps distinguish routine work from items that need faster attention.
 
-Status
+**Status**
+
 Set the current stage of the maintenance task, such as Open or In Progress.
 
-Category
+**Category**
+
 Choose the type of maintenance task. The screenshot shows General as an available category.
 
-Due date (optional)
+**Due date (optional)**
+
 Add a due date when the task needs to be completed by a certain day.
 
 When finished, click Save to create the task. Click Cancel to close the form without saving.
@@ -1147,7 +1204,7 @@ As work progresses, tasks can be updated from Open to In Progress and then Compl
 
 The priority and status filters make it easier to quickly identify what needs attention and what has already been handled.
 
-Help videos coming soon
+*Help videos coming soon*
 
 # Property
 
@@ -1174,15 +1231,18 @@ After making changes, click Save in the upper-right corner.
 
 ### Property Details
 
-Title
+**Title**
+
 Enter the main property title used to identify and market the rental on the website.
 
 This should clearly describe the property and can include a short selling point or feature.
 
-Location
+**Location**
+
 Enter the location that should be displayed for the property.
 
-Latitude & Longitude
+**Latitude & Longitude**
+
 These coordinates control the exact property location used by the website's map.
 
 Use accurate coordinates so the map is positioned correctly.
@@ -1195,6 +1255,7 @@ The following fields describe the property's accommodations:
 - Bedrooms â€” total number of bedrooms.
 - Beds â€” total number of beds.
 - Bathrooms â€” total number of bathrooms.
+
 These details are used on the live website to help guests quickly understand the size and capacity of the property.
 
 ### Property Description
@@ -1208,14 +1269,17 @@ This is where you can explain:
 - nearby attractions or activities
 - the type of experience guests can expect
 - other useful information about the property
+
 Because this description appears on the guest-facing website, it should be written for potential guests rather than as an internal note.
 
 ### Host Information
 
-Host Name
+**Host Name**
+
 Enter the name that should be displayed for the host.
 
-Years Hosting
+**Years Hosting**
+
 Enter the number of years of hosting experience that should be shown on the website.
 
 ### Host Photo
@@ -1226,6 +1290,7 @@ You can:
 
 - Replace the current host photo
 - Remove the current photo
+
 Recommended image size is approximately 500 Ã— 500 pixels, and supported formats include PNG, JPEG, and WebP.
 
 ### Updating the Live Website
@@ -1234,7 +1299,7 @@ Changes made in Basic Info affect information presented on the public property w
 
 Before launch, it is a good idea to review the live website after making significant changes to confirm that the property title, description, capacity, map location, and host information appear as expected.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Highlights
 
@@ -1246,27 +1311,33 @@ These callouts are designed to quickly draw attention to important features or s
 
 Each highlight includes:
 
-Icon
+**Icon**
+
 Choose an icon that visually represents the feature.
 
-Heading
+**Heading**
+
 Enter the short title guests will see.
 
 Keep the heading concise and easy to understand.
 
-Subtitle (optional)
+**Subtitle (optional)**
+
 Add a short explanation beneath the heading to give guests more context.
 
-Sort Order
+**Sort Order**
+
 Controls the order in which the highlights appear on the public website.
 
 A lower number appears first.
 
 For example:
 
-0 â†’ first
-1 â†’ second
-2 â†’ third
+**0 â†’ first**
+
+**1 â†’ second**
+
+**2 â†’ third**
 
 ### Choosing Highlights
 
@@ -1282,6 +1353,7 @@ Examples may include:
 - Family-friendly features
 - Parking
 - Outdoor entertainment areas
+
 Highlights should focus on key selling points rather than trying to repeat the entire amenities list.
 
 ### Updating the Website
@@ -1290,7 +1362,7 @@ After changing an icon, heading, subtitle, or sort order, click Save.
 
 The updated highlights will then appear in the corresponding highlights area of the public property website.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Amenities
 
@@ -1304,6 +1376,7 @@ Each amenity has a checkbox.
 
 - Checked amenities are shown on the public property listing.
 - Unchecked amenities are hidden from the public listing.
+
 This allows the property owner or manager to keep the amenities list accurate as features are added, removed, or changed.
 
 ### Amenity Categories
@@ -1314,6 +1387,7 @@ Amenities are grouped into sections such as:
 - Bathroom
 - Bedroom and laundry
 - Additional categories further down the page
+
 Each category contains its own list of available amenities.
 
 ### Adding a Custom Amenity
@@ -1338,7 +1412,7 @@ After checking, unchecking, or adding amenities, click Save in the upper-right c
 
 The updated selections will then be reflected in the property's amenities section on the public website.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Neighborhood
 
@@ -1350,19 +1424,24 @@ This section helps guests quickly understand what is nearby and how far importan
 
 Each neighborhood entry includes:
 
-Place Name
+**Place Name**
+
 Enter the name of the nearby location, attraction, business, or point of interest.
 
-Distance
+**Distance**
+
 Enter the approximate distance from the property.
 
 This can be entered in a simple guest-friendly format such as:
 
-1 mile
-2.5 miles
-< 1 mile
+**1 mile**
 
-Category
+**2.5 miles**
+
+**< 1 mile**
+
+**Category**
+
 Choose the category that best describes the place.
 
 Categories can be used to organize nearby places into groups such as:
@@ -1372,6 +1451,7 @@ Categories can be used to organize nearby places into groups such as:
 - Essentials
 - Dining & Drinks
 - Entertainment
+
 Grouping places by category makes the neighborhood information easier for guests to browse.
 
 ### Adding a New Place
@@ -1383,6 +1463,7 @@ Enter the:
 - place name
 - distance
 - category
+
 Then click Save when finished.
 
 ### Removing a Place
@@ -1407,6 +1488,7 @@ Good entries may include:
 - convenience stores
 - major attractions
 - other commonly needed services
+
 Keep distances reasonably accurate and review the list periodically in case businesses close, move, or new attractions become relevant.
 
 ### Updating the Public Website
@@ -1415,7 +1497,7 @@ After adding, editing, re-categorizing, or removing neighborhood places, click S
 
 The updated information will then be reflected in the neighborhood/location area of the public property website.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Contact
 
@@ -1446,6 +1528,7 @@ Examples might include:
 - Usually within a few hours
 - Usually within 24 hours
 - Same-day response
+
 Avoid promising a response time that cannot normally be maintained.
 
 ### Saving Changes
@@ -1456,7 +1539,7 @@ The updated information will then appear in the Get In Touch section of the publ
 
 Before launching a new property, verify that all contact information is correct and that both the email address and phone number are actively monitored.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Photos
 
@@ -1472,6 +1555,7 @@ You can add photos in two ways:
 
 - Upload â€” upload an image from your device.
 - Add URL â€” add an image using an image URL.
+
 Supported source image types include:
 
 - JPG
@@ -1506,6 +1590,7 @@ Each area can contain:
 - its own group of photos
 - a custom area name
 - features or amenities associated with that area
+
 Areas can also be reordered using the drag handle.
 
 ### Bedroom Areas on the Homepage
@@ -1541,6 +1626,7 @@ You can:
 - add a feature
 - remove an existing feature
 - associate several features with the same area
+
 This helps give guests additional context while browsing the photo tour.
 
 ### Managing Photo Tour Areas
@@ -1554,6 +1640,7 @@ Depending on the action needed, you can:
 - add or remove photos
 - update its features
 - remove the area
+
 Be careful when deleting an area, since it may contain multiple photos and associated information.
 
 ### Image Upload Optimization
@@ -1574,8 +1661,8 @@ Before publishing a new property, review the entire Photos section and confirm:
 - photos are assigned to the appropriate areas
 - feature tags are accurate
 - outdated or duplicate photos have been removed
-Help videos coming soon
 
+*Help videos coming soon*
 
 ## Things to Know
 
@@ -1589,6 +1676,7 @@ Use the Show on Homepage toggle to control whether the Things to Know section ap
 
 - On â€” the section is displayed to guests.
 - Off â€” the entire section is hidden from the public website.
+
 The content can still be edited while the section is hidden.
 
 ### Section Heading
@@ -1607,10 +1695,12 @@ This means the default text does not have to be entered manually.
 
 Each content block contains two editable fields:
 
-Title
+**Title**
+
 Enter the heading you want displayed for that particular block.
 
-Description
+**Description**
+
 Enter the information that should appear underneath that title.
 
 Both fields are fully customizable.
@@ -1622,6 +1712,7 @@ For example, a default title may suggest information such as:
 - House Rules
 - Cancellation Policy
 - Safety & Property
+
 However, the owner or manager is free to replace that title with something completely different.
 
 A title could instead be changed to something such as:
@@ -1633,6 +1724,7 @@ A title could instead be changed to something such as:
 - Guest Expectations
 - Weather & Safety
 - Before You Arrive
+
 The accompanying Description can then contain whatever information belongs under that title.
 
 ### Leaving a Field Blank
@@ -1653,6 +1745,7 @@ For every block, the property owner or manager can:
 - change the description
 - keep the default content
 - replace the default wording entirely
+
 This makes the Things to Know area flexible enough to present whatever information is most important for that particular property.
 
 The section is not limited to one specific type of content.
@@ -1665,7 +1758,7 @@ The saved content will then be reflected in the Things to Know section on the pu
 
 Before launching a property, review this area and confirm that all information is accurate, clear, and relevant to guests.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Sections & Content
 
@@ -1675,6 +1768,7 @@ It has two main purposes:
 
 - control whether entire sections are visible to guests
 - manage the individual content displayed inside those sections
+
 The content is organized into four tabs:
 
 - FAQs
@@ -1706,6 +1800,7 @@ Controls the guest-information area that includes content such as:
 - Check-in & Check-out information
 - Pet Policy
 - Accessibility Notes
+
 Turning this section off hides that guest information from the public website without deleting the underlying content.
 
 ### Important
@@ -1727,6 +1822,7 @@ Each FAQ item includes controls to:
 - Edit â€” change the question or answer
 - Hide â€” keep the FAQ saved but prevent it from appearing publicly
 - Delete â€” permanently remove the FAQ
+
 An Active indicator shows that the FAQ is currently available for display.
 
 ### Adding an FAQ
@@ -1746,6 +1842,7 @@ Useful topics may include:
 - nearby attractions
 - amenities
 - other frequently asked guest questions
+
 Keep answers clear and concise so guests can quickly find the information they need.
 
 ### House Rules
@@ -1757,6 +1854,7 @@ Each rule can have:
 - a Rule Title
 - an optional Description
 - an Icon
+
 ### Adding a House Rule
 
 Click + Add rule.
@@ -1781,6 +1879,7 @@ Available icon styles include options for topics such as:
 - Key / Access
 - Cancellation
 - Warning
+
 The icon is used to make the rule easier for guests to identify visually.
 
 Click Save to add the rule.
@@ -1792,6 +1891,7 @@ Each saved rule can be:
 - Edited
 - Hidden
 - Deleted
+
 An Active indicator identifies rules currently available for display.
 
 The House Rules list also provides ordering controls so rules can be arranged in the order you want guests to see them.
@@ -1808,6 +1908,7 @@ The platform includes policy areas for information such as:
 - Check-in & Check-out
 - Pet Policy
 - Accessibility Notes
+
 Each policy contains a title and descriptive content that can be edited to match the requirements of the property.
 
 ### Managing Policies
@@ -1817,6 +1918,7 @@ Each policy can be:
 - Edited
 - Hidden
 - Deleted
+
 An Active indicator shows which policies are currently available for guest display.
 
 Click + Add policy when an additional policy is needed.
@@ -1836,6 +1938,7 @@ Each recommendation can contain information such as:
 - approximate travel time or distance
 - whether the recommendation is Featured
 - whether it is Active
+
 ### Featured Recommendations
 
 A recommendation marked Featured can be given additional prominence within the guest-facing local recommendations section.
@@ -1849,6 +1952,7 @@ Each recommendation can be:
 - Edited
 - Hidden
 - Deleted
+
 Click + Add place to create another recommendation.
 
 Hiding a recommendation removes it from guest view without deleting the saved information.
@@ -1863,13 +1967,16 @@ This allows the recommendations to be prepared in advance and made public later 
 
 Throughout Sections & Content, there is an important difference between hiding and deleting content.
 
-Active
+**Active**
+
 The item is available to appear on the public website when its parent section is enabled.
 
-Hide
+**Hide**
+
 Keeps the item saved in the system but removes it from guest view.
 
-Delete
+**Delete**
+
 Removes the item entirely.
 
 When content may be needed again later, use Hide instead of Delete.
@@ -1884,8 +1991,9 @@ The top-level toggles control whether a complete section appears on the website.
 
 For example:
 
-FAQs OFF
-â†’ No FAQ section is shown, even if individual FAQs are Active.
+**FAQs OFF**
+
+> â†’ No FAQ section is shown, even if individual FAQs are Active.
 
 ### Individual Item
 
@@ -1893,8 +2001,9 @@ The Hide control determines whether a particular item appears when its section i
 
 For example:
 
-FAQs ON + one FAQ hidden
-â†’ The FAQ section appears, but that particular question does not.
+**FAQs ON + one FAQ hidden**
+
+> â†’ The FAQ section appears, but that particular question does not.
 
 This allows owners to prepare, temporarily hide, or selectively display content without deleting it.
 
@@ -1911,7 +2020,8 @@ Review Sections & Content and confirm:
 - outdated items have been removed
 - local recommendations are current
 - featured recommendations are intentional
-Help videos coming soon
+
+*Help videos coming soon*
 
 # Email
 
@@ -1989,7 +2099,7 @@ The test message is sent to the configured admin email address.
 
 This is an important setup step for every new property before relying on automated guest or admin notifications.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Templates
 
@@ -2007,6 +2117,7 @@ Each template displays information such as:
 - active status
 - whether it is a System template
 - email subject
+
 Click a template to expand it and edit its content.
 
 ### Subject
@@ -2029,7 +2140,7 @@ Use the Active toggle to control whether the template is available for use.
 
 Templates can contain placeholders written in the format:
 
-{{variable_name}}
+`{{variable_name}}`
 
 When an email is sent, these placeholders are automatically replaced with information from the property, reservation, guest, payment, or other relevant system data.
 
@@ -2045,6 +2156,7 @@ Depending on the template, available information may include items such as:
 - payment information
 - refund information
 - access information
+
 Use the listed variables instead of manually entering information that changes from booking to booking.
 
 ### Preview
@@ -2057,27 +2169,33 @@ Click + Create Template to create a new email template.
 
 The form includes:
 
-Template Name
+**Template Name**
+
 An internal name used to identify the template.
 
-Template Key
+**Template Key**
+
 The internal identifier used by the platform.
 
-Subject
+**Subject**
+
 The email subject line.
 
-HTML Body
+**HTML Body**
+
 The content of the email.
 
-Active
+**Active**
+
 Determines whether the template is available for use.
 
-Available variables
+**Available variables**
+
 Shows placeholders that can be inserted into the email.
 
 Click Create Template when finished.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Automations
 
@@ -2099,6 +2217,7 @@ Each automation shows information such as:
 - assigned template
 - active status
 - explanation of when the email is sent
+
 Depending on the automation, controls may include:
 
 Edit â€” change the automation settings.
@@ -2123,6 +2242,7 @@ Examples include notifications associated with:
 - declines
 - cancellations
 - refunds
+
 Guest and admin notifications can be handled separately, allowing the platform to send different messages to each recipient when the same event occurs.
 
 These system event notifications are connected to the appropriate built-in email templates.
@@ -2205,9 +2325,10 @@ This scheduling system supports reservation-relative timing such as:
 - before check-out
 - day of check-out
 - after check-out
+
 This makes it possible to create messages such as arrival instructions, reminders, checkout information, or follow-up messages without manually sending them for every booking.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Recommended Email Setup for a New Property
 
@@ -2222,6 +2343,7 @@ Before launching a property, complete the Email section in this order:
 7. Configure any additional scheduled guest messages.
 8. Confirm required automations are Active.
 9. Review the Logs after testing to verify successful email processing.
+
 Once these steps are complete, the email system can handle both reservation-related notifications and scheduled guest communication automatically.
 
 ## Inquiries
@@ -2238,7 +2360,7 @@ The refresh control can be used to check for updated inquiry information.
 
 If there are no inquiries, the page displays No inquiries yet.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Logs
 
@@ -2252,6 +2374,7 @@ Logs can be filtered by:
 - Sent
 - Skipped
 - Failed
+
 ### Sent
 
 The notification was successfully processed for sending.
@@ -2270,7 +2393,7 @@ Failed entries should be reviewed when troubleshooting email configuration or de
 
 Use the refresh control to load the latest notification activity.
 
-Help videos coming soon
+*Help videos coming soon*
 
 # Payments
 
@@ -2291,13 +2414,14 @@ It shows:
 - whether the Test webhook signing secret is configured
 - whether the Stripe Live secret key is configured
 - whether the Live webhook signing secret is configured
+
 A status such as:
 
-Stripe Test â€” ready
+**Stripe Test â€” ready**
 
 or:
 
-Stripe Live â€” ready
+**Stripe Live â€” ready**
 
 indicates that the credentials required for that payment mode are configured.
 
@@ -2374,7 +2498,7 @@ Use the following Stripe test card:
 
 **Card Number**
 
-4242 4242 4242 4242
+`4242 4242 4242 4242`
 
 **Expiration Date**
 
@@ -2382,7 +2506,7 @@ Enter any future expiration date.
 
 Example:
 
-12/30
+`12/30`
 
 **Security Code (CVC)**
 
@@ -2390,7 +2514,7 @@ Enter any 3-digit number.
 
 Example:
 
-123
+`123`
 
 **ZIP / Postal Code**
 
@@ -2473,7 +2597,7 @@ The Stripe Test Credentials section contains the credentials used only when the 
 
 The test secret key begins with:
 
-sk_test_
+`sk_test_`
 
 This is a secret credential and should never be shared publicly.
 
@@ -2485,7 +2609,7 @@ To replace the saved value, enter the new secret key into the replacement field 
 
 The test webhook signing secret begins with:
 
-whsec_
+`whsec_`
 
 Stripe provides this secret when the test webhook destination is created.
 
@@ -2497,7 +2621,7 @@ It allows the platform to verify that incoming webhook events were actually sent
 
 The test publishable key begins with:
 
-pk_test_
+`pk_test_`
 
 Unlike the secret key, the publishable key is not secret and is safe to use in the website's payment interface.
 
@@ -2509,7 +2633,7 @@ The Stripe Live Credentials section contains the credentials used when the payme
 
 The live secret key begins with:
 
-sk_live_
+`sk_live_`
 
 This key allows the system to create real Stripe payment sessions and must be protected.
 
@@ -2521,7 +2645,7 @@ The system stores the key securely and displays only a masked preview after it h
 
 The live webhook signing secret begins with:
 
-whsec_
+`whsec_`
 
 This is generated by Stripe for the live webhook destination.
 
@@ -2533,7 +2657,7 @@ Do not reuse the test webhook secret for live payments.
 
 The live publishable key begins with:
 
-pk_live_
+`pk_live_`
 
 This key is safe to use in the website and is not considered a secret.
 
@@ -2547,6 +2671,7 @@ To replace it:
 2. Click Save Settings.
 3. Refresh the page if necessary.
 4. Confirm the Current Status shows the appropriate credential as configured.
+
 Leaving the replacement field blank keeps the existing saved credential.
 
 ## Webhook Endpoint
@@ -2559,7 +2684,7 @@ The same application webhook URL can be used when configuring Stripe, but test a
 
 In Stripe, create the webhook destination under:
 
-Developers â†’ Webhooks
+**Developers â†’ Webhooks**
 
 Configure the endpoint to listen for the payment events required by the platform, including:
 
@@ -2567,6 +2692,7 @@ Configure the endpoint to listen for the payment events required by the platform
 - checkout.session.expired
 - payment_intent.payment_failed
 - charge.refunded
+
 These events support the major payment workflows.
 
 ### checkout.session.completed
@@ -2598,6 +2724,7 @@ Even when both destinations use the same endpoint URL, they have different:
 - Stripe environments
 - webhook signing secrets
 - event deliveries
+
 The test webhook signing secret must be stored in the Test field.
 
 The live webhook signing secret must be stored in the Live field.
@@ -2622,7 +2749,7 @@ The value is entered in minutes.
 
 The supported range is:
 
-30â€“1440 minutes
+**30â€“1440 minutes**
 
 The default is typically 30 minutes.
 
@@ -2642,6 +2769,7 @@ The Payments page provides separate controls for:
 
 - Remove Test Keys
 - Remove Live Keys
+
 Use these carefully.
 
 ### Remove Test Keys
@@ -2660,7 +2788,6 @@ Do not use this when simply switching temporarily back to Stripe Test.
 
 Changing the Payment Mode is enough to determine which credential set the system uses.
 
-
 ## Switching Between Test and Live
 
 The recommended workflow for a new property is:
@@ -2675,6 +2802,7 @@ The recommended workflow for a new property is:
 8. Leave the site in Stripe Test while the property is still being prepared.
 9. When the property is ready for real bookings, select Stripe Live and click Save Settings.
 10. Refresh the page and confirm the status shows Stripe Live â€” ready.
+
 Once Stripe Live is selected, real customer payment methods will result in real charges.
 
 ## Security
@@ -2691,6 +2819,7 @@ Security protections include:
 - only masked previews are displayed after saving
 - publishable keys can be stored normally because they are not secret
 - the Payments settings page is restricted to authorized administrators
+
 > WARNING: Never include full sk_test_, sk_live_, or whsec_ values in screenshots, documentation, support messages, or public files.
 
 Publishable keys beginning with pk_test_ or pk_live_ are designed to be publicly usable.
@@ -2708,11 +2837,12 @@ Before selecting Stripe Live, confirm:
 - the Site URL is correct
 - checkout expiration is configured appropriately
 - the Current Status shows the live credentials as ready
+
 Then select Stripe Live, save the settings, refresh the page, and confirm that the status shows:
 
-Stripe Live â€” ready
+**Stripe Live â€” ready**
 
-Help videos coming soon
+*Help videos coming soon*
 
 # Account
 
@@ -2723,6 +2853,7 @@ The Account menu also provides access to:
 - Privacy Policy
 - Terms & Conditions
 - Documentation
+
 These documents are part of the administrator side of the platform.
 
 ## Profile
@@ -2762,6 +2893,7 @@ Fields include:
 - Owner Phone
 - Business / Company Name
 - Business Address
+
 The business/company information can be left blank when it does not apply.
 
 This information is separate from the administratorâ€™s own login profile, allowing the platform user and the property owner/business to be represented independently.
@@ -2780,6 +2912,7 @@ Fields include:
 - State
 - ZIP
 - Country
+
 These values are used by the platform where structured property information is needed.
 
 ### Listing Manager
@@ -2792,6 +2925,7 @@ Fields include:
 - Manager Role
 - Manager Email
 - Manager Phone
+
 This information can also be used by email templates through the platformâ€™s template variables.
 
 ### Primary Guest Contact
@@ -2803,6 +2937,7 @@ Fields include:
 - Contact Name
 - Contact Email
 - Contact Phone
+
 After changing listing or contact information, click Save.
 
 ## Email Template Settings
@@ -2831,7 +2966,7 @@ This field is for email-template content only. Entering a value here does not it
 
 Click Save after updating these values.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## Preferences
 
@@ -2869,6 +3004,7 @@ The existing image can be:
 
 - replaced
 - removed
+
 ### Favicon
 
 Upload the small icon used by browsers for the website tab.
@@ -2926,6 +3062,7 @@ Available badge types cover property characteristics such as:
 - peaceful retreat
 - location
 - privacy
+
 Use badges only for features that accurately apply to the property.
 
 The first selected badge uses the configured tagline accent color.
@@ -2948,7 +3085,7 @@ This may appear in search-engine results depending on how the search engine choo
 
 Click Save after changing branding, homepage-header, badge, or SEO settings.
 
-Help videos coming soon
+*Help videos coming soon*
 
 ## System Status
 
@@ -3039,4 +3176,5 @@ Before launching a newly configured property, review the Account page and confir
 - payment and email status show the expected configuration
 - password-reset email can be accessed
 - support information is available when needed
-Help videos coming soon
+
+*Help videos coming soon*
