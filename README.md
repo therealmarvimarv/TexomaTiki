@@ -1,4 +1,4 @@
-# Tiki Cottage â€” Vacation Rental Management Platform
+# Tiki Cottage - Vacation Rental Management Platform
 
 **Release:** V1.0.1  
 **Status:** Active production deployment  
