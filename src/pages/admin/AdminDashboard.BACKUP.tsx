@@ -1,0 +1,241 @@
+import { useEffect, useState } from 'react';
+import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
+import AdminOverview from './AdminOverview';
+import AdminCalendar from './AdminCalendar';
+import PropertyEditor from './PropertyEditor';
+import BookingsManager from './BookingsManager';
+import BookingDetail from './BookingDetail';
+import CalendarSync from './CalendarSync';
+import CleaningManager from './CleaningManager';
+import MaintenanceManager from './MaintenanceManager';
+import EmailSettings from './EmailSettings';
+import PaymentsEditor from './PaymentsEditor';
+import AccountPage from './AccountPage';
+import PlatformPrivacyPolicy from './PlatformPrivacyPolicy';
+import PlatformTermsConditions from './PlatformTermsConditions';
+import PlatformDocumentation from './PlatformDocumentation';
+import { LayoutDashboard, CalendarDays, BookOpen, Home, Menu, X, Sparkles, Wrench, Mail, CreditCard, CircleUser as UserCircle } from 'lucide-react';
+
+interface NavItem {
+  to: string;
+  label: string;
+  icon: React.ElementType;
+  exact?: boolean;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { to: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
+  { to: '/admin/calendar', label: 'Calendar', icon: CalendarDays },
+  { to: '/admin/bookings', label: 'Bookings', icon: BookOpen },
+  { to: '/admin/cleaning', label: 'Cleaning', icon: Sparkles },
+  { to: '/admin/maintenance', label: 'Maintenance', icon: Wrench },
+  { to: '/admin/property', label: 'Property', icon: Home },
+  { to: '/admin/email', label: 'Email', icon: Mail },
+  { to: '/admin/payments', label: 'Payments', icon: CreditCard },
+  { to: '/admin/account', label: 'Account', icon: UserCircle },
+];
+
+function NavLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
+  const location = useLocation();
+  const active = item.exact ? location.pathname === item.to : location.pathname.startsWith(item.to);
+  const Icon = item.icon;
+  return (
+    <Link
+      to={item.to}
+      onClick={onClick}
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+        active ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+      }`}
+    >
+      <Icon className="w-4 h-4 flex-shrink-0" />
+      {item.label}
+    </Link>
+  );
+}
+
+function AccountNavItem({ onNavigate }: { onNavigate?: () => void }) {
+  const location = useLocation();
+  const inAccountSection = location.pathname.startsWith('/admin/account');
+
+  return (
+    <div className="relative">
+      <Link
+        to="/admin/account"
+        onClick={onNavigate}
+        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+          inAccountSection ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+        }`}
+      >
+        <UserCircle className="w-4 h-4 flex-shrink-0" />
+        Account
+      </Link>
+      {inAccountSection && (
+        <div className="hidden lg:block absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+          <Link
+            to="/admin/account/privacy"
+            onClick={onNavigate}
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            to="/admin/account/terms"
+            onClick={onNavigate}
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Terms &amp; Conditions
+          </Link>
+          <Link
+            to="/admin/account/documentation"
+            onClick={onNavigate}
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Documentation
+          </Link>
+        </div>
+      )}
+      <div className="lg:hidden ml-6 mt-1 space-y-1">
+        <Link
+          to="/admin/account/privacy"
+          onClick={onNavigate}
+          className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+        >
+          Privacy Policy
+        </Link>
+        <Link
+          to="/admin/account/terms"
+          onClick={onNavigate}
+          className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+        >
+          Terms &amp; Conditions
+        </Link>
+        <Link
+          to="/admin/account/documentation"
+          onClick={onNavigate}
+          className="block px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+        >
+          Documentation
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default function AdminDashboard() {
+  const [ready, setReady] = useState(false);
+  const [denied, setDenied] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) {
+        navigate('/admin/login');
+        return;
+      }
+      const uid = data.session.user.id;
+      const { data: adminRow } = await supabase
+        .from('admin_users')
+        .select('role')
+        .eq('user_id', uid)
+        .maybeSingle();
+      if (!adminRow) {
+        setDenied(true);
+        setReady(true);
+        return;
+      }
+      setReady(true);
+    });
+  }, [navigate]);
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (denied) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="max-w-sm w-full text-center">
+          <p className="text-lg font-semibold text-gray-900 mb-2">Access denied</p>
+          <p className="text-sm text-gray-500 mb-6">Your account is not authorized to access this dashboard.</p>
+          <button
+            onClick={() => navigate('/admin/login')}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+          >
+            Back to login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Top bar */}
+      <header className="bg-white border-b sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={() => setMobileOpen(o => !o)}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+            <span className="font-bold text-gray-900 text-lg">Texoma Tiki</span>
+            <span className="hidden sm:inline-block text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full font-medium">Admin</span>
+          </div>
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {NAV_ITEMS.filter(item => item.to !== '/admin/account').map(item => (
+              <NavLink key={item.to} item={item} />
+            ))}
+            <AccountNavItem />
+          </nav>
+
+          {/* Spacer to balance the layout */}
+          <div className="w-20" />
+        </div>
+      </header>
+
+      {/* Mobile nav drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-30 top-14">
+          <div className="absolute inset-0 bg-black/20" onClick={() => setMobileOpen(false)} />
+          <div className="relative bg-white w-64 h-full shadow-xl p-4 space-y-1 overflow-y-auto">
+            {NAV_ITEMS.filter(item => item.to !== '/admin/account').map(item => (
+              <NavLink key={item.to} item={item} onClick={() => setMobileOpen(false)} />
+            ))}
+            <AccountNavItem onNavigate={() => setMobileOpen(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Page content */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
+        <Routes>
+          <Route path="/" element={<AdminOverview />} />
+          <Route path="/calendar/*" element={<AdminCalendar />} />
+          <Route path="/calendar-sync" element={<CalendarSync />} />
+          <Route path="/bookings" element={<BookingsManager />} />
+          <Route path="/bookings/:bookingId" element={<BookingDetail />} />
+          <Route path="/cleaning" element={<CleaningManager />} />
+          <Route path="/maintenance" element={<MaintenanceManager />} />
+          <Route path="/property" element={<PropertyEditor />} />
+          <Route path="/email" element={<EmailSettings />} />
+          <Route path="/payments" element={<PaymentsEditor />} />
+          <Route path="/account" element={<AccountPage />} />
+          <Route path="/account/privacy" element={<PlatformPrivacyPolicy />} />
+          <Route path="/account/terms" element={<PlatformTermsConditions />} />
+          <Route path="/account/documentation" element={<PlatformDocumentation />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
