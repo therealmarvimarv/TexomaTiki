@@ -31,7 +31,7 @@ export const CURRENT_ADMIN_UPDATE: AdminUpdateNotice = {
       'Pricing has moved from the Property section to the Calendar section',
 
     body:
-      'Your pricing settings, rates, seasonal pricing, custom date pricing, minimum-stay rules, taxes, and fees are all still there.',
+      'Your pricing settings, rates, seasonal pricing, custom date pricing, minimum-stay rules, taxes, and fees are all still there. You can now find them under:',
 
     destinationLabel: 'Calendar > Pricing',
 
