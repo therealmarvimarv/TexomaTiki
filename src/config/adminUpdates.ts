@@ -36,7 +36,7 @@ export const CURRENT_ADMIN_UPDATE: AdminUpdateNotice = {
     destinationLabel: 'Calendar > Pricing',
 
     reason:
-      'This brings your rates, availability, calendar sync, and calendar tools together in one place, making everything easier to manage from one place.',
+      'This brings your calendar, availability, rates, calendar sync, and other calendar tools together in one place, making day-to-day management easier and more efficient.',
   },
 
   improvements: [
