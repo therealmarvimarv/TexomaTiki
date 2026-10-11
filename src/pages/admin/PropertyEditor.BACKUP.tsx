@@ -3,11 +3,13 @@ import { supabase } from '../../lib/supabase';
 import { Property } from '../../types';
 import { Save, X, Plus, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
 import PhotosEditor from './PhotosEditor';
+import PricingEditor from './PricingEditor';
+import FeesEditor from './FeesEditor';
 import ContentEditor from './ContentEditor';
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
-type Tab = 'basic' | 'highlights' | 'amenities' | 'neighborhood' | 'contact' | 'photos' | 'policies' | 'sections';
+type Tab = 'basic' | 'highlights' | 'amenities' | 'neighborhood' | 'contact' | 'photos' | 'pricing' | 'policies' | 'sections';
 
 // ── Highlights ────────────────────────────────────────────────────────────────
 
@@ -634,6 +636,37 @@ function ContactEditor({ propertyId }: { propertyId: string }) {
   );
 }
 
+// ── Pricing tabs wrapper ──────────────────────────────────────────────────────
+
+function PricingTabs({ propertyId, basePrice, taxRate }: { propertyId: string; basePrice: number; taxRate: number }) {
+  const [pricingTab, setPricingTab] = useState<'rates' | 'fees'>('rates');
+  const PRICING_TABS = [
+    { id: 'rates' as const, label: 'Rates' },
+    { id: 'fees' as const, label: 'Fees' },
+  ];
+  return (
+    <div>
+      <div className="flex gap-1 mb-6 border-b">
+        {PRICING_TABS.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setPricingTab(t.id)}
+            className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
+              pricingTab === t.id
+                ? 'border-gray-900 text-gray-900'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      {pricingTab === 'rates' && <PricingEditor propertyId={propertyId} basePrice={basePrice} taxRate={taxRate} />}
+      {pricingTab === 'fees' && <FeesEditor propertyId={propertyId} />}
+    </div>
+  );
+}
+
 // ── Sections Visibility ───────────────────────────────────────────────────────
 
 interface SectionFlags {
@@ -757,6 +790,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'neighborhood', label: 'Neighborhood' },
   { id: 'contact', label: 'Contact' },
   { id: 'photos', label: 'Photos' },
+  { id: 'pricing', label: 'Pricing' },
   { id: 'policies', label: 'Things to Know' },
   { id: 'sections', label: 'Sections & Content' },
 ];
@@ -1111,6 +1145,9 @@ export default function PropertyEditor() {
 
           {/* Photos */}
           {tab === 'photos' && <PhotosEditor propertyId={property.id} />}
+
+          {/* Pricing */}
+          {tab === 'pricing' && <PricingTabs propertyId={property.id} basePrice={property.basePrice} taxRate={property.taxRate} />}
 
           {/* Sections & Content */}
           {tab === 'sections' && <SectionsEditor propertyId={property.id} />}
