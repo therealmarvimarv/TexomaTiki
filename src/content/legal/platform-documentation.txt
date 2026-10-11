@@ -2,15 +2,49 @@ VACATION RENTAL MANAGEMENT PLATFORM DOCUMENTATION
 
 Use the navigation menu on the left side of the Documentation page to jump directly to a section.
 
+# Administrator Navigation
+
+The administrator dashboard uses a responsive left sidebar for the main management sections.
+
+On desktop, the sidebar can be collapsed or expanded. The selected sidebar state is preserved between sessions.
+
+On mobile, use the administrator header to open the slide-out navigation menu.
+
+The main navigation includes:
+
+- Overview
+- Calendar
+- Bookings
+- Cleaning
+- Maintenance
+- Property
+- Email
+- Payments
+- Account
+
+## What's New Notice
+
+V1.0.1 includes a What's New notice that explains important administrator-facing changes.
+
+For this release, the notice explains that Pricing moved from Property to Calendar.
+
+The notice may appear once on each of the first two eligible administrator logins. After it is dismissed, it will not appear again while moving between admin sections during that same login.
+
+Select Go to Pricing to open Calendar â†’ Pricing directly.
+
+A temporary NEW badge may also appear beside Pricing in the Calendar section to help identify its new location.
+
+Help videos coming soon
+
 # Calendar
 
-The Calendar section is where you manage your property’s booking activity, availability rules, blocked dates, and calendar synchronization with external booking platforms.
+The Calendar section is where you manage your propertyâ€™s booking activity, availability rules, pricing, blocked dates, and calendar synchronization with external booking platforms.
 
-At the top of this section, you will see three tabs:
+At the top of this section, you will see four tabs:
 
-Calendar | Availability | Calendar Sync
+Calendar | Availability | Pricing | Calendar Sync
 
-Each tab handles a different part of your property’s availability management.
+Each tab handles a different part of your propertyâ€™s calendar, availability, pricing, or synchronization management.
 
 Help videos coming soon
 
@@ -24,13 +58,13 @@ From this calendar, you can quickly see bookings, payment activity, owner blocks
 
 The legend above the calendar identifies the different types of activity:
 
-- Confirmed — confirmed guest reservations
-- Pending Review — booking requests waiting for your review
-- Pending Payment — approved reservations waiting for payment
-- Payment Conflict — a booking with a payment-related issue that may require attention
-- Owner Block — dates you have manually blocked for personal use or another reason
-- iCal Import — unavailable dates imported from an external booking platform
-- Cleaning — scheduled cleaning activity
+- Confirmed â€” confirmed guest reservations
+- Pending Review â€” booking requests waiting for your review
+- Pending Payment â€” approved reservations waiting for payment
+- Payment Conflict â€” a booking with a payment-related issue that may require attention
+- Owner Block â€” dates you have manually blocked for personal use or another reason
+- iCal Import â€” unavailable dates imported from an external booking platform
+- Cleaning â€” scheduled cleaning activity
 These colors make it easy to scan the month and understand what is happening without opening each individual item.
 
 ### Viewing Calendar Details
@@ -159,6 +193,328 @@ Use this feature whenever you need to intentionally remove dates from availabili
 
 Help videos coming soon
 
+## Pricing Tab
+
+The Pricing tab controls the property's nightly rates, date-specific pricing, seasonal pricing, minimum-stay rules, taxes, and fees.
+
+Inside Pricing, there are two tabs:
+
+- Rates â€” nightly pricing, calendar overrides, seasonal pricing, and minimum-stay controls.
+- Fees â€” additional charges applied to reservations.
+The pricing system uses a specific order of precedence so that more specific pricing rules override more general ones.
+
+### Rates
+
+**Base Settings**
+
+The Base settings card contains the property's standard pricing information.
+
+Default nightly rate
+This is the fallback nightly price. If no more specific pricing rule applies to a date, the default nightly rate is used.
+
+Tax rate
+Enter the percentage of tax that should be applied to applicable bookings.
+
+Displayed price on booking card
+Choose how the starting nightly price is presented to guests before they select stay dates.
+
+There are two options:
+
+- Default rate â€” displays the property's default nightly rate.
+- Nightly avg â€” displays the average of the configured day-of-week rates.
+When calculating the nightly average, all seven days of the week are considered. If a particular weekday does not have its own custom rate, the default nightly rate is used for that day when calculating the average.
+
+This displayed amount is primarily an introductory price shown before dates are selected. Once guests choose actual stay dates, the reservation is priced using the rates that apply to those specific dates.
+
+Click Save after changing the Base Settings.
+
+**Nightly Rates by Day of Week**
+
+Turn on Customize by day of week when different nightly rates should apply depending on the day of the week.
+
+Separate rates can be configured for:
+
+- Sunday
+- Monday
+- Tuesday
+- Wednesday
+- Thursday
+- Friday
+- Saturday
+For example, this allows weekday pricing and weekend pricing to be different.
+
+If a weekday does not have its own custom rate, the system falls back to the Default nightly rate.
+
+If an existing day-of-week rate is cleared, that weekday returns to using the default rate rather than retaining the previous custom amount.
+
+Click Save rates after making changes.
+
+Changes to these general rates do not retroactively change existing reservations, pending booking requests, or dates that already have their own custom date price.
+
+**Pricing Calendar**
+
+The Pricing Calendar shows the nightly rate currently applying to each date.
+
+The calendar also provides two important date-specific controls:
+
+Click nightly price to set custom price
+Click moon/min to set custom min stay
+
+These controls allow individual dates to override broader pricing or minimum-stay rules.
+
+The legend beneath the calendar identifies:
+
+- Custom date price
+- Custom min nights
+- Day-of-week / base rate
+
+**Custom Price for a Specific Date**
+
+Click the nightly price displayed inside a calendar date to set a custom price for that specific date.
+
+A custom-date editor opens where the nightly price can be entered and saved.
+
+A date-specific price has the highest pricing priority.
+
+**Nightly Price Priority**
+
+When determining the nightly price for a selected date, the system uses this order:
+
+1. Custom date price
+â†“
+2. Seasonal pricing
+â†“
+3. Day-of-week rate
+â†“
+4. Default nightly rate
+
+This means a custom price entered directly on a calendar date takes priority over every broader pricing rule.
+
+> IMPORTANT: Date-specific overrides take priority over seasonal, day-of-week, and default pricing settings.
+
+**Editing an Existing Custom Price**
+
+Once a custom date price has been saved, it appears in the Custom date prices list.
+
+An existing custom price can be reopened and changed instead of creating another price for the same date.
+
+You can edit it by:
+
+- clicking the saved date/price
+- clicking the pencil icon
+- clicking that date's nightly price again on the calendar
+The existing value is loaded into the editor so it can be changed and saved.
+
+The X removes the custom date price.
+
+There should only be one custom price for a particular date.
+
+**Custom Minimum Stay by Date**
+
+Hover over an available calendar date to reveal the moon/min control.
+
+Click it to set a custom minimum stay beginning on that check-in date.
+
+The editor explains:
+
+Set a custom minimum stay starting on this date. Leave blank or set to 0 to remove the override.
+
+Once saved, the calendar displays a small moon indicator showing that the date has its own minimum-night rule.
+
+Click that indicator again to edit the existing minimum stay.
+
+A date-specific minimum stay can be either higher or lower than the broader minimum-stay setting. It is treated as a true override rather than simply taking whichever number is highest.
+
+**Minimum-Stay Priority**
+
+Minimum-night rules have their own precedence separate from nightly pricing.
+
+For a guest's check-in date, the system uses:
+
+1. Custom minimum stay for that specific date
+â†“
+2. Seasonal minimum stay
+â†“
+3. Property-wide/default minimum stay
+
+For example, if the normal property minimum is 2 nights and a season requires 4 nights, a guest checking in during that season must stay at least 4 nights.
+
+However, if one check-in date within that season has its own custom 3-night minimum, that date requires 3 nights because the date-specific rule takes priority.
+
+The same rule works in the opposite direction. A date-specific or seasonal minimum can intentionally lower the broader default as well.
+
+These minimum-stay rules are enforced in both the guest booking experience and the checkout process.
+
+> IMPORTANT: Minimum-stay priority is based on the guestâ€™s check-in date: specific date override â†’ seasonal minimum â†’ property default.
+
+**Seasonal Pricing**
+
+The Seasonal Pricing section allows rates and minimum-stay requirements to be applied across a date range.
+
+Click + Add preset to create a seasonal pricing period.
+
+A seasonal preset can be used for periods such as:
+
+- holidays
+- peak season
+- special events
+- summer or winter pricing
+- slower travel periods
+- other date ranges requiring different rates
+A seasonal preset can include its own:
+
+- date range
+- nightly rate
+- minimum-night requirement
+- priority
+Seasonal presets can also be activated, deactivated, edited, or deleted.
+
+**Overlapping Seasonal Presets**
+
+If more than one active seasonal preset applies to the same date, the preset with the higher priority is used.
+
+The winning seasonal preset controls both its seasonal nightly rate and its seasonal minimum-stay rule.
+
+This keeps overlapping seasonal rules predictable rather than combining multiple presets.
+
+**How All the Pricing Layers Work Together**
+
+The easiest way to understand this section is to think of pricing as layers.
+
+**Nightly Price**
+
+Specific date â†’ Season â†’ Day of week â†’ Default
+
+The system always uses the most specific applicable price.
+
+**Minimum Stay**
+
+Specific check-in date â†’ Season â†’ Property default
+
+The system always uses the most specific applicable minimum-stay rule.
+
+Pricing and minimum-stay rules are related, but they are resolved independently. For example, a date may use a seasonal nightly price while also having its own custom minimum-stay override.
+
+**What Guests Are Charged**
+
+Once the guest selects actual reservation dates, the system calculates the stay using the applicable nightly rate for those dates.
+
+That means seasonal rates and custom date prices are reflected in the actual reservation quote and checkoutâ€”not merely displayed in the admin calendar.
+
+The applicable fees and taxes are then added to produce the final booking total.
+
+**Before Launch**
+
+Before accepting reservations, review Calendar â†’ Pricing and confirm:
+
+- the default nightly rate is correct
+- the tax rate is correct
+- the desired booking-card display option is selected
+- day-of-week rates are correct
+- seasonal presets are active for the correct dates
+- seasonal minimum stays are correct
+- custom calendar prices are intentional
+- custom minimum-stay overrides are intentional
+- overlapping seasonal presets have the correct priority
+Help videos coming soon
+
+### Fees
+
+The Fees tab controls additional charges that can be added to a guestâ€™s booking total.
+
+Fees are separate from the nightly rate and can be configured for common charges such as cleaning, pets, additional guests, and other property-specific costs.
+
+The page includes Standard Fees and Custom Fees.
+
+**Cleaning Fee**
+
+Use the Cleaning section to configure the cleaning charge for a reservation.
+
+Amount (USD)
+Enter the cleaning fee amount.
+
+Fee Type
+Choose how the fee should be applied. For example, Per stay charges the cleaning fee once for the entire reservation rather than once per night.
+
+Apply to guest quote
+Turn this on when the cleaning fee should be included in the guestâ€™s booking quote and final calculated total.
+
+**Pet Fee**
+
+Use the Pets section to configure a charge for reservations that include pets.
+
+Amount (USD)
+Enter the pet fee.
+
+Fee Type
+Choose how the pet fee should be calculated.
+
+Apply to guest quote
+When enabled, the fee is included in the quote only when the guest indicates that pets are included in the reservation.
+
+This allows the pet fee to remain configured without charging guests who are not bringing pets.
+
+**Additional Guest Fee**
+
+The Additional guests section allows an extra charge to be applied when the number of guests exceeds a specified threshold.
+
+This is useful when additional occupants create extra costs for supplies, utilities, cleaning, or general property use.
+
+Amount (USD)
+Enter the amount charged for each additional guest.
+
+Fee Type
+The fee can be configured as Per guest per stay, allowing the system to calculate the charge based on the number of additional guests.
+
+For each guest after
+Set the guest-count threshold.
+
+For example, if the threshold is set to 4, the additional-guest fee begins when the reservation exceeds four applicable guests.
+
+Apply to guest quote
+When enabled, the additional-guest fee is automatically included when the guest count exceeds the configured threshold.
+
+**Custom Fees**
+
+The Custom fees section allows additional property-specific charges to be created when the standard fee options do not cover what is needed.
+
+Click + Add custom fee to create another fee.
+
+The system supports up to six custom fees.
+
+Custom fees can be useful for charges associated with property-specific services, amenities, utilities, or other costs that need to be disclosed and included in the booking calculation.
+
+**How Fees Affect the Guest Quote**
+
+Fees with Apply to guest quote enabled are included when the system calculates the guestâ€™s reservation price, subject to any conditions attached to that fee.
+
+For example:
+
+- a standard cleaning fee can apply to the stay
+- a pet fee applies when pets are selected
+- an additional-guest fee applies when the guest count exceeds its threshold
+The applicable fees are added to the nightly accommodation charges as part of the booking total.
+
+**Keeping Fees Guest-Friendly**
+
+The admin includes a reminder that fees can be used to help cover hosting costs, but excessive fees may discourage guests.
+
+When configuring a property, keep fees clear, reasonable, and directly connected to an actual cost or service whenever possible.
+
+**Saving Fee Changes**
+
+After adding or changing fees, click Save fees.
+
+Before launch, confirm:
+
+- each fee amount is correct
+- the appropriate fee type is selected
+- the correct fees are enabled for the guest quote
+- pet-fee behavior is correct
+- the additional-guest threshold is correct
+- custom fees are still necessary and accurate
+Help videos coming soon
+
 ## Calendar Sync Tab
 
 The Calendar Sync tab allows your direct-booking website to exchange availability information with external booking platforms.
@@ -234,6 +590,16 @@ Each imported calendar can be enabled or disabled.
 
 If a source is disabled, it will not actively synchronize new calendar information until it is enabled again.
 
+### Automatic Sync
+
+Enabled external calendar sources are checked automatically every 15 minutes.
+
+This allows new unavailable dates published by connected platforms to be imported without requiring you to select Sync All.
+
+Automatic synchronization does not remove the manual sync controls. You can still sync an individual source or use Sync All whenever you want to request an immediate refresh.
+
+> NOTE: Calendar synchronization is not necessarily instantaneous. Airbnb, Vrbo, Booking.com, or another external platform must first publish the reservation or blocked date to its iCal feed before this system can import it.
+
 ### Manual Sync
 
 The sync control beside an imported calendar can be used when you want to manually request an update from that source.
@@ -250,7 +616,7 @@ Select Sync All to request synchronization for all enabled imported calendars.
 
 Help videos coming soon
 
-> IMPORTANT: Calendar synchronization with external booking platforms is not necessarily instantaneous. Your website can make updated calendar information available immediately, but external platforms determine when they check or refresh imported calendar feeds. Always monitor your calendars when managing the same property across multiple booking platforms.
+> IMPORTANT: Calendar synchronization with external booking platforms is not necessarily instantaneous. This system checks enabled import feeds automatically every 15 minutes, but external platforms control when they publish new reservations to their feeds and when they refresh this property's export feed. Always monitor your calendars when managing the same property across multiple booking platforms.
 
 # Bookings
 
@@ -451,7 +817,7 @@ When a guest has been sent a payment link, the booking may display a payment dea
 
 For example:
 
-Payment link sent — awaiting guest payment. Link expires [date/time].
+Payment link sent â€” awaiting guest payment. Link expires [date/time].
 
 If the guest does not complete payment before the expiration time, the booking may move into an expired state according to the configured payment workflow.
 
@@ -658,12 +1024,12 @@ The Cleaning page is used to track property turnovers, assign cleaners, and foll
 
 At the top of the page, cleaning tasks can be filtered by status:
 
-- All — displays every cleaning task.
-- Needed — cleaning is required but has not yet been scheduled or started.
-- Scheduled — the cleaning task has been scheduled.
-- In Progress — cleaning is currently underway.
-- Completed — the cleaning task has been finished.
-- Skipped — the cleaning task was intentionally skipped.
+- All â€” displays every cleaning task.
+- Needed â€” cleaning is required but has not yet been scheduled or started.
+- Scheduled â€” the cleaning task has been scheduled.
+- In Progress â€” cleaning is currently underway.
+- Completed â€” the cleaning task has been finished.
+- Skipped â€” the cleaning task was intentionally skipped.
 These filters make it easy to focus on the cleaning tasks that currently need attention.
 
 ## Automatic Cleaning Tasks From Confirmed Bookings
@@ -700,7 +1066,7 @@ Choose the current status of the cleaning task. A new task can begin as Needed a
 
 Available statuses include:
 
-Needed → Scheduled → In Progress → Completed
+Needed â†’ Scheduled â†’ In Progress â†’ Completed
 
 A task can also be marked Skipped when appropriate.
 
@@ -732,17 +1098,17 @@ The Maintenance page is used to track repairs, supply needs, and other property-
 
 At the top of the page, three summary cards give you a quick overview of maintenance activity:
 
-- Open tasks — tasks that still need attention.
-- Urgent — tasks marked with urgent priority.
-- Total tasks — the total number of maintenance tasks in the system.
+- Open tasks â€” tasks that still need attention.
+- Urgent â€” tasks marked with urgent priority.
+- Total tasks â€” the total number of maintenance tasks in the system.
 You can also filter the task list by status:
 
-- Active — shows tasks that are currently open or in progress.
-- All — shows all maintenance tasks.
-- Open — tasks that have not yet been started.
-- In Progress — tasks currently being worked on.
-- Completed — finished tasks.
-- Archived — older tasks that have been moved out of the active workflow.
+- Active â€” shows tasks that are currently open or in progress.
+- All â€” shows all maintenance tasks.
+- Open â€” tasks that have not yet been started.
+- In Progress â€” tasks currently being worked on.
+- Completed â€” finished tasks.
+- Archived â€” older tasks that have been moved out of the active workflow.
 ## Adding a Maintenance Task
 
 Click + Add task in the upper-right corner to create a new maintenance task.
@@ -785,6 +1151,21 @@ Help videos coming soon
 
 # Property
 
+The Property section is focused on property information, guest-facing content, and photos.
+
+It contains eight tabs:
+
+- Basic Info
+- Highlights
+- Amenities
+- Neighborhood
+- Contact
+- Photos
+- Things to Know
+- Sections & Content
+
+Pricing is managed separately under Calendar â†’ Pricing.
+
 ## Basic Information
 
 The Basic Info tab contains the core information about the property. Much of the information entered here is displayed throughout the live website, so changes should be reviewed carefully before saving.
@@ -810,10 +1191,10 @@ Use accurate coordinates so the map is positioned correctly.
 
 The following fields describe the property's accommodations:
 
-- Max Guests — maximum number of guests the property can accommodate.
-- Bedrooms — total number of bedrooms.
-- Beds — total number of beds.
-- Bathrooms — total number of bathrooms.
+- Max Guests â€” maximum number of guests the property can accommodate.
+- Bedrooms â€” total number of bedrooms.
+- Beds â€” total number of beds.
+- Bathrooms â€” total number of bathrooms.
 These details are used on the live website to help guests quickly understand the size and capacity of the property.
 
 ### Property Description
@@ -845,7 +1226,7 @@ You can:
 
 - Replace the current host photo
 - Remove the current photo
-Recommended image size is approximately 500 × 500 pixels, and supported formats include PNG, JPEG, and WebP.
+Recommended image size is approximately 500 Ã— 500 pixels, and supported formats include PNG, JPEG, and WebP.
 
 ### Updating the Live Website
 
@@ -883,9 +1264,9 @@ A lower number appears first.
 
 For example:
 
-0 → first
-1 → second
-2 → third
+0 â†’ first
+1 â†’ second
+2 â†’ third
 
 ### Choosing Highlights
 
@@ -961,7 +1342,7 @@ Help videos coming soon
 
 ## Neighborhood
 
-The Neighborhood tab controls the nearby places and local points of interest shown to guests in the property’s location section on the public website.
+The Neighborhood tab controls the nearby places and local points of interest shown to guests in the propertyâ€™s location section on the public website.
 
 This section helps guests quickly understand what is nearby and how far important places are from the property.
 
@@ -1038,7 +1419,7 @@ Help videos coming soon
 
 ## Contact
 
-The Contact tab controls the contact information shown in the public website’s Get In Touch section.
+The Contact tab controls the contact information shown in the public websiteâ€™s Get In Touch section.
 
 This is where guests can find the best way to reach the property owner or manager with questions before or after booking.
 
@@ -1050,7 +1431,7 @@ Use an address that is actively monitored so guest questions and inquiries can b
 
 ### Phone Number
 
-Enter the phone number that should appear with the property’s contact information.
+Enter the phone number that should appear with the propertyâ€™s contact information.
 
 Make sure the number is current and belongs to the person or team responsible for guest communication.
 
@@ -1089,14 +1470,16 @@ The Main Page section controls the primary photos displayed in the main gallery 
 
 You can add photos in two ways:
 
-- Upload — upload an image from your device.
-- Add URL — add an image using an image URL.
-Supported image types include:
+- Upload â€” upload an image from your device.
+- Add URL â€” add an image using an image URL.
+Supported source image types include:
 
 - JPG
 - PNG
 - WebP
-Images up to 25 MB can be uploaded.
+
+Uploaded source images are saved as optimized WebP files.
+Images up to 25 MB can be uploaded. New uploaded images are automatically converted to optimized WebP before they are saved.
 
 The first photo in this section is used as the cover image.
 
@@ -1127,13 +1510,13 @@ Areas can also be reordered using the drag handle.
 
 ### Bedroom Areas on the Homepage
 
-Bedroom areas in the Photo Tour also supply the bedroom cards displayed in the **Where You’ll Sleep** section on the homepage.
+Bedroom areas in the Photo Tour also supply the bedroom cards displayed in the **Where Youâ€™ll Sleep** section on the homepage.
 
-- **Area Title** — the Photo Tour area title is used as the bedroom name shown on the homepage.
-- **First Photo** — the first photo in that Photo Tour area is used as the bedroom card image on the homepage.
-- **Photo Order** — if the photos are reordered, the new first photo becomes the image displayed on the homepage.
-- **Room Name Changes** — if the Photo Tour area title is changed, the bedroom name shown on the homepage changes with it.
-- **View Photos** — selecting the bedroom card on the homepage takes the guest directly to that bedroom’s corresponding section in the Photo Tour.
+- **Area Title** â€” the Photo Tour area title is used as the bedroom name shown on the homepage.
+- **First Photo** â€” the first photo in that Photo Tour area is used as the bedroom card image on the homepage.
+- **Photo Order** â€” if the photos are reordered, the new first photo becomes the image displayed on the homepage.
+- **Room Name Changes** â€” if the Photo Tour area title is changed, the bedroom name shown on the homepage changes with it.
+- **View Photos** â€” selecting the bedroom card on the homepage takes the guest directly to that bedroomâ€™s corresponding section in the Photo Tour.
 
 > TIP: For bedroom areas, make sure the title is correct and place the photo you want representing the room first. The homepage uses those Photo Tour settings automatically.
 
@@ -1175,7 +1558,9 @@ Be careful when deleting an area, since it may contain multiple photos and assoc
 
 ### Image Upload Optimization
 
-Uploaded property photos are automatically prepared for use on the website so large source images do not need to be manually resized before uploading.
+Uploaded property photos are automatically converted to WebP before they are saved. The conversion uses approximately 85% WebP quality, preserves the imageâ€™s orientation and aspect ratio, limits the longest edge to 3000 pixels, and does not upscale smaller images.
+
+If conversion fails, the original file is not silently uploaded in its place. The upload stops so the image can be corrected or retried.
 
 For best results, start with clear, high-quality images and avoid unnecessarily low-resolution photos.
 
@@ -1191,325 +1576,6 @@ Before publishing a new property, review the entire Photos section and confirm:
 - outdated or duplicate photos have been removed
 Help videos coming soon
 
-## Pricing
-
-The Pricing section controls the property's nightly rates, date-specific pricing, seasonal pricing, minimum-stay rules, taxes, and fees.
-
-There are two tabs:
-
-- Rates — nightly pricing, calendar overrides, seasonal pricing, and minimum-stay controls.
-- Fees — additional charges applied to reservations.
-The pricing system uses a specific order of precedence so that more specific pricing rules override more general ones.
-
-### Base Settings
-
-The Base settings card contains the property's standard pricing information.
-
-Default nightly rate
-This is the fallback nightly price. If no more specific pricing rule applies to a date, the default nightly rate is used.
-
-Tax rate
-Enter the percentage of tax that should be applied to applicable bookings.
-
-Displayed price on booking card
-Choose how the starting nightly price is presented to guests before they select stay dates.
-
-There are two options:
-
-- Default rate — displays the property's default nightly rate.
-- Nightly avg — displays the average of the configured day-of-week rates.
-When calculating the nightly average, all seven days of the week are considered. If a particular weekday does not have its own custom rate, the default nightly rate is used for that day when calculating the average.
-
-This displayed amount is primarily an introductory price shown before dates are selected. Once guests choose actual stay dates, the reservation is priced using the rates that apply to those specific dates.
-
-Click Save after changing the Base Settings.
-
-### Nightly Rates by Day of Week
-
-Turn on Customize by day of week when different nightly rates should apply depending on the day of the week.
-
-Separate rates can be configured for:
-
-- Sunday
-- Monday
-- Tuesday
-- Wednesday
-- Thursday
-- Friday
-- Saturday
-For example, this allows weekday pricing and weekend pricing to be different.
-
-If a weekday does not have its own custom rate, the system falls back to the Default nightly rate.
-
-If an existing day-of-week rate is cleared, that weekday returns to using the default rate rather than retaining the previous custom amount.
-
-Click Save rates after making changes.
-
-Changes to these general rates do not retroactively change existing reservations, pending booking requests, or dates that already have their own custom date price.
-
-### Pricing Calendar
-
-The Pricing Calendar shows the nightly rate currently applying to each date.
-
-The calendar also provides two important date-specific controls:
-
-Click nightly price to set custom price
-Click moon/min to set custom min stay
-
-These controls allow individual dates to override broader pricing or minimum-stay rules.
-
-The legend beneath the calendar identifies:
-
-- Custom date price
-- Custom min nights
-- Day-of-week / base rate
-
-### Custom Price for a Specific Date
-
-Click the nightly price displayed inside a calendar date to set a custom price for that specific date.
-
-A custom-date editor opens where the nightly price can be entered and saved.
-
-A date-specific price has the highest pricing priority.
-
-### Nightly Price Priority
-
-When determining the nightly price for a selected date, the system uses this order:
-
-1. Custom date price
-↓
-2. Seasonal pricing
-↓
-3. Day-of-week rate
-↓
-4. Default nightly rate
-
-This means a custom price entered directly on a calendar date takes priority over every broader pricing rule.
-
-> IMPORTANT: Date-specific overrides take priority over seasonal, day-of-week, and default pricing settings.
-
-### Editing an Existing Custom Price
-
-Once a custom date price has been saved, it appears in the Custom date prices list.
-
-An existing custom price can be reopened and changed instead of creating another price for the same date.
-
-You can edit it by:
-
-- clicking the saved date/price
-- clicking the pencil icon
-- clicking that date's nightly price again on the calendar
-The existing value is loaded into the editor so it can be changed and saved.
-
-The X removes the custom date price.
-
-There should only be one custom price for a particular date.
-
-### Custom Minimum Stay by Date
-
-Hover over an available calendar date to reveal the moon/min control.
-
-Click it to set a custom minimum stay beginning on that check-in date.
-
-The editor explains:
-
-Set a custom minimum stay starting on this date. Leave blank or set to 0 to remove the override.
-
-Once saved, the calendar displays a small moon indicator showing that the date has its own minimum-night rule.
-
-Click that indicator again to edit the existing minimum stay.
-
-A date-specific minimum stay can be either higher or lower than the broader minimum-stay setting. It is treated as a true override rather than simply taking whichever number is highest.
-
-### Minimum-Stay Priority
-
-Minimum-night rules have their own precedence separate from nightly pricing.
-
-For a guest's check-in date, the system uses:
-
-1. Custom minimum stay for that specific date
-↓
-2. Seasonal minimum stay
-↓
-3. Property-wide/default minimum stay
-
-For example, if the normal property minimum is 2 nights and a season requires 4 nights, a guest checking in during that season must stay at least 4 nights.
-
-However, if one check-in date within that season has its own custom 3-night minimum, that date requires 3 nights because the date-specific rule takes priority.
-
-The same rule works in the opposite direction. A date-specific or seasonal minimum can intentionally lower the broader default as well.
-
-These minimum-stay rules are enforced in both the guest booking experience and the checkout process.
-
-> IMPORTANT: Minimum-stay priority is based on the guest’s check-in date: specific date override → seasonal minimum → property default.
-
-### Seasonal Pricing
-
-The Seasonal Pricing section allows rates and minimum-stay requirements to be applied across a date range.
-
-Click + Add preset to create a seasonal pricing period.
-
-A seasonal preset can be used for periods such as:
-
-- holidays
-- peak season
-- special events
-- summer or winter pricing
-- slower travel periods
-- other date ranges requiring different rates
-A seasonal preset can include its own:
-
-- date range
-- nightly rate
-- minimum-night requirement
-- priority
-Seasonal presets can also be activated, deactivated, edited, or deleted.
-
-### Overlapping Seasonal Presets
-
-If more than one active seasonal preset applies to the same date, the preset with the higher priority is used.
-
-The winning seasonal preset controls both its seasonal nightly rate and its seasonal minimum-stay rule.
-
-This keeps overlapping seasonal rules predictable rather than combining multiple presets.
-
-### How All the Pricing Layers Work Together
-
-The easiest way to understand this section is to think of pricing as layers.
-
-### Nightly Price
-
-Specific date → Season → Day of week → Default
-
-The system always uses the most specific applicable price.
-
-### Minimum Stay
-
-Specific check-in date → Season → Property default
-
-The system always uses the most specific applicable minimum-stay rule.
-
-Pricing and minimum-stay rules are related, but they are resolved independently. For example, a date may use a seasonal nightly price while also having its own custom minimum-stay override.
-
-### What Guests Are Charged
-
-Once the guest selects actual reservation dates, the system calculates the stay using the applicable nightly rate for those dates.
-
-That means seasonal rates and custom date prices are reflected in the actual reservation quote and checkout—not merely displayed in the admin calendar.
-
-The applicable fees and taxes are then added to produce the final booking total.
-
-### Before Launch
-
-Before accepting reservations, review the Pricing section and confirm:
-
-- the default nightly rate is correct
-- the tax rate is correct
-- the desired booking-card display option is selected
-- day-of-week rates are correct
-- seasonal presets are active for the correct dates
-- seasonal minimum stays are correct
-- custom calendar prices are intentional
-- custom minimum-stay overrides are intentional
-- overlapping seasonal presets have the correct priority
-Help videos coming soon
-
-## Fees
-
-The Fees tab controls additional charges that can be added to a guest’s booking total.
-
-Fees are separate from the nightly rate and can be configured for common charges such as cleaning, pets, additional guests, and other property-specific costs.
-
-The page includes Standard Fees and Custom Fees.
-
-### Cleaning Fee
-
-Use the Cleaning section to configure the cleaning charge for a reservation.
-
-Amount (USD)
-Enter the cleaning fee amount.
-
-Fee Type
-Choose how the fee should be applied. For example, Per stay charges the cleaning fee once for the entire reservation rather than once per night.
-
-Apply to guest quote
-Turn this on when the cleaning fee should be included in the guest’s booking quote and final calculated total.
-
-### Pet Fee
-
-Use the Pets section to configure a charge for reservations that include pets.
-
-Amount (USD)
-Enter the pet fee.
-
-Fee Type
-Choose how the pet fee should be calculated.
-
-Apply to guest quote
-When enabled, the fee is included in the quote only when the guest indicates that pets are included in the reservation.
-
-This allows the pet fee to remain configured without charging guests who are not bringing pets.
-
-### Additional Guest Fee
-
-The Additional guests section allows an extra charge to be applied when the number of guests exceeds a specified threshold.
-
-This is useful when additional occupants create extra costs for supplies, utilities, cleaning, or general property use.
-
-Amount (USD)
-Enter the amount charged for each additional guest.
-
-Fee Type
-The fee can be configured as Per guest per stay, allowing the system to calculate the charge based on the number of additional guests.
-
-For each guest after
-Set the guest-count threshold.
-
-For example, if the threshold is set to 4, the additional-guest fee begins when the reservation exceeds four applicable guests.
-
-Apply to guest quote
-When enabled, the additional-guest fee is automatically included when the guest count exceeds the configured threshold.
-
-### Custom Fees
-
-The Custom fees section allows additional property-specific charges to be created when the standard fee options do not cover what is needed.
-
-Click + Add custom fee to create another fee.
-
-The system supports up to six custom fees.
-
-Custom fees can be useful for charges associated with property-specific services, amenities, utilities, or other costs that need to be disclosed and included in the booking calculation.
-
-### How Fees Affect the Guest Quote
-
-Fees with Apply to guest quote enabled are included when the system calculates the guest’s reservation price, subject to any conditions attached to that fee.
-
-For example:
-
-- a standard cleaning fee can apply to the stay
-- a pet fee applies when pets are selected
-- an additional-guest fee applies when the guest count exceeds its threshold
-The applicable fees are added to the nightly accommodation charges as part of the booking total.
-
-### Keeping Fees Guest-Friendly
-
-The admin includes a reminder that fees can be used to help cover hosting costs, but excessive fees may discourage guests.
-
-When configuring a property, keep fees clear, reasonable, and directly connected to an actual cost or service whenever possible.
-
-### Saving Fee Changes
-
-After adding or changing fees, click Save fees.
-
-Before launch, confirm:
-
-- each fee amount is correct
-- the appropriate fee type is selected
-- the correct fees are enabled for the guest quote
-- pet-fee behavior is correct
-- the additional-guest threshold is correct
-- custom fees are still necessary and accurate
-Help videos coming soon
 
 ## Things to Know
 
@@ -1521,8 +1587,8 @@ This area can be used for important information guests should know before bookin
 
 Use the Show on Homepage toggle to control whether the Things to Know section appears on the public website.
 
-- On — the section is displayed to guests.
-- Off — the entire section is hidden from the public website.
+- On â€” the section is displayed to guests.
+- Off â€” the entire section is hidden from the public website.
 The content can still be edited while the section is hidden.
 
 ### Section Heading
@@ -1575,7 +1641,7 @@ The accompanying Description can then contain whatever information belongs under
 
 This provides useful starter content while still allowing each property to completely customize the section when needed.
 
-The default wording is there as a starting point—it does not prevent the property owner from replacing it.
+The default wording is there as a starting pointâ€”it does not prevent the property owner from replacing it.
 
 ### Customizing the Content
 
@@ -1658,9 +1724,9 @@ Each FAQ consists of a question and an answer.
 
 Each FAQ item includes controls to:
 
-- Edit — change the question or answer
-- Hide — keep the FAQ saved but prevent it from appearing publicly
-- Delete — permanently remove the FAQ
+- Edit â€” change the question or answer
+- Hide â€” keep the FAQ saved but prevent it from appearing publicly
+- Delete â€” permanently remove the FAQ
 An Active indicator shows that the FAQ is currently available for display.
 
 ### Adding an FAQ
@@ -1819,7 +1885,7 @@ The top-level toggles control whether a complete section appears on the website.
 For example:
 
 FAQs OFF
-→ No FAQ section is shown, even if individual FAQs are Active.
+â†’ No FAQ section is shown, even if individual FAQs are Active.
 
 ### Individual Item
 
@@ -1828,7 +1894,7 @@ The Hide control determines whether a particular item appears when its section i
 For example:
 
 FAQs ON + one FAQ hidden
-→ The FAQ section appears, but that particular question does not.
+â†’ The FAQ section appears, but that particular question does not.
 
 This allows owners to prepare, temporarily hide, or selectively display content without deleting it.
 
@@ -1849,7 +1915,7 @@ Help videos coming soon
 
 # Email
 
-The Email section controls the platform’s outgoing email provider, notification templates, automated email rules, guest inquiries, and delivery logs.
+The Email section controls the platformâ€™s outgoing email provider, notification templates, automated email rules, guest inquiries, and delivery logs.
 
 At the top of the page, the status bar shows whether email is configured and which admin email address is currently being used.
 
@@ -1889,7 +1955,7 @@ The page includes guidance for commonly used secure SMTP configurations.
 
 Use this setting when required by the email provider.
 
-The correct combination of port and security settings should match the provider’s SMTP instructions.
+The correct combination of port and security settings should match the providerâ€™s SMTP instructions.
 
 ### From Email
 
@@ -2019,7 +2085,7 @@ The Automations tab controls when emails are sent and who receives them.
 
 An automation connects:
 
-Trigger → Recipient → Template
+Trigger â†’ Recipient â†’ Template
 
 The platform contains system automations for important reservation events and also supports custom time-based automations.
 
@@ -2035,13 +2101,13 @@ Each automation shows information such as:
 - explanation of when the email is sent
 Depending on the automation, controls may include:
 
-Edit — change the automation settings.
+Edit â€” change the automation settings.
 
-Test — send or verify the automation without waiting for the normal trigger.
+Test â€” send or verify the automation without waiting for the normal trigger.
 
-Delete — remove the automation.
+Delete â€” remove the automation.
 
-Active toggle — enable or disable the automation.
+Active toggle â€” enable or disable the automation.
 
 Inactive automations do not run.
 
@@ -2160,13 +2226,13 @@ Once these steps are complete, the email system can handle both reservation-rela
 
 ## Inquiries
 
-The Inquiries tab displays messages submitted through the public website’s guest contact form.
+The Inquiries tab displays messages submitted through the public websiteâ€™s guest contact form.
 
 Each inquiry can contain guest contact information and the message submitted by the guest.
 
-The page explains that replies are handled through the property’s normal email inbox.
+The page explains that replies are handled through the propertyâ€™s normal email inbox.
 
-Inquiry emails use the guest’s email address as the Reply-To address, allowing the property owner or manager to reply directly from their email account.
+Inquiry emails use the guestâ€™s email address as the Reply-To address, allowing the property owner or manager to reply directly from their email account.
 
 The refresh control can be used to check for updated inquiry information.
 
@@ -2227,11 +2293,11 @@ It shows:
 - whether the Live webhook signing secret is configured
 A status such as:
 
-Stripe Test — ready
+Stripe Test â€” ready
 
 or:
 
-Stripe Live — ready
+Stripe Live â€” ready
 
 indicates that the credentials required for that payment mode are configured.
 
@@ -2250,9 +2316,9 @@ The four available modes are:
 
 The easiest way to understand the difference is:
 
-**Manual modes = Request first → Admin reviews → Payment after approval**
+**Manual modes = Request first â†’ Admin reviews â†’ Payment after approval**
 
-**Stripe modes = Available dates → Guest goes directly to checkout**
+**Stripe modes = Available dates â†’ Guest goes directly to checkout**
 
 > IMPORTANT: "Manual" does not mean the booking or payment has to be handled outside the platform. It means the guest's request must be reviewed by the administrator before the guest proceeds with payment.
 
@@ -2388,11 +2454,11 @@ This makes it easy to switch back to Stripe Test later if additional testing is 
 
 **Manual Test / Manual Live**
 
-Guest selects dates → Booking request submitted → Dates held → Administrator reviews → Approve or decline → Approved guest receives payment link → Guest completes payment
+Guest selects dates â†’ Booking request submitted â†’ Dates held â†’ Administrator reviews â†’ Approve or decline â†’ Approved guest receives payment link â†’ Guest completes payment
 
 **Stripe Test / Stripe Live**
 
-Guest selects dates → Availability and booking rules are checked → Guest proceeds directly to Stripe Checkout → Payment is completed → Booking continues through the payment workflow
+Guest selects dates â†’ Availability and booking rules are checked â†’ Guest proceeds directly to Stripe Checkout â†’ Payment is completed â†’ Booking continues through the payment workflow
 
 The difference between **Test** and **Live** is whether real money is processed.
 
@@ -2493,7 +2559,7 @@ The same application webhook URL can be used when configuring Stripe, but test a
 
 In Stripe, create the webhook destination under:
 
-Developers → Webhooks
+Developers â†’ Webhooks
 
 Configure the endpoint to listen for the payment events required by the platform, including:
 
@@ -2556,7 +2622,7 @@ The value is entered in minutes.
 
 The supported range is:
 
-30–1440 minutes
+30â€“1440 minutes
 
 The default is typically 30 minutes.
 
@@ -2608,7 +2674,7 @@ The recommended workflow for a new property is:
 7. Configure the live webhook and live signing secret.
 8. Leave the site in Stripe Test while the property is still being prepared.
 9. When the property is ready for real bookings, select Stripe Live and click Save Settings.
-10. Refresh the page and confirm the status shows Stripe Live — ready.
+10. Refresh the page and confirm the status shows Stripe Live â€” ready.
 Once Stripe Live is selected, real customer payment methods will result in real charges.
 
 ## Security
@@ -2644,7 +2710,7 @@ Before selecting Stripe Live, confirm:
 - the Current Status shows the live credentials as ready
 Then select Stripe Live, save the settings, refresh the page, and confirm that the status shows:
 
-Stripe Live — ready
+Stripe Live â€” ready
 
 Help videos coming soon
 
@@ -2665,11 +2731,11 @@ The Profile section contains information about the currently logged-in administr
 
 ### Full Name
 
-Enter the administrator’s name.
+Enter the administratorâ€™s name.
 
 ### Phone
 
-Enter the administrator’s contact phone number.
+Enter the administratorâ€™s contact phone number.
 
 ### Login Email
 
@@ -2679,7 +2745,7 @@ The login email is tied to the authentication account and is not changed through
 
 ### Role
 
-Shows the administrator’s assigned account role.
+Shows the administratorâ€™s assigned account role.
 
 The account creation date is also displayed for reference.
 
@@ -2698,7 +2764,7 @@ Fields include:
 - Business Address
 The business/company information can be left blank when it does not apply.
 
-This information is separate from the administrator’s own login profile, allowing the platform user and the property owner/business to be represented independently.
+This information is separate from the administratorâ€™s own login profile, allowing the platform user and the property owner/business to be represented independently.
 
 ## Listing Info
 
@@ -2726,7 +2792,7 @@ Fields include:
 - Manager Role
 - Manager Email
 - Manager Phone
-This information can also be used by email templates through the platform’s template variables.
+This information can also be used by email templates through the platformâ€™s template variables.
 
 ### Primary Guest Contact
 
@@ -2773,7 +2839,7 @@ The Preferences section controls regional and formatting settings used by the pl
 
 ### Timezone
 
-Select the property’s local timezone.
+Select the propertyâ€™s local timezone.
 
 This is particularly important for scheduled platform functions and time-based email automations.
 
@@ -2833,7 +2899,7 @@ Individual tagline items can be removed and replaced as needed.
 
 Choose the accent color used for the tagline presentation.
 
-The selected color is also applied to the first selected badge’s icon and label.
+The selected color is also applied to the first selected badgeâ€™s icon and label.
 
 ### Homepage Badges
 
@@ -2900,7 +2966,7 @@ Shows the configured outgoing email provider.
 
 ### Calendar Sync
 
-Shows whether calendar synchronization sources are configured.
+Shows whether calendar synchronization sources are configured. Enabled external calendar sources are checked automatically every 15 minutes.
 
 ### Account Status
 
@@ -2965,7 +3031,7 @@ Before launching a newly configured property, review the Account page and confir
 - primary guest contact information is correct
 - email-template property information is complete
 - check-in and check-out times are correct
-- timezone is set to the property’s actual local timezone
+- timezone is set to the propertyâ€™s actual local timezone
 - currency and date format are correct
 - logo and favicon are configured
 - homepage tagline and badges accurately represent the property
