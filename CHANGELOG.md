@@ -9,6 +9,69 @@ This project follows semantic versioning:
 
 ---
 
+## [1.0.1] - 2026-10-11
+
+### Changed
+
+- Replaced the previous horizontal admin navigation with the new responsive left sidebar.
+- Added desktop sidebar collapse/expand behavior with the selected state preserved between sessions.
+- Added a mobile admin header with slide-out navigation.
+- Preserved the existing Texoma Tiki admin branding.
+- Moved Pricing out of the Property section and into the Calendar section.
+- Updated Calendar navigation to:
+  - Calendar
+  - Availability
+  - Pricing
+  - Calendar Sync
+- Preserved the existing Rates and Fees subsections inside Calendar → Pricing.
+- Removed the Pricing tab from Property.
+- Property now contains:
+  - Basic Info
+  - Highlights
+  - Amenities
+  - Neighborhood
+  - Contact
+  - Photos
+  - Things to Know
+  - Sections & Content
+- Redesigned the Pricing workspace for responsive use:
+  - Wide screens display Pricing Calendar, rate settings, and Seasonal Pricing in three columns.
+  - Intermediate screen widths display Pricing Calendar and rate settings in two columns with Seasonal Pricing below.
+  - Mobile screens use a single-column layout.
+- Rebalanced Pricing Calendar and rate-settings widths.
+- Reduced Pricing Calendar cell height for a more compact layout.
+- Improved Seasonal Pricing layout and preset form spacing.
+- Updated the Seasonal Pricing header so the Add preset button remains properly aligned within narrower layouts.
+
+### Added
+
+- Added a reusable "What's New" admin update modal to notify administrators about important dashboard changes.
+- Added a direct "Go to Pricing" button in the modal that opens Calendar → Pricing.
+- Added a temporary `NEW` badge to the Pricing tab inside Calendar.
+- Added configurable modal appearance limits using `maxAppearances`.
+- Configured the V1.0.1 modal to appear a maximum of two times per administrator.
+- Added separate modal tracking for each authenticated administrator so the developer and client administrator accounts maintain independent appearance counts.
+- Added version-based modal tracking so future platform updates can use their own notification cycle.
+
+### Fixed
+
+- Fixed the update modal so it appears only once during an eligible login session.
+- Fixed an issue where navigating between Calendar, Bookings, Property, and other admin sections could cause the modal to appear again during the same login.
+- Fixed modal appearance counting so normal admin navigation does not consume additional appearances.
+- Fixed `/admin/calendar?tab=pricing` handling so the Pricing tab opens correctly when accessed directly from the modal.
+- Verified the modal appears once on the first eligible login, once on the second eligible login, and remains dismissed on subsequent logins for that administrator.
+
+### Notes
+
+- The V1.0.1 update modal is configured with `maxAppearances: 2`.
+- Modal tracking is maintained separately for each authenticated administrator and browser/device.
+- Developer and client administrator accounts do not consume each other's modal appearances.
+- No database migration was required.
+- No pricing logic, fee logic, booking logic, payment processing, email configuration, production data, or Edge Functions were modified.
+- Existing pricing precedence, seasonal pricing, date-specific overrides, day-of-week rates, minimum-night rules, and fee behavior remain unchanged.
+- The existing production iCal scheduler/authentication implementation was intentionally left unchanged.
+- The verified legacy iCal scheduler exception documented in the 2026-10-08 changelog remains in effect and must not be overwritten with the master-template scheduler implementation.
+
 ## [1.0.1] - 2026-10-08
 
 ### Fixed
