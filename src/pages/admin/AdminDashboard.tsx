@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+
 import AdminOverview from './AdminOverview';
 import AdminCalendar from './AdminCalendar';
 import PropertyEditor from './PropertyEditor';
@@ -15,8 +22,13 @@ import AccountPage from './AccountPage';
 import PlatformPrivacyPolicy from './PlatformPrivacyPolicy';
 import PlatformTermsConditions from './PlatformTermsConditions';
 import PlatformDocumentation from './PlatformDocumentation';
+
 import WhatsNewModal from '../../components/admin/WhatsNewModal';
-import { CURRENT_ADMIN_UPDATE, getAdminUpdateStorageKey } from '../../config/adminUpdates';
+import {
+  CURRENT_ADMIN_UPDATE,
+  getAdminUpdateStorageKey,
+} from '../../config/adminUpdates';
+
 import {
   LayoutDashboard,
   CalendarDays,
@@ -41,15 +53,52 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
-  { to: '/admin/calendar', label: 'Calendar', icon: CalendarDays },
-  { to: '/admin/bookings', label: 'Bookings', icon: BookOpen },
-  { to: '/admin/cleaning', label: 'Cleaning', icon: Sparkles },
-  { to: '/admin/maintenance', label: 'Maintenance', icon: Wrench },
-  { to: '/admin/property', label: 'Property', icon: Home },
-  { to: '/admin/email', label: 'Email', icon: Mail },
-  { to: '/admin/payments', label: 'Payments', icon: CreditCard },
-  { to: '/admin/account', label: 'Account', icon: UserCircle },
+  {
+    to: '/admin',
+    label: 'Overview',
+    icon: LayoutDashboard,
+    exact: true,
+  },
+  {
+    to: '/admin/calendar',
+    label: 'Calendar',
+    icon: CalendarDays,
+  },
+  {
+    to: '/admin/bookings',
+    label: 'Bookings',
+    icon: BookOpen,
+  },
+  {
+    to: '/admin/cleaning',
+    label: 'Cleaning',
+    icon: Sparkles,
+  },
+  {
+    to: '/admin/maintenance',
+    label: 'Maintenance',
+    icon: Wrench,
+  },
+  {
+    to: '/admin/property',
+    label: 'Property',
+    icon: Home,
+  },
+  {
+    to: '/admin/email',
+    label: 'Email',
+    icon: Mail,
+  },
+  {
+    to: '/admin/payments',
+    label: 'Payments',
+    icon: CreditCard,
+  },
+  {
+    to: '/admin/account',
+    label: 'Account',
+    icon: UserCircle,
+  },
 ];
 
 function NavLink({
@@ -100,7 +149,9 @@ function AccountNavItem({
   onNavigate?: () => void;
 }) {
   const location = useLocation();
-  const inAccountSection = location.pathname.startsWith('/admin/account');
+
+  const inAccountSection =
+    location.pathname.startsWith('/admin/account');
 
   return (
     <div>
@@ -120,6 +171,7 @@ function AccountNavItem({
         }`}
       >
         <UserCircle className="w-4 h-4 flex-shrink-0" />
+
         {!collapsed && <span>Account</span>}
       </Link>
 
@@ -153,7 +205,8 @@ function AccountNavItem({
             to="/admin/account/documentation"
             onClick={onNavigate}
             className={`block px-3 py-1.5 rounded-lg text-sm transition-colors ${
-              location.pathname === '/admin/account/documentation'
+              location.pathname ===
+              '/admin/account/documentation'
                 ? 'bg-gray-100 text-gray-900 font-medium'
                 : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
             }`}
@@ -171,12 +224,18 @@ export default function AdminDashboard() {
   const [denied, setDenied] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const [adminUserId, setAdminUserId] = useState<string | null>(null);
+  const [adminUserId, setAdminUserId] = useState<string | null>(
+    null
+  );
+
   const [showWhatsNew, setShowWhatsNew] = useState(false);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return localStorage.getItem('adminSidebarCollapsed') === 'true';
+
+    return (
+      localStorage.getItem('adminSidebarCollapsed') === 'true'
+    );
   });
 
   const navigate = useNavigate();
@@ -205,12 +264,18 @@ export default function AdminDashboard() {
 
       setAdminUserId(uid);
 
-      const lastSeenUpdate = localStorage.getItem(
-        getAdminUpdateStorageKey(uid)
+      const storageKey = getAdminUpdateStorageKey(
+        uid,
+        CURRENT_ADMIN_UPDATE.version
+      );
+
+      const appearanceCount = Number(
+        localStorage.getItem(storageKey) || '0'
       );
 
       setShowWhatsNew(
-        lastSeenUpdate !== CURRENT_ADMIN_UPDATE.version
+        appearanceCount <
+          CURRENT_ADMIN_UPDATE.maxAppearances
       );
 
       setReady(true);
@@ -232,6 +297,7 @@ export default function AdminDashboard() {
     if (!mobileOpen) return;
 
     const previousOverflow = document.body.style.overflow;
+
     document.body.style.overflow = 'hidden';
 
     return () => {
@@ -241,10 +307,24 @@ export default function AdminDashboard() {
 
   const markCurrentUpdateSeen = () => {
     if (adminUserId) {
-      localStorage.setItem(
-        getAdminUpdateStorageKey(adminUserId),
+      const storageKey = getAdminUpdateStorageKey(
+        adminUserId,
         CURRENT_ADMIN_UPDATE.version
       );
+
+      const currentCount = Number(
+        localStorage.getItem(storageKey) || '0'
+      );
+
+      if (
+        currentCount <
+        CURRENT_ADMIN_UPDATE.maxAppearances
+      ) {
+        localStorage.setItem(
+          storageKey,
+          String(currentCount + 1)
+        );
+      }
     }
 
     setShowWhatsNew(false);
@@ -252,6 +332,7 @@ export default function AdminDashboard() {
 
   const goToPricing = () => {
     markCurrentUpdateSeen();
+
     navigate('/admin/calendar?tab=pricing');
   };
 
@@ -272,7 +353,8 @@ export default function AdminDashboard() {
           </p>
 
           <p className="text-sm text-gray-500 mb-6">
-            Your account is not authorized to access this dashboard.
+            Your account is not authorized to access this
+            dashboard.
           </p>
 
           <button
@@ -302,10 +384,12 @@ export default function AdminDashboard() {
           sidebarCollapsed ? 'w-[72px]' : 'w-[220px]'
         }`}
       >
-        {/* Logo */}
+        {/* Texoma Tiki branding */}
         <div
           className={`h-20 flex items-center border-b border-gray-100 ${
-            sidebarCollapsed ? 'justify-center px-2' : 'px-5'
+            sidebarCollapsed
+              ? 'justify-center px-2'
+              : 'px-5'
           }`}
         >
           {sidebarCollapsed ? (
@@ -317,6 +401,7 @@ export default function AdminDashboard() {
               <div className="text-lg font-bold text-gray-900 leading-tight">
                 Texoma Tiki
               </div>
+
               <div className="mt-1 inline-flex text-[10px] uppercase tracking-wide font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                 Admin
               </div>
@@ -347,7 +432,9 @@ export default function AdminDashboard() {
               />
             ))}
 
-            <AccountNavItem collapsed={sidebarCollapsed} />
+            <AccountNavItem
+              collapsed={sidebarCollapsed}
+            />
           </div>
         </nav>
 
@@ -355,11 +442,19 @@ export default function AdminDashboard() {
         <div className="border-t border-gray-100 p-3">
           <button
             type="button"
-            onClick={() => setSidebarCollapsed(value => !value)}
-            aria-label={
-              sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
+            onClick={() =>
+              setSidebarCollapsed(value => !value)
             }
-            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={
+              sidebarCollapsed
+                ? 'Expand sidebar'
+                : 'Collapse sidebar'
+            }
+            title={
+              sidebarCollapsed
+                ? 'Expand sidebar'
+                : 'Collapse sidebar'
+            }
             className={`flex items-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors ${
               sidebarCollapsed
                 ? 'w-10 h-10 justify-center mx-auto'
@@ -371,7 +466,10 @@ export default function AdminDashboard() {
             ) : (
               <>
                 <ChevronLeft className="w-4 h-4" />
-                <span className="text-sm font-medium">Collapse</span>
+
+                <span className="text-sm font-medium">
+                  Collapse
+                </span>
               </>
             )}
           </button>
@@ -391,7 +489,10 @@ export default function AdminDashboard() {
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="font-bold text-gray-900">Texoma Tiki</span>
+            <span className="font-bold text-gray-900">
+              Texoma Tiki
+            </span>
+
             <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full font-semibold">
               Admin
             </span>
@@ -413,7 +514,10 @@ export default function AdminDashboard() {
           <aside className="relative bg-white w-[280px] max-w-[85vw] h-full shadow-2xl flex flex-col">
             <div className="h-16 px-4 flex items-center justify-between border-b border-gray-100">
               <div>
-                <div className="font-bold text-gray-900">Texoma Tiki</div>
+                <div className="font-bold text-gray-900">
+                  Texoma Tiki
+                </div>
+
                 <div className="text-[10px] uppercase tracking-wide font-semibold text-gray-500 mt-0.5">
                   Admin
                 </div>
@@ -463,32 +567,80 @@ export default function AdminDashboard() {
       {/* Page content */}
       <div
         className={`min-h-screen transition-[padding] duration-200 ${
-          sidebarCollapsed ? 'lg:pl-[72px]' : 'lg:pl-[220px]'
+          sidebarCollapsed
+            ? 'lg:pl-[72px]'
+            : 'lg:pl-[220px]'
         }`}
       >
         <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
           <Routes>
-            <Route path="/" element={<AdminOverview />} />
-            <Route path="/calendar/*" element={<AdminCalendar />} />
-            <Route path="/calendar-sync" element={<CalendarSync />} />
-            <Route path="/bookings" element={<BookingsManager />} />
-            <Route path="/bookings/:bookingId" element={<BookingDetail />} />
-            <Route path="/cleaning" element={<CleaningManager />} />
-            <Route path="/maintenance" element={<MaintenanceManager />} />
-            <Route path="/property" element={<PropertyEditor />} />
-            <Route path="/email" element={<EmailSettings />} />
-            <Route path="/payments" element={<PaymentsEditor />} />
-            <Route path="/account" element={<AccountPage />} />
             <Route
-              path="account/privacy"
+              path="/"
+              element={<AdminOverview />}
+            />
+
+            <Route
+              path="/calendar/*"
+              element={<AdminCalendar />}
+            />
+
+            <Route
+              path="/calendar-sync"
+              element={<CalendarSync />}
+            />
+
+            <Route
+              path="/bookings"
+              element={<BookingsManager />}
+            />
+
+            <Route
+              path="/bookings/:bookingId"
+              element={<BookingDetail />}
+            />
+
+            <Route
+              path="/cleaning"
+              element={<CleaningManager />}
+            />
+
+            <Route
+              path="/maintenance"
+              element={<MaintenanceManager />}
+            />
+
+            <Route
+              path="/property"
+              element={<PropertyEditor />}
+            />
+
+            <Route
+              path="/email"
+              element={<EmailSettings />}
+            />
+
+            <Route
+              path="/payments"
+              element={<PaymentsEditor />}
+            />
+
+            <Route
+              path="/account"
+              element={<AccountPage />}
+            />
+
+            <Route
+              path="/account/privacy"
               element={<PlatformPrivacyPolicy />}
             />
+
             <Route
-              path="account/terms"
+              path="/account/terms"
               element={<PlatformTermsConditions />}
             />
+
             <Route
-              path="account/documentation"
+              path="/account/documentation"
               element={<PlatformDocumentation />}
             />
           </Routes>
