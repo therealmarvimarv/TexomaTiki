@@ -2,17 +2,18 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import {
-  Calendar, Clock, RefreshCw,
+  Calendar, Clock, DollarSign, MessageSquare, RefreshCw,
   ChevronLeft, ChevronRight, CheckCircle2, AlertCircle,
-  AlertTriangle, TrendingUp, Loader2,
-  Sparkles, Wrench, Shield, LogOut, ArrowRight, X,
+  AlertTriangle, Users, TrendingUp, Loader2, ExternalLink,
+  Sparkles, Wrench, Shield, LogOut,
 } from 'lucide-react';
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
-// Helpers
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
 function fmtDate(iso: string | null | undefined): string {
-  if (!iso) return '-';
+  if (!iso) return '—';
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
@@ -32,104 +33,82 @@ function timeUntil(iso: string): string {
   return `${Math.floor(mins / 60)}h left`;
 }
 
-// Shared stat card
+// ── Shared stat card ──────────────────────────────────────────────────────────
+
 function StatCard({
   icon: Icon,
   label,
   value,
   sub,
   accent,
-  iconColor,
   loading,
-  to,
 }: {
   icon: React.ElementType;
   label: string;
   value: string | number;
   sub: string;
   accent?: string;
-  iconColor?: string;
   loading?: boolean;
-  to?: string;
 }) {
-  const card = (
-    <div className="group h-full rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md sm:p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl ${accent ?? 'bg-gray-100'}`}>
-          <Icon className={`h-[18px] w-[18px] ${iconColor ?? 'text-gray-700'}`} strokeWidth={1.8} />
-        </div>
-        {to && (
-          <ArrowRight className="h-4 w-4 flex-shrink-0 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-gray-500" />
-        )}
+  return (
+    <div className="bg-white rounded-2xl border p-5 flex items-start gap-4">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${accent ?? 'bg-gray-100'}`}>
+        <Icon className="w-5 h-5 text-gray-700" />
       </div>
-
-      <div className="mt-4 min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500">{label}</p>
+      <div className="min-w-0">
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</p>
         {loading ? (
-          <div className="mt-1.5 h-8 w-20 animate-pulse rounded-lg bg-gray-100" />
+          <div className="h-7 w-16 bg-gray-100 rounded animate-pulse mt-1" />
         ) : (
-          <p className="mt-1 text-[26px] font-bold leading-none tracking-tight text-gray-950">{value}</p>
+          <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
         )}
-        <p className="mt-2 text-xs leading-4 text-gray-400">{sub}</p>
+        <p className="text-xs text-gray-400 mt-0.5">{sub}</p>
       </div>
     </div>
   );
-
-  return to ? (
-    <Link to={to} className="block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 rounded-2xl">
-      {card}
-    </Link>
-  ) : card;
 }
 
-// Widget shell
+// ── Widget shell ──────────────────────────────────────────────────────────────
+
 function Widget({
   title,
-  subtitle,
   loading,
   error,
   children,
   action,
-  bodyClassName = 'p-5',
 }: {
   title: string;
-  subtitle?: string;
   loading?: boolean;
   error?: string;
   children: React.ReactNode;
   action?: React.ReactNode;
-  bodyClassName?: string;
 }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex min-h-[64px] items-center justify-between gap-4 border-b border-gray-100 px-5 py-3.5">
-        <div className="min-w-0">
-          <h3 className="text-[15px] font-semibold text-gray-950">{title}</h3>
-          {subtitle && <p className="mt-0.5 text-xs leading-4 text-gray-400">{subtitle}</p>}
-        </div>
-        {action && <div className="flex-shrink-0">{action}</div>}
+    <div className="bg-white rounded-2xl border overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b">
+        <h3 className="font-semibold text-gray-900">{title}</h3>
+        {action}
       </div>
-      <div className={bodyClassName}>
+      <div className="p-5">
         {loading ? (
-          <div className="flex min-h-[120px] items-center justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
           </div>
         ) : error ? (
-          <div className="flex min-h-[120px] items-center justify-center">
-            <div className="flex max-w-sm items-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
-              {error}
-            </div>
+          <div className="flex items-center gap-2 text-sm text-red-600 py-4">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            {error}
           </div>
         ) : (
           children
         )}
       </div>
-    </section>
+    </div>
   );
 }
 
-// 1. Stats summary
+// ── 1. Stats summary ──────────────────────────────────────────────────────────
+
 interface SummaryStats {
   upcomingCount: number;
   pendingCount: number;
@@ -179,63 +158,52 @@ function StatsRow() {
   const syncLabel =
     stats?.syncStatus === 'healthy' ? 'All synced' :
     stats?.syncStatus === 'error' ? 'Sync error' :
-    stats?.syncStatus === 'warning' ? 'Attention' : 'No sources';
+    stats?.syncStatus === 'warning' ? 'Needs attention' : 'No sources';
 
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <StatCard
         icon={Calendar}
         label="Upcoming Bookings"
-        value={loading ? '-' : (stats?.upcomingCount ?? 0)}
+        value={loading ? '—' : (stats?.upcomingCount ?? 0)}
         sub="Next confirmed stays"
         accent="bg-blue-50"
-        iconColor="text-blue-600"
         loading={loading}
-        to="/admin/bookings"
       />
       <StatCard
         icon={Clock}
         label="Pending Requests"
-        value={loading ? '-' : (stats?.pendingCount ?? 0)}
+        value={loading ? '—' : (stats?.pendingCount ?? 0)}
         sub="Awaiting host review"
-        accent="bg-amber-50"
-        iconColor="text-amber-600"
+        accent="bg-yellow-50"
         loading={loading}
-        to="/admin/bookings"
       />
       <StatCard
         icon={TrendingUp}
         label="Est. Revenue"
-        value={loading ? '-' : fmtMoney(stats?.estimatedRevenueCents ?? 0)}
+        value={loading ? '—' : fmtMoney(stats?.estimatedRevenueCents ?? 0)}
         sub="Upcoming confirmed + paid"
-        accent="bg-emerald-50"
-        iconColor="text-emerald-600"
+        accent="bg-green-50"
         loading={loading}
-        to="/admin/bookings"
       />
       <StatCard
         icon={RefreshCw}
         label="Calendar Sync"
-        value={loading ? '-' : syncLabel}
+        value={loading ? '—' : syncLabel}
         sub={stats?.syncStatus === 'none' ? 'No iCal sources' : 'iCal import status'}
         accent={
-          stats?.syncStatus === 'healthy' ? 'bg-emerald-50' :
+          stats?.syncStatus === 'healthy' ? 'bg-green-50' :
           stats?.syncStatus === 'error' ? 'bg-red-50' :
-          stats?.syncStatus === 'warning' ? 'bg-amber-50' : 'bg-gray-100'
-        }
-        iconColor={
-          stats?.syncStatus === 'healthy' ? 'text-emerald-600' :
-          stats?.syncStatus === 'error' ? 'text-red-600' :
-          stats?.syncStatus === 'warning' ? 'text-amber-600' : 'text-gray-600'
+          stats?.syncStatus === 'warning' ? 'bg-yellow-50' : 'bg-gray-100'
         }
         loading={loading}
-        to="/admin/calendar?tab=sync"
       />
     </div>
   );
 }
 
-// 2. Upcoming bookings
+// ── 2. Upcoming bookings ──────────────────────────────────────────────────────
+
 interface BookingRow {
   id: string;
   guest_name: string;
@@ -246,7 +214,6 @@ interface BookingRow {
   total_price: number;
   status: string;
   payment_status: string;
-  payment_expires_at?: string | null;
 }
 
 function UpcomingBookings() {
@@ -274,54 +241,41 @@ function UpcomingBookings() {
   return (
     <Widget
       title="Upcoming Bookings"
-      subtitle="Your next confirmed guest stays"
       loading={loading}
       error={error}
       action={
-        <Link
-          to="/admin/bookings"
-          className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-900"
-        >
-          View all <ArrowRight className="h-3.5 w-3.5" />
+        <Link to="/admin/bookings" className="text-xs text-gray-500 hover:text-gray-800 flex items-center gap-1 transition-colors">
+          View all <ExternalLink className="w-3 h-3" />
         </Link>
       }
     >
       {bookings.length === 0 ? (
-        <div className="flex min-h-[132px] flex-col items-center justify-center text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-            <Calendar className="h-[18px] w-[18px] text-blue-500" />
-          </div>
-          <p className="mt-3 text-sm font-medium text-gray-700">No upcoming bookings</p>
-          <p className="mt-1 text-xs text-gray-400">Confirmed stays will appear here.</p>
-        </div>
+        <p className="text-sm text-gray-400 text-center py-6">No upcoming confirmed bookings yet.</p>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-3">
           {bookings.map(b => {
             const nights = nightsBetween(b.check_in, b.check_out);
             const total = b.amount_total != null ? fmtMoney(b.amount_total) : `$${Number(b.total_price).toFixed(2)}`;
             return (
-              <Link
-                key={b.id}
-                to={`/admin/bookings/${b.id}`}
-                className="group flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-gray-50"
-              >
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                  <Calendar className="h-[18px] w-[18px]" strokeWidth={1.8} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-gray-900">{b.guest_name}</p>
-                  <p className="mt-0.5 truncate text-xs text-gray-500">
-                    {fmtDate(b.check_in)} - {fmtDate(b.check_out)}
-                  </p>
-                  <p className="mt-0.5 text-[11px] text-gray-400">
-                    {nights} night{nights !== 1 ? 's' : ''} | {b.guests} guest{b.guests !== 1 ? 's' : ''}
+              <div key={b.id} className="flex items-start justify-between gap-3 py-2.5 border-b last:border-b-0">
+                <div className="min-w-0">
+                  <p className="font-medium text-gray-900 text-sm truncate">{b.guest_name}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {fmtDate(b.check_in)} → {fmtDate(b.check_out)}
+                    <span className="mx-1.5 text-gray-300">·</span>
+                    {nights}n · {b.guests} guest{b.guests !== 1 ? 's' : ''}
                   </p>
                 </div>
-                <div className="flex flex-shrink-0 items-center gap-2 pl-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <span className="text-sm font-semibold text-gray-900">{total}</span>
-                  <ArrowRight className="h-4 w-4 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-gray-500" />
+                  <Link
+                    to={`/admin/bookings/${b.id}`}
+                    className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                  >
+                    View
+                  </Link>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
@@ -330,7 +284,8 @@ function UpcomingBookings() {
   );
 }
 
-// 3. Pending requests
+// ── 3. Pending requests ───────────────────────────────────────────────────────
+
 function PendingRequests() {
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -353,62 +308,44 @@ function PendingRequests() {
   return (
     <Widget
       title="Pending Requests"
-      subtitle="Bookings waiting for review or payment"
       loading={loading}
       error={error}
       action={
-        <Link
-          to="/admin/bookings"
-          className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-900"
-        >
-          View all <ArrowRight className="h-3.5 w-3.5" />
+        <Link to="/admin/bookings" className="text-xs text-gray-500 hover:text-gray-800 flex items-center gap-1 transition-colors">
+          View all <ExternalLink className="w-3 h-3" />
         </Link>
       }
     >
       {bookings.length === 0 ? (
-        <div className="flex min-h-[132px] flex-col items-center justify-center text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50">
-            <CheckCircle2 className="h-[18px] w-[18px] text-amber-500" />
-          </div>
-          <p className="mt-3 text-sm font-medium text-gray-700">You're all caught up</p>
-          <p className="mt-1 text-xs text-gray-400">No booking requests need attention.</p>
-        </div>
+        <p className="text-sm text-gray-400 text-center py-6">No pending booking requests.</p>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-3">
           {bookings.map(b => {
-            const total = b.amount_total != null ? fmtMoney(b.amount_total) : `$${Number(b.total_price).toFixed(2)}`;
-            const expires = b.payment_expires_at;
-            const isPayment = b.status === 'pending_payment';
+            const total = (b as any).amount_total != null ? fmtMoney((b as any).amount_total) : `$${Number(b.total_price).toFixed(2)}`;
+            const expires = (b as any).payment_expires_at;
             return (
-              <Link
-                key={b.id}
-                to={`/admin/bookings/${b.id}`}
-                className="group flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-gray-50"
-              >
-                <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${isPayment ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'}`}>
-                  <Clock className="h-[18px] w-[18px]" strokeWidth={1.8} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <p className="truncate text-sm font-semibold text-gray-900">{b.guest_name}</p>
-                    <span className={`flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${isPayment ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'}`}>
-                      {isPayment ? 'Payment' : 'Review'}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 truncate text-xs text-gray-500">
-                    {fmtDate(b.check_in)} - {fmtDate(b.check_out)}
+              <div key={b.id} className="flex items-start justify-between gap-3 py-2.5 border-b last:border-b-0">
+                <div className="min-w-0">
+                  <p className="font-medium text-gray-900 text-sm truncate">{b.guest_name}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {fmtDate(b.check_in)} → {fmtDate(b.check_out)}
                   </p>
                   {expires && (
-                    <p className={`mt-0.5 text-[11px] ${timeUntil(expires) === 'Expired' ? 'text-red-500' : 'text-amber-600'}`}>
+                    <span className="inline-block mt-1 text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
                       {timeUntil(expires)}
-                    </p>
+                    </span>
                   )}
                 </div>
-                <div className="flex flex-shrink-0 items-center gap-2 pl-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <span className="text-sm font-semibold text-gray-900">{total}</span>
-                  <ArrowRight className="h-4 w-4 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-gray-500" />
+                  <Link
+                    to={`/admin/bookings/${b.id}`}
+                    className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                  >
+                    View
+                  </Link>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
@@ -417,7 +354,8 @@ function PendingRequests() {
   );
 }
 
-// 4. Revenue estimate
+// ── 4. Revenue estimate ───────────────────────────────────────────────────────
+
 type RevenueRange = 'month' | 'next30' | 'next90' | 'ytd';
 
 function RevenueWidget() {
@@ -458,7 +396,7 @@ function RevenueWidget() {
 
     if (err) { setError('Could not load revenue data.'); setLoading(false); return; }
 
-    const totalCents = (rows ?? []).reduce((sum, row) => sum + (row.amount_total ?? Math.round(Number(row.total_price) * 100)), 0);
+    const totalCents = (rows ?? []).reduce((s, r) => s + (r.amount_total ?? Math.round(Number(r.total_price) * 100)), 0);
     setData({ totalCents, count: (rows ?? []).length });
     setLoading(false);
   }, []);
@@ -471,55 +409,41 @@ function RevenueWidget() {
     { key: 'month', label: 'This Month' },
     { key: 'next30', label: 'Next 30d' },
     { key: 'next90', label: 'Next 90d' },
-    { key: 'ytd', label: 'YTD' },
+    { key: 'ytd', label: 'Year to Date' },
   ];
 
   return (
     <Widget
       title="Revenue Estimate"
-      subtitle="Confirmed and paid bookings"
       loading={loading}
       error={error}
-    >
-      <div className="space-y-5">
-        <div className="grid grid-cols-4 gap-1 rounded-xl bg-gray-100 p-1">
-          {RANGES.map(item => (
+      action={
+        <div className="flex gap-1">
+          {RANGES.map(r => (
             <button
-              key={item.key}
-              type="button"
-              onClick={() => setRange(item.key)}
-              className={`rounded-lg px-2 py-2 text-[11px] font-semibold transition-all ${
-                range === item.key
-                  ? 'bg-white text-gray-950 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-800'
-              }`}
+              key={r.key}
+              onClick={() => setRange(r.key)}
+              className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${range === r.key ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
             >
-              {item.label}
+              {r.label}
             </button>
           ))}
         </div>
-
-        <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-medium text-emerald-700">Revenue in selected period</p>
-              <p className="mt-1 text-3xl font-bold tracking-tight text-gray-950">{fmtMoney(data?.totalCents ?? 0)}</p>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm">
-              <TrendingUp className="h-5 w-5" strokeWidth={1.8} />
-            </div>
-          </div>
-          <p className="mt-3 text-[11px] leading-4 text-gray-500">Confirmed but unpaid bookings are excluded.</p>
+      }
+    >
+      <div className="space-y-4">
+        <div>
+          <p className="text-3xl font-bold text-gray-900">{fmtMoney(data?.totalCents ?? 0)}</p>
+          <p className="text-xs text-gray-400 mt-1">Confirmed + paid bookings only. Confirmed but unpaid bookings are excluded.</p>
         </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-4">
-            <p className="text-xs font-medium text-gray-500">Bookings</p>
-            <p className="mt-1 text-xl font-bold text-gray-950">{data?.count ?? 0}</p>
+        <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+          <div>
+            <p className="text-xs text-gray-500">Bookings</p>
+            <p className="text-lg font-semibold text-gray-900 mt-0.5">{data?.count ?? 0}</p>
           </div>
-          <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-4">
-            <p className="text-xs font-medium text-gray-500">Avg booking value</p>
-            <p className="mt-1 text-xl font-bold text-gray-950">{fmtMoney(avg)}</p>
+          <div>
+            <p className="text-xs text-gray-500">Avg booking value</p>
+            <p className="text-lg font-semibold text-gray-900 mt-0.5">{fmtMoney(avg)}</p>
           </div>
         </div>
       </div>
@@ -527,7 +451,8 @@ function RevenueWidget() {
   );
 }
 
-// 5. Mini calendar
+// ── 5. Mini calendar ──────────────────────────────────────────────────────────
+
 interface CalEvent {
   date: string;
   type: 'confirmed' | 'pending' | 'blocked' | 'ical' | 'owner_block';
@@ -638,7 +563,7 @@ function MiniCalendar() {
 
   function eventDot(type: CalEvent['type']) {
     switch (type) {
-      case 'confirmed': return 'bg-emerald-500';
+      case 'confirmed': return 'bg-green-500';
       case 'pending': return 'bg-amber-400';
       case 'blocked': return 'bg-gray-400';
       case 'ical': return 'bg-blue-400';
@@ -657,44 +582,35 @@ function MiniCalendar() {
   return (
     <Widget
       title="Calendar Preview"
-      subtitle="Bookings, blocks, and imported availability"
       loading={loading}
       error={error}
-      action={
-        <Link
-          to="/admin/calendar"
-          className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-900"
-        >
-          Open calendar <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      }
     >
       <div className="space-y-4">
-        <div className="flex items-center justify-between rounded-xl bg-gray-50 px-2 py-1.5">
+        {/* Month nav */}
+        <div className="flex items-center justify-between">
           <button
-            type="button"
             onClick={() => { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); }}
-            className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-sm"
-            aria-label="Previous month"
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="text-sm font-semibold text-gray-900">{monthName}</span>
           <button
-            type="button"
             onClick={() => { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); }}
-            className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-sm"
-            aria-label="Next month"
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
+        {/* Day labels */}
         <div className="grid grid-cols-7 gap-1">
           {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-            <div key={d} className="py-1 text-center text-[10px] font-semibold uppercase tracking-wide text-gray-400">{d}</div>
+            <div key={d} className="text-center text-xs font-medium text-gray-400 py-1">{d}</div>
           ))}
+          {/* Empty cells before first day */}
           {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
+          {/* Day cells */}
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const day = i + 1;
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -703,24 +619,17 @@ function MiniCalendar() {
             const isSelected = selected?.date === dateStr;
             return (
               <button
-                type="button"
                 key={day}
                 onClick={() => handleDayClick(dateStr)}
-                className={`relative flex min-h-[42px] flex-col items-center justify-center rounded-xl text-xs transition-all ${
-                  isSelected
-                    ? 'bg-gray-950 font-semibold text-white shadow-sm'
-                    : isToday
-                    ? 'bg-blue-50 font-semibold text-blue-700'
-                    : dayEvts.length > 0
-                    ? 'text-gray-800 hover:bg-gray-100'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
+                className={`relative flex flex-col items-center py-1.5 rounded-lg text-xs transition-colors
+                  ${isSelected ? 'bg-gray-900 text-white' : isToday ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}
+                  ${dayEvts.length > 0 ? 'cursor-pointer' : 'cursor-default'}`}
               >
                 <span>{day}</span>
                 {dayEvts.length > 0 && (
-                  <div className="mt-1 flex gap-0.5">
+                  <div className="flex gap-0.5 mt-0.5">
                     {dayEvts.slice(0, 3).map((e, idx) => (
-                      <span key={idx} className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-white' : eventDot(e.type)}`} />
+                      <span key={idx} className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : eventDot(e.type)}`} />
                     ))}
                   </div>
                 )}
@@ -729,47 +638,40 @@ function MiniCalendar() {
           })}
         </div>
 
-        <div className="flex flex-wrap gap-x-3 gap-y-2 border-t border-gray-100 pt-3">
+        {/* Legend */}
+        <div className="flex flex-wrap gap-3 pt-2 border-t">
           {[
-            { color: 'bg-emerald-500', label: 'Confirmed' },
+            { color: 'bg-green-500', label: 'Confirmed' },
             { color: 'bg-amber-400', label: 'Pending' },
             { color: 'bg-slate-500', label: 'Owner Block' },
             { color: 'bg-gray-400', label: 'Blocked' },
             { color: 'bg-blue-400', label: 'Imported' },
-          ].map(item => (
-            <div key={item.label} className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <span className={`h-2 w-2 rounded-full ${item.color}`} />
-              {item.label}
+          ].map(l => (
+            <div key={l.label} className="flex items-center gap-1.5 text-xs text-gray-500">
+              <span className={`w-2.5 h-2.5 rounded-full ${l.color}`} />
+              {l.label}
             </div>
           ))}
         </div>
 
+        {/* Selected day detail */}
         {selected && (
-          <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-4">
-            <div className="mb-3 flex items-center justify-between">
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-2">
+            <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold text-gray-900">{fmtDate(selected.date)}</p>
-              <button
-                type="button"
-                onClick={() => setSelected(null)}
-                className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-white hover:text-gray-700"
-                aria-label="Close day details"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <button onClick={() => setSelected(null)} className="text-xs text-gray-400 hover:text-gray-700">✕</button>
             </div>
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {selected.events.map((e, idx) => (
                 <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <span className={`h-2 w-2 flex-shrink-0 rounded-full ${eventDot(e.type)}`} />
-                    <span className="truncate text-gray-700">
-                      {e.label ?? (e.type === 'ical' ? 'Imported calendar block' : e.type === 'owner_block' ? 'Owner Block' : 'Blocked by host')}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${eventDot(e.type)}`} />
+                    <span className="text-gray-700">{e.label ?? (e.type === 'ical' ? 'Imported calendar block' : e.type === 'owner_block' ? 'Owner Block' : 'Blocked by host')}</span>
                   </div>
                   {e.bookingId && (
                     <Link
                       to={`/admin/bookings/${e.bookingId}`}
-                      className="flex-shrink-0 text-xs font-medium text-gray-500 hover:text-gray-900"
+                      className="text-xs text-gray-500 hover:text-gray-800 underline flex-shrink-0"
                     >
                       View
                     </Link>
@@ -784,7 +686,8 @@ function MiniCalendar() {
   );
 }
 
-// 6. Recent inquiries
+// ── 6. Recent inquiries ───────────────────────────────────────────────────────
+
 interface InquiryRow {
   id: string;
   sender_name: string;
@@ -836,58 +739,41 @@ function RecentInquiries() {
     } catch { /* clipboard unavailable */ }
   }
 
-  const btnClass = 'rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900';
+  const btnClass = 'text-xs text-gray-500 hover:text-gray-900 border border-gray-200 px-2.5 py-1 rounded-lg transition-colors';
 
   return (
-    <Widget
-      title="Recent Inquiries"
-      subtitle="Latest guest messages saved by the platform"
-      loading={loading}
-      error={error}
-      action={
-        <Link
-          to="/admin/email?tab=inquiries"
-          className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-900"
-        >
-          View all <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      }
-    >
+    <Widget title="Recent Inquiries" loading={loading} error={error}>
+      <p className="text-xs text-gray-400 -mt-1 mb-4">
+        New guest inquiries are emailed to you and saved here as a reminder.
+      </p>
       {inquiries.length === 0 ? (
-        <div className="flex min-h-[132px] flex-col items-center justify-center text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
-            <CheckCircle2 className="h-[18px] w-[18px] text-gray-500" />
-          </div>
-          <p className="mt-3 text-sm font-medium text-gray-700">No recent inquiries</p>
-          <p className="mt-1 text-xs text-gray-400">New guest messages will appear here.</p>
-        </div>
+        <p className="text-sm text-gray-400 text-center py-6">No recent inquiries.</p>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-4">
           {inquiries.map(inq => (
-            <div key={inq.id} className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
-              <div className="flex items-start justify-between gap-3">
+            <div key={inq.id} className="pb-4 border-b last:border-b-0">
+              <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="min-w-0">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <p className="truncate text-sm font-semibold text-gray-900">{inq.sender_name}</p>
-                    <span className={`flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize ${INQUIRY_STATUS_STYLES[inq.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                      {inq.status}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 truncate text-xs text-gray-500">{inq.sender_email}</p>
+                  <span className="font-medium text-sm text-gray-900">{inq.sender_name}</span>
+                  <span className="text-xs text-gray-400 mx-1.5">·</span>
+                  <span className="text-xs text-gray-500">{fmtDate(inq.created_at)}</span>
                 </div>
-                <span className="flex-shrink-0 text-[11px] text-gray-400">{fmtDate(inq.created_at)}</span>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${INQUIRY_STATUS_STYLES[inq.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                  {inq.status}
+                </span>
               </div>
-              <p className="mt-2 line-clamp-2 text-sm leading-5 text-gray-600">{inq.message}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <p className="text-xs text-gray-500">{inq.sender_email}</p>
+              <p className="text-sm text-gray-700 mt-1.5 line-clamp-2">{inq.message}</p>
+              <div className="flex gap-2 mt-2 flex-wrap">
                 {inq.status === 'new' && (
-                  <button type="button" onClick={() => markRead(inq.id)} className={btnClass}>
+                  <button onClick={() => markRead(inq.id)} className={btnClass}>
                     Mark read
                   </button>
                 )}
-                <button type="button" onClick={() => setDetail(inq)} className={btnClass}>
+                <button onClick={() => setDetail(inq)} className={btnClass}>
                   Details
                 </button>
-                <button type="button" onClick={() => copyEmail(inq.sender_email, inq.id)} className={btnClass}>
+                <button onClick={() => copyEmail(inq.sender_email, inq.id)} className={btnClass}>
                   {copied === inq.id ? 'Copied!' : 'Copy email'}
                 </button>
               </div>
@@ -896,67 +782,57 @@ function RecentInquiries() {
         </div>
       )}
 
+      <div className="pt-3 border-t mt-2">
+        <Link to="/admin/email?tab=inquiries" className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
+          View all inquiries →
+        </Link>
+      </div>
+
       {detail && (
-        <div className="fixed inset-0 z-[110] overflow-y-auto bg-gray-950/50" onClick={() => setDetail(null)}>
-          <div className="flex min-h-full items-center justify-center p-4">
-            <div
-              className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-2xl"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setDetail(null)}>
+          <div className="absolute inset-0 bg-black/20" />
+          <div className="relative bg-white rounded-2xl border shadow-xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900">Inquiry Details</h3>
+              <button onClick={() => setDetail(null)} className="text-gray-400 hover:text-gray-700 text-lg leading-none">✕</button>
+            </div>
+            <dl className="space-y-3 text-sm">
+              <div>
+                <dt className="text-xs text-gray-500 mb-0.5">Name</dt>
+                <dd className="text-gray-900">{detail.sender_name}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-gray-500 mb-0.5">Email</dt>
+                <dd className="text-gray-900 font-mono text-xs">{detail.sender_email}</dd>
+              </div>
+              {detail.sender_phone && (
                 <div>
-                  <h3 className="font-semibold text-gray-950">Inquiry Details</h3>
-                  <p className="mt-0.5 text-xs text-gray-400">Received {fmtDate(detail.created_at)}</p>
+                  <dt className="text-xs text-gray-500 mb-0.5">Phone</dt>
+                  <dd className="text-gray-900">{detail.sender_phone}</dd>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setDetail(null)}
-                  className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
-                  aria-label="Close inquiry details"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+              )}
+              <div>
+                <dt className="text-xs text-gray-500 mb-0.5">Received</dt>
+                <dd className="text-gray-900">{fmtDate(detail.created_at)}</dd>
               </div>
-
-              <div className="space-y-4 p-5 text-sm">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="rounded-xl bg-gray-50 p-3">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">Name</p>
-                    <p className="mt-1 text-gray-900">{detail.sender_name}</p>
-                  </div>
-                  {detail.sender_phone && (
-                    <div className="rounded-xl bg-gray-50 p-3">
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">Phone</p>
-                      <p className="mt-1 text-gray-900">{detail.sender_phone}</p>
-                    </div>
-                  )}
-                </div>
-                <div className="rounded-xl bg-gray-50 p-3">
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">Email</p>
-                  <p className="mt-1 break-all text-gray-900">{detail.sender_email}</p>
-                </div>
-                <div className="rounded-xl bg-gray-50 p-3">
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">Message</p>
-                  <p className="mt-2 whitespace-pre-wrap leading-6 text-gray-700">{detail.message}</p>
-                </div>
+              <div>
+                <dt className="text-xs text-gray-500 mb-0.5">Message</dt>
+                <dd className="text-gray-700 leading-relaxed whitespace-pre-wrap">{detail.message}</dd>
               </div>
-
-              <div className="flex justify-end gap-2 border-t border-gray-100 bg-gray-50/60 px-5 py-3.5">
-                <button
-                  type="button"
-                  onClick={() => copyEmail(detail.sender_email, detail.id)}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-                >
-                  {copied === detail.id ? 'Copied!' : 'Copy email'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDetail(null)}
-                  className="rounded-lg bg-gray-950 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-800"
-                >
-                  Close
-                </button>
-              </div>
+            </dl>
+            <div className="flex justify-end gap-2 mt-5 pt-4 border-t">
+              <button
+                onClick={() => copyEmail(detail.sender_email, detail.id)}
+                className="text-xs px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                {copied === detail.id ? 'Copied!' : 'Copy email'}
+              </button>
+              <button
+                onClick={() => setDetail(null)}
+                className="text-xs px-3 py-1.5 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
@@ -965,7 +841,8 @@ function RecentInquiries() {
   );
 }
 
-// 7. Sync health
+// ── 7. Sync health ────────────────────────────────────────────────────────────
+
 interface IcalSource {
   id: string;
   name: string;
@@ -1015,100 +892,78 @@ function SyncHealth() {
     sources.some(s => s.enabled && !s.last_sync_at) ? 'warning' : 'healthy';
 
   const overallBadge = {
-    none: 'bg-gray-100 text-gray-600',
-    healthy: 'bg-emerald-50 text-emerald-700',
-    warning: 'bg-amber-50 text-amber-700',
-    error: 'bg-red-50 text-red-700',
+    none: 'bg-gray-100 text-gray-500',
+    healthy: 'bg-green-100 text-green-700',
+    warning: 'bg-yellow-100 text-yellow-700',
+    error: 'bg-red-100 text-red-700',
   }[overallStatus];
 
   const overallLabel = {
     none: 'No sources',
     healthy: 'Healthy',
-    warning: 'Needs attention',
+    warning: 'Needs Attention',
     error: 'Failed',
   }[overallStatus];
 
   return (
     <Widget
       title="Calendar Sync Health"
-      subtitle="Status of connected external calendars"
       loading={loading}
       error={error}
       action={
         <div className="flex items-center gap-2">
-          <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${overallBadge}`}>{overallLabel}</span>
-          <Link
-            to="/admin/calendar?tab=sync"
-            className="hidden items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 sm:inline-flex"
-          >
-            Manage <ArrowRight className="h-3.5 w-3.5" />
+          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${overallBadge}`}>{overallLabel}</span>
+          <Link to="/admin/calendar-sync" className="text-xs text-gray-500 hover:text-gray-800 flex items-center gap-1 transition-colors">
+            Manage <ExternalLink className="w-3 h-3" />
           </Link>
         </div>
       }
     >
       {sources.length === 0 ? (
-        <div className="flex min-h-[132px] flex-col items-center justify-center text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
-            <RefreshCw className="h-[18px] w-[18px] text-gray-500" />
-          </div>
-          <p className="mt-3 text-sm font-medium text-gray-700">No calendar sources connected</p>
-          <Link
-            to="/admin/calendar?tab=sync"
-            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-900"
-          >
-            Set up Calendar Sync <ArrowRight className="h-3.5 w-3.5" />
+        <div className="text-center py-6">
+          <p className="text-sm text-gray-400">No calendar sync sources connected yet.</p>
+          <Link to="/admin/calendar-sync" className="text-xs text-gray-500 hover:text-gray-800 mt-2 inline-block underline">
+            Set up Calendar Sync →
           </Link>
         </div>
       ) : (
-        <div className="space-y-2">
-          {sources.map(source => {
-            const statusIcon = source.last_error
-              ? <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
-              : source.last_sync_at
-              ? <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-600" />
-              : <AlertTriangle className="h-4 w-4 flex-shrink-0 text-amber-500" />;
+        <div className="space-y-3">
+          {sources.map(s => {
+            const statusIcon = s.last_error
+              ? <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+              : s.last_sync_at
+              ? <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+              : <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />;
 
             const maskedUrl = (() => {
               try {
-                const u = new URL(source.url);
-                return `${u.hostname}/...`;
+                const u = new URL(s.url);
+                return u.hostname + '/…';
               } catch {
-                return `${source.url.slice(0, 30)}...`;
+                return s.url.slice(0, 30) + '…';
               }
             })();
 
             return (
-              <div key={source.id} className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50/50 p-3">
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-white shadow-sm">
-                  {statusIcon}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <p className="truncate text-sm font-semibold text-gray-900">{source.name}</p>
-                    {!source.enabled && (
-                      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500">Disabled</span>
-                    )}
-                  </div>
-                  <p className="mt-0.5 truncate font-mono text-[10px] text-gray-400">{maskedUrl}</p>
-                  {source.last_error ? (
-                    <p className="mt-1 line-clamp-1 text-[11px] text-red-500">{source.last_error}</p>
-                  ) : (
-                    <p className="mt-1 text-[11px] text-gray-400">
-                      {source.last_sync_at
-                        ? `Synced ${new Date(source.last_sync_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`
-                        : 'Never synced'}
+              <div key={s.id} className="flex items-start gap-3 py-2.5 border-b last:border-b-0">
+                {statusIcon}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900">{s.name}</p>
+                  <p className="text-xs text-gray-400 font-mono truncate">{maskedUrl}</p>
+                  {s.last_error && <p className="text-xs text-red-500 mt-0.5">{s.last_error}</p>}
+                  {!s.last_error && (
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {s.last_sync_at ? `Synced ${new Date(s.last_sync_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}` : 'Never synced'}
                     </p>
                   )}
                 </div>
                 <button
-                  type="button"
-                  onClick={() => handleSyncOne(source.id)}
-                  disabled={syncing === source.id || !source.enabled}
-                  className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  onClick={() => handleSyncOne(s.id)}
+                  disabled={syncing === s.id || !s.enabled}
+                  className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-40 transition-colors flex-shrink-0"
                   title="Sync now"
-                  aria-label={`Sync ${source.name}`}
                 >
-                  <RefreshCw className={`h-4 w-4 ${syncing === source.id ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-4 h-4 text-gray-600 ${syncing === s.id ? 'animate-spin' : ''}`} />
                 </button>
               </div>
             );
@@ -1119,64 +974,49 @@ function SyncHealth() {
   );
 }
 
-// Main Overview
-export default function AdminOverview() {
-  const todayLabel = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
+// ── Main Overview ─────────────────────────────────────────────────────────────
 
+export default function AdminOverview() {
   return (
-    <div className="mx-auto w-full max-w-[1500px] space-y-5 sm:space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">Admin Dashboard</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-gray-950">Overview</h2>
-          <p className="mt-1 text-sm text-gray-500">{todayLabel}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link
-            to="/admin/calendar"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
-          >
-            <Calendar className="h-4 w-4" />
-            Calendar
-          </Link>
-          <Link
-            to="/admin/bookings"
-            className="inline-flex items-center gap-2 rounded-lg bg-gray-950 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-gray-800"
-          >
-            Bookings
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+        </p>
       </div>
 
+      {/* Stats row */}
       <StatsRow />
 
-      <OwnerOpsWidgets />
-
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
+      {/* Upcoming + Pending side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <UpcomingBookings />
         <PendingRequests />
       </div>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
+      {/* Calendar + Revenue side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <MiniCalendar />
         <RevenueWidget />
       </div>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
+      {/* Inquiries + Sync health side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentInquiries />
         <SyncHealth />
+      </div>
+
+      {/* Owner operations widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <OwnerOpsWidgets />
       </div>
     </div>
   );
 }
 
-// Owner ops widgets
+// ── Owner ops widgets ─────────────────────────────────────────────────────────
+
 function OwnerOpsWidgets() {
   const [nextCleaning, setNextCleaning] = useState<{ task_date: string; assigned_to: string; guest_name: string | null } | null>(null);
   const [openMaint, setOpenMaint] = useState(0);
@@ -1212,103 +1052,78 @@ function OwnerOpsWidgets() {
 
   const fmtShort = (d: string) => new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-  const cardClass = 'group rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md';
-
   return (
-    <section>
-      <div className="mb-3 flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-semibold text-gray-900">Property Operations</h3>
-          <p className="mt-0.5 text-xs text-gray-400">A quick look at the work around your next stays</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-        <Link to="/admin/cleaning" className={cardClass}>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
-              <Sparkles className="h-[18px] w-[18px]" />
+    <div className="col-span-full">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Next cleaning */}
+        <Link to="/admin/cleaning" className="bg-white rounded-2xl border p-5 hover:border-gray-300 transition-colors group">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-teal-600" />
             </div>
-            <ArrowRight className="h-4 w-4 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-gray-500" />
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Next Cleaning</p>
           </div>
-          <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500">Next Cleaning</p>
-          {loading ? (
-            <div className="mt-2 h-6 w-24 animate-pulse rounded bg-gray-100" />
-          ) : nextCleaning ? (
+          {loading ? <div className="h-5 w-24 bg-gray-100 rounded animate-pulse" /> : nextCleaning ? (
             <>
-              <p className="mt-1 text-lg font-bold text-gray-950">{fmtShort(nextCleaning.task_date)}</p>
-              <p className="mt-1 truncate text-xs text-gray-500">
-                {nextCleaning.assigned_to || 'Unassigned'}
-                {nextCleaning.guest_name ? ` | after ${nextCleaning.guest_name}` : ''}
-              </p>
+              <p className="text-lg font-bold text-gray-900">{fmtShort(nextCleaning.task_date)}</p>
+              {nextCleaning.assigned_to && <p className="text-xs text-gray-500 mt-0.5">{nextCleaning.assigned_to}</p>}
+              {nextCleaning.guest_name && <p className="text-xs text-gray-400">after {nextCleaning.guest_name}</p>}
             </>
-          ) : (
-            <p className="mt-2 text-sm font-medium text-gray-500">No upcoming cleanings</p>
-          )}
+          ) : <p className="text-sm text-gray-400">No upcoming cleanings</p>}
         </Link>
 
-        <Link to="/admin/maintenance" className={cardClass}>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-              <Wrench className="h-[18px] w-[18px]" />
+        {/* Open maintenance */}
+        <Link to="/admin/maintenance" className="bg-white rounded-2xl border p-5 hover:border-gray-300 transition-colors group">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+              <Wrench className="w-4 h-4 text-amber-600" />
             </div>
-            <ArrowRight className="h-4 w-4 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-gray-500" />
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Maintenance</p>
           </div>
-          <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500">Maintenance</p>
-          {loading ? (
-            <div className="mt-2 h-6 w-12 animate-pulse rounded bg-gray-100" />
-          ) : (
+          {loading ? <div className="h-5 w-16 bg-gray-100 rounded animate-pulse" /> : (
             <>
-              <p className={`mt-1 text-2xl font-bold ${openMaint > 0 ? 'text-amber-700' : 'text-gray-950'}`}>{openMaint}</p>
-              <p className="mt-1 text-xs text-gray-400">open task{openMaint !== 1 ? 's' : ''}</p>
+              <p className={`text-2xl font-bold ${openMaint > 0 ? 'text-amber-700' : 'text-gray-900'}`}>{openMaint}</p>
+              <p className="text-xs text-gray-400 mt-0.5">open task{openMaint !== 1 ? 's' : ''}</p>
             </>
           )}
         </Link>
 
-        <Link to="/admin/calendar?tab=availability&section=owner-blocks" className={cardClass}>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-500">
-              <Shield className="h-[18px] w-[18px]" />
+        {/* Active owner blocks */}
+        <Link to="/admin/calendar?tab=availability&section=owner-blocks" className="bg-white rounded-2xl border p-5 hover:border-gray-300 transition-colors group">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+              <Shield className="w-4 h-4 text-red-500" />
             </div>
-            <ArrowRight className="h-4 w-4 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-gray-500" />
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Owner Blocks</p>
           </div>
-          <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500">Owner Blocks</p>
-          {loading ? (
-            <div className="mt-2 h-6 w-12 animate-pulse rounded bg-gray-100" />
-          ) : (
+          {loading ? <div className="h-5 w-16 bg-gray-100 rounded animate-pulse" /> : (
             <>
-              <p className="mt-1 text-2xl font-bold text-gray-950">{activeBlocks}</p>
-              <p className="mt-1 text-xs text-gray-400">active block{activeBlocks !== 1 ? 's' : ''}</p>
+              <p className="text-2xl font-bold text-gray-900">{activeBlocks}</p>
+              <p className="text-xs text-gray-400 mt-0.5">active block{activeBlocks !== 1 ? 's' : ''}</p>
             </>
           )}
         </Link>
 
-        <Link to="/admin/bookings" className={cardClass}>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-              <LogOut className="h-[18px] w-[18px]" />
+        {/* Upcoming checkouts */}
+        <Link to="/admin/bookings" className="bg-white rounded-2xl border p-5 hover:border-gray-300 transition-colors group">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+              <LogOut className="w-4 h-4 text-blue-500" />
             </div>
-            <ArrowRight className="h-4 w-4 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-gray-500" />
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Checkouts (7d)</p>
           </div>
-          <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500">Checkouts | 7 Days</p>
-          {loading ? (
-            <div className="mt-2 h-6 w-20 animate-pulse rounded bg-gray-100" />
-          ) : upcomingCheckouts.length > 0 ? (
-            <div className="mt-2 space-y-1">
-              {upcomingCheckouts.slice(0, 2).map((booking, index) => (
-                <p key={index} className="truncate text-xs text-gray-600">
-                  <span className="font-semibold text-gray-900">{fmtShort(booking.check_out)}</span> | {booking.guest_name}
+          {loading ? <div className="h-5 w-24 bg-gray-100 rounded animate-pulse" /> : upcomingCheckouts.length > 0 ? (
+            <div className="space-y-1">
+              {upcomingCheckouts.slice(0, 3).map((b, i) => (
+                <p key={i} className="text-xs text-gray-700">
+                  <span className="font-medium">{fmtShort(b.check_out)}</span> — {b.guest_name}
                 </p>
               ))}
-              {upcomingCheckouts.length > 2 && (
-                <p className="text-[11px] text-gray-400">+{upcomingCheckouts.length - 2} more</p>
-              )}
+              {upcomingCheckouts.length > 3 && <p className="text-xs text-gray-400">+{upcomingCheckouts.length - 3} more</p>}
             </div>
-          ) : (
-            <p className="mt-2 text-sm font-medium text-gray-500">No checkouts this week</p>
-          )}
+          ) : <p className="text-sm text-gray-400">No checkouts this week</p>}
         </Link>
       </div>
-    </section>
+    </div>
   );
 }
