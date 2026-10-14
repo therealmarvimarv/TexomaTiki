@@ -2,18 +2,18 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import {
-  Calendar, Clock, DollarSign, MessageSquare, RefreshCw,
+  Calendar, Clock, RefreshCw,
   ChevronLeft, ChevronRight, CheckCircle2, AlertCircle,
-  AlertTriangle, Users, TrendingUp, Loader2, ExternalLink,
+  AlertTriangle, TrendingUp, Loader2, ExternalLink,
   Sparkles, Wrench, Shield, LogOut,
 } from 'lucide-react';
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// --- Helpers ---
 
 function fmtDate(iso: string | null | undefined): string {
-  if (!iso) return '—';
+  if (!iso) return '\u2014';
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
@@ -33,7 +33,7 @@ function timeUntil(iso: string): string {
   return `${Math.floor(mins / 60)}h left`;
 }
 
-// ── Shared stat card ──────────────────────────────────────────────────────────
+// --- Shared stat card ---
 
 function StatCard({
   icon: Icon,
@@ -51,24 +51,24 @@ function StatCard({
   loading?: boolean;
 }) {
   return (
-    <div className="bg-white rounded-2xl border p-5 flex items-start gap-4">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${accent ?? 'bg-gray-100'}`}>
-        <Icon className="w-5 h-5 text-gray-700" />
+    <div className="flex min-h-[184px] min-w-0 flex-col rounded-2xl border border-gray-200 bg-white p-5 min-[700px]:max-[833px]:p-3 shadow-sm">
+      <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl ${accent ?? 'bg-gray-100'}`}>
+        <Icon className="h-4 w-4 text-gray-700" />
       </div>
-      <div className="min-w-0">
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</p>
+      <div className="mt-4 min-w-0">
+        <p className="text-[11px] font-medium uppercase tracking-[0.08em] leading-4 text-gray-500">{label}</p>
         {loading ? (
-          <div className="h-7 w-16 bg-gray-100 rounded animate-pulse mt-1" />
+          <div className="mt-1 h-7 w-16 animate-pulse rounded bg-gray-100" />
         ) : (
-          <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
+          <p className="mt-1 break-words text-2xl min-[700px]:max-[833px]:text-xl font-bold leading-tight text-gray-900">{value}</p>
         )}
-        <p className="text-xs text-gray-400 mt-0.5">{sub}</p>
+        <p className="mt-1 text-xs leading-4 text-gray-400">{sub}</p>
       </div>
     </div>
   );
 }
 
-// ── Widget shell ──────────────────────────────────────────────────────────────
+// --- Widget shell ---
 
 function Widget({
   title,
@@ -76,17 +76,23 @@ function Widget({
   error,
   children,
   action,
+  compactTabletHeader = false,
+  stackNarrowTabletHeader = false,
+  compactNarrowTabletHeader = false,
 }: {
   title: string;
   loading?: boolean;
   error?: string;
   children: React.ReactNode;
   action?: React.ReactNode;
+  compactTabletHeader?: boolean;
+  stackNarrowTabletHeader?: boolean;
+  compactNarrowTabletHeader?: boolean;
 }) {
   return (
     <div className="bg-white rounded-2xl border overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b">
-        <h3 className="font-semibold text-gray-900">{title}</h3>
+      <div className={`flex items-center justify-between px-5 py-4 border-b ${compactTabletHeader ? 'min-[834px]:px-3 min-[834px]:py-3 min-[960px]:px-5 min-[960px]:py-4' : ''} ${stackNarrowTabletHeader ? 'min-[700px]:max-[833px]:flex-col min-[700px]:max-[833px]:items-stretch min-[700px]:max-[833px]:px-0 min-[700px]:max-[833px]:py-0' : ''} ${compactNarrowTabletHeader ? 'min-[700px]:max-[833px]:px-2 min-[700px]:max-[833px]:py-3' : ''}`}>
+        <h3 className={`font-semibold text-gray-900 ${compactTabletHeader ? 'min-[834px]:text-[13px] min-[960px]:text-base' : ''} ${stackNarrowTabletHeader ? 'min-[700px]:max-[833px]:px-3 min-[700px]:max-[833px]:py-3 min-[700px]:max-[833px]:text-sm' : ''} ${compactNarrowTabletHeader ? 'min-[700px]:max-[833px]:text-[11px] min-[700px]:max-[833px]:whitespace-nowrap' : ''}`}>{title}</h3>
         {action}
       </div>
       <div className="p-5">
@@ -107,7 +113,7 @@ function Widget({
   );
 }
 
-// ── 1. Stats summary ──────────────────────────────────────────────────────────
+// --- 1. Stats summary ---
 
 interface SummaryStats {
   upcomingCount: number;
@@ -161,11 +167,11 @@ function StatsRow() {
     stats?.syncStatus === 'warning' ? 'Needs attention' : 'No sources';
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 min-[700px]:grid-cols-4 min-[834px]:grid-cols-4 lg:grid-cols-4 gap-4">
       <StatCard
         icon={Calendar}
         label="Upcoming Bookings"
-        value={loading ? '—' : (stats?.upcomingCount ?? 0)}
+        value={loading ? '\u2014' : (stats?.upcomingCount ?? 0)}
         sub="Next confirmed stays"
         accent="bg-blue-50"
         loading={loading}
@@ -173,7 +179,7 @@ function StatsRow() {
       <StatCard
         icon={Clock}
         label="Pending Requests"
-        value={loading ? '—' : (stats?.pendingCount ?? 0)}
+        value={loading ? '\u2014' : (stats?.pendingCount ?? 0)}
         sub="Awaiting host review"
         accent="bg-yellow-50"
         loading={loading}
@@ -181,7 +187,7 @@ function StatsRow() {
       <StatCard
         icon={TrendingUp}
         label="Est. Revenue"
-        value={loading ? '—' : fmtMoney(stats?.estimatedRevenueCents ?? 0)}
+        value={loading ? '\u2014' : fmtMoney(stats?.estimatedRevenueCents ?? 0)}
         sub="Upcoming confirmed + paid"
         accent="bg-green-50"
         loading={loading}
@@ -189,7 +195,7 @@ function StatsRow() {
       <StatCard
         icon={RefreshCw}
         label="Calendar Sync"
-        value={loading ? '—' : syncLabel}
+        value={loading ? '\u2014' : syncLabel}
         sub={stats?.syncStatus === 'none' ? 'No iCal sources' : 'iCal import status'}
         accent={
           stats?.syncStatus === 'healthy' ? 'bg-green-50' :
@@ -202,7 +208,7 @@ function StatsRow() {
   );
 }
 
-// ── 2. Upcoming bookings ──────────────────────────────────────────────────────
+// --- 2. Upcoming bookings ---
 
 interface BookingRow {
   id: string;
@@ -261,9 +267,9 @@ function UpcomingBookings() {
                 <div className="min-w-0">
                   <p className="font-medium text-gray-900 text-sm truncate">{b.guest_name}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {fmtDate(b.check_in)} → {fmtDate(b.check_out)}
-                    <span className="mx-1.5 text-gray-300">·</span>
-                    {nights}n · {b.guests} guest{b.guests !== 1 ? 's' : ''}
+                    {fmtDate(b.check_in)} &#8594; {fmtDate(b.check_out)}
+                    <span className="mx-1.5 text-gray-300">&#183;</span>
+                    {nights}n &#183; {b.guests} guest{b.guests !== 1 ? 's' : ''}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -284,7 +290,7 @@ function UpcomingBookings() {
   );
 }
 
-// ── 3. Pending requests ───────────────────────────────────────────────────────
+// --- 3. Pending requests ---
 
 function PendingRequests() {
   const [bookings, setBookings] = useState<BookingRow[]>([]);
@@ -328,7 +334,7 @@ function PendingRequests() {
                 <div className="min-w-0">
                   <p className="font-medium text-gray-900 text-sm truncate">{b.guest_name}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {fmtDate(b.check_in)} → {fmtDate(b.check_out)}
+                    {fmtDate(b.check_in)} &#8594; {fmtDate(b.check_out)}
                   </p>
                   {expires && (
                     <span className="inline-block mt-1 text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
@@ -354,7 +360,7 @@ function PendingRequests() {
   );
 }
 
-// ── 4. Revenue estimate ───────────────────────────────────────────────────────
+// --- 4. Revenue estimate ---
 
 type RevenueRange = 'month' | 'next30' | 'next90' | 'ytd';
 
@@ -417,13 +423,15 @@ function RevenueWidget() {
       title="Revenue Estimate"
       loading={loading}
       error={error}
+      compactTabletHeader
+      stackNarrowTabletHeader
       action={
-        <div className="flex gap-1">
+        <div className="flex gap-1 min-[700px]:max-[833px]:w-full min-[700px]:max-[833px]:justify-between min-[700px]:max-[833px]:gap-0.5 min-[700px]:max-[833px]:border-t min-[700px]:max-[833px]:px-2 min-[700px]:max-[833px]:py-2">
           {RANGES.map(r => (
             <button
               key={r.key}
               onClick={() => setRange(r.key)}
-              className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${range === r.key ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
+              className={`text-xs px-2.5 py-1 min-[700px]:max-[833px]:px-1 min-[700px]:max-[833px]:text-[9px] min-[834px]:px-1 min-[834px]:text-[9px] min-[960px]:px-1.5 min-[960px]:text-[10px] lg:px-2.5 lg:text-xs whitespace-nowrap rounded-lg transition-colors ${range === r.key ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
             >
               {r.label}
             </button>
@@ -451,7 +459,7 @@ function RevenueWidget() {
   );
 }
 
-// ── 5. Mini calendar ──────────────────────────────────────────────────────────
+// --- 5. Mini calendar ---
 
 interface CalEvent {
   date: string;
@@ -584,82 +592,91 @@ function MiniCalendar() {
       title="Calendar Preview"
       loading={loading}
       error={error}
+      compactTabletHeader
+      action={
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); }}
+            className="rounded-lg p-1.5 text-gray-600 transition-colors hover:bg-gray-100"
+            aria-label="Previous month"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <span className="min-w-[94px] text-center text-xs font-semibold text-gray-900 2xl:text-sm">{monthName}</span>
+          <button
+            type="button"
+            onClick={() => { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); }}
+            className="rounded-lg p-1.5 text-gray-600 transition-colors hover:bg-gray-100"
+            aria-label="Next month"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      }
     >
       <div className="space-y-4">
-        {/* Month nav */}
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); }}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <span className="text-sm font-semibold text-gray-900">{monthName}</span>
-          <button
-            onClick={() => { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); }}
-            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Day labels */}
-        <div className="grid grid-cols-7 gap-1">
-          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-            <div key={d} className="text-center text-xs font-medium text-gray-400 py-1">{d}</div>
-          ))}
-          {/* Empty cells before first day */}
-          {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
-          {/* Day cells */}
-          {Array.from({ length: daysInMonth }).map((_, i) => {
-            const day = i + 1;
-            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const dayEvts = eventsForDate(dateStr);
-            const isToday = dateStr === today;
-            const isSelected = selected?.date === dateStr;
-            return (
-              <button
-                key={day}
-                onClick={() => handleDayClick(dateStr)}
-                className={`relative flex flex-col items-center py-1.5 rounded-lg text-xs transition-colors
-                  ${isSelected ? 'bg-gray-900 text-white' : isToday ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}
-                  ${dayEvts.length > 0 ? 'cursor-pointer' : 'cursor-default'}`}
-              >
-                <span>{day}</span>
-                {dayEvts.length > 0 && (
-                  <div className="flex gap-0.5 mt-0.5">
-                    {dayEvts.slice(0, 3).map((e, idx) => (
-                      <span key={idx} className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : eventDot(e.type)}`} />
-                    ))}
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap gap-3 pt-2 border-t">
-          {[
-            { color: 'bg-green-500', label: 'Confirmed' },
-            { color: 'bg-amber-400', label: 'Pending' },
-            { color: 'bg-slate-500', label: 'Owner Block' },
-            { color: 'bg-gray-400', label: 'Blocked' },
-            { color: 'bg-blue-400', label: 'Imported' },
-          ].map(l => (
-            <div key={l.label} className="flex items-center gap-1.5 text-xs text-gray-500">
-              <span className={`w-2.5 h-2.5 rounded-full ${l.color}`} />
-              {l.label}
+        <div className="grid grid-cols-[minmax(0,1fr)_clamp(96px,23%,120px)] items-stretch gap-3">
+          <div className="min-w-0">
+            <div className="grid grid-cols-7 gap-x-0 gap-y-0">
+              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                <div key={d} className="py-1 text-center text-[10px] font-medium text-gray-400 2xl:text-[11px]">{d}</div>
+              ))}
+              {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const day = i + 1;
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayEvts = eventsForDate(dateStr);
+                const isToday = dateStr === today;
+                const isSelected = selected?.date === dateStr;
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => handleDayClick(dateStr)}
+                    aria-label={fmtDate(dateStr)}
+                    aria-pressed={isSelected}
+                    className={`relative flex min-h-[24px] flex-col items-center justify-center rounded-lg text-[11px] transition-colors 2xl:min-h-[26px] 2xl:text-xs
+                      ${isSelected ? 'bg-gray-900 text-white' : isToday ? 'bg-blue-50 font-semibold text-blue-700' : 'text-gray-700 hover:bg-gray-50'}
+                      ${dayEvts.length > 0 ? 'cursor-pointer' : 'cursor-default'}`}
+                  >
+                    <span>{day}</span>
+                    {dayEvts.length > 0 && (
+                      <div className="mt-0.5 flex gap-0.5">
+                        {dayEvts.slice(0, 3).map((e, idx) => (
+                          <span key={idx} className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-white' : eventDot(e.type)}`} />
+                        ))}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
-          ))}
+          </div>
+
+          {/* Legend remains to the right of the calendar on laptops and larger displays. */}
+          <div className="flex min-w-0 flex-col gap-1.5 border-l border-gray-200 py-1 pl-3">
+            {[
+              { color: 'bg-green-500', label: 'Confirmed' },
+              { color: 'bg-amber-400', label: 'Pending' },
+              { color: 'bg-slate-500', label: 'Owner Block' },
+              { color: 'bg-gray-400', label: 'Blocked' },
+              { color: 'bg-blue-400', label: 'Imported' },
+            ].map(l => (
+              <div key={l.label} className="flex min-w-0 items-center gap-1.5 whitespace-nowrap text-[10px] leading-4 text-gray-500 2xl:text-xs">
+                <span className={`h-2 w-2 flex-shrink-0 rounded-full ${l.color}`} />
+                {l.label}
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Selected day detail */}
+        {/* Existing selected-day details and direct booking links are unchanged. */}
         {selected && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-2">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold text-gray-900">{fmtDate(selected.date)}</p>
-              <button onClick={() => setSelected(null)} className="text-xs text-gray-400 hover:text-gray-700">✕</button>
+              <button onClick={() => setSelected(null)} className="text-xs text-gray-400 hover:text-gray-700">&#10005;</button>
             </div>
             <div className="space-y-2">
               {selected.events.map((e, idx) => (
@@ -686,7 +703,7 @@ function MiniCalendar() {
   );
 }
 
-// ── 6. Recent inquiries ───────────────────────────────────────────────────────
+// --- 6. Recent inquiries ---
 
 interface InquiryRow {
   id: string;
@@ -755,7 +772,7 @@ function RecentInquiries() {
               <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="min-w-0">
                   <span className="font-medium text-sm text-gray-900">{inq.sender_name}</span>
-                  <span className="text-xs text-gray-400 mx-1.5">·</span>
+                  <span className="text-xs text-gray-400 mx-1.5">&#183;</span>
                   <span className="text-xs text-gray-500">{fmtDate(inq.created_at)}</span>
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${INQUIRY_STATUS_STYLES[inq.status] ?? 'bg-gray-100 text-gray-600'}`}>
@@ -784,7 +801,7 @@ function RecentInquiries() {
 
       <div className="pt-3 border-t mt-2">
         <Link to="/admin/email?tab=inquiries" className="text-xs text-gray-500 hover:text-gray-900 transition-colors">
-          View all inquiries →
+          View all inquiries &#8594;
         </Link>
       </div>
 
@@ -794,7 +811,7 @@ function RecentInquiries() {
           <div className="relative bg-white rounded-2xl border shadow-xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-gray-900">Inquiry Details</h3>
-              <button onClick={() => setDetail(null)} className="text-gray-400 hover:text-gray-700 text-lg leading-none">✕</button>
+              <button onClick={() => setDetail(null)} className="text-gray-400 hover:text-gray-700 text-lg leading-none">&#10005;</button>
             </div>
             <dl className="space-y-3 text-sm">
               <div>
@@ -841,7 +858,7 @@ function RecentInquiries() {
   );
 }
 
-// ── 7. Sync health ────────────────────────────────────────────────────────────
+// --- 7. Sync health ---
 
 interface IcalSource {
   id: string;
@@ -910,10 +927,11 @@ function SyncHealth() {
       title="Calendar Sync Health"
       loading={loading}
       error={error}
+      compactNarrowTabletHeader
       action={
-        <div className="flex items-center gap-2">
-          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${overallBadge}`}>{overallLabel}</span>
-          <Link to="/admin/calendar-sync" className="text-xs text-gray-500 hover:text-gray-800 flex items-center gap-1 transition-colors">
+        <div className="flex items-center gap-2 min-[700px]:max-[833px]:gap-1 min-[700px]:max-[833px]:shrink-0">
+          <span className={`text-xs px-2.5 py-1 min-[700px]:max-[833px]:px-1 min-[700px]:max-[833px]:py-0.5 min-[700px]:max-[833px]:text-[9px] rounded-full font-medium ${overallBadge}`}>{overallLabel}</span>
+          <Link to="/admin/calendar-sync" className="text-xs min-[700px]:max-[833px]:text-[9px] text-gray-500 hover:text-gray-800 flex items-center gap-1 min-[700px]:max-[833px]:gap-0.5 transition-colors">
             Manage <ExternalLink className="w-3 h-3" />
           </Link>
         </div>
@@ -923,7 +941,7 @@ function SyncHealth() {
         <div className="text-center py-6">
           <p className="text-sm text-gray-400">No calendar sync sources connected yet.</p>
           <Link to="/admin/calendar-sync" className="text-xs text-gray-500 hover:text-gray-800 mt-2 inline-block underline">
-            Set up Calendar Sync →
+            Set up Calendar Sync &#8594;
           </Link>
         </div>
       ) : (
@@ -938,9 +956,9 @@ function SyncHealth() {
             const maskedUrl = (() => {
               try {
                 const u = new URL(s.url);
-                return u.hostname + '/…';
+                return u.hostname + '/\u2026';
               } catch {
-                return s.url.slice(0, 30) + '…';
+                return s.url.slice(0, 30) + '\u2026';
               }
             })();
 
@@ -974,7 +992,7 @@ function SyncHealth() {
   );
 }
 
-// ── Main Overview ─────────────────────────────────────────────────────────────
+// --- Main Overview ---
 
 export default function AdminOverview() {
   return (
@@ -990,32 +1008,32 @@ export default function AdminOverview() {
       <StatsRow />
 
       {/* Upcoming + Pending side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 min-[834px]:grid-cols-2 lg:grid-cols-2 gap-6">
         <UpcomingBookings />
         <PendingRequests />
       </div>
 
       {/* Calendar + Revenue side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 min-[700px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] min-[834px]:grid-cols-2 lg:grid-cols-2 gap-6 min-[700px]:max-[833px]:gap-4">
         <MiniCalendar />
         <RevenueWidget />
       </div>
 
       {/* Inquiries + Sync health side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 min-[700px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] min-[834px]:grid-cols-2 lg:grid-cols-2 gap-6 min-[700px]:max-[833px]:gap-4">
         <RecentInquiries />
         <SyncHealth />
       </div>
 
       {/* Owner operations widgets */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 min-[834px]:grid-cols-2 lg:grid-cols-2 gap-6">
         <OwnerOpsWidgets />
       </div>
     </div>
   );
 }
 
-// ── Owner ops widgets ─────────────────────────────────────────────────────────
+// --- Owner ops widgets ---
 
 function OwnerOpsWidgets() {
   const [nextCleaning, setNextCleaning] = useState<{ task_date: string; assigned_to: string; guest_name: string | null } | null>(null);
@@ -1054,14 +1072,14 @@ function OwnerOpsWidgets() {
 
   return (
     <div className="col-span-full">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 min-[700px]:grid-cols-4 min-[834px]:grid-cols-4 lg:grid-cols-4 gap-4 min-[700px]:max-[833px]:gap-2">
         {/* Next cleaning */}
-        <Link to="/admin/cleaning" className="bg-white rounded-2xl border p-5 hover:border-gray-300 transition-colors group">
+        <Link to="/admin/cleaning" className="bg-white rounded-2xl border p-5 min-[700px]:max-[833px]:p-2.5 min-[834px]:p-4 min-[960px]:p-5 hover:border-gray-300 transition-colors group">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-teal-600" />
             </div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Next Cleaning</p>
+            <p className="text-xs min-[700px]:max-[833px]:text-[10px] font-medium text-gray-500 uppercase tracking-wide">Next Cleaning</p>
           </div>
           {loading ? <div className="h-5 w-24 bg-gray-100 rounded animate-pulse" /> : nextCleaning ? (
             <>
@@ -1073,12 +1091,12 @@ function OwnerOpsWidgets() {
         </Link>
 
         {/* Open maintenance */}
-        <Link to="/admin/maintenance" className="bg-white rounded-2xl border p-5 hover:border-gray-300 transition-colors group">
+        <Link to="/admin/maintenance" className="bg-white rounded-2xl border p-5 min-[700px]:max-[833px]:p-2.5 min-[834px]:p-4 min-[960px]:p-5 hover:border-gray-300 transition-colors group">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
               <Wrench className="w-4 h-4 text-amber-600" />
             </div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Maintenance</p>
+            <p className="text-xs min-[700px]:max-[833px]:text-[10px] font-medium text-gray-500 uppercase tracking-wide">Maintenance</p>
           </div>
           {loading ? <div className="h-5 w-16 bg-gray-100 rounded animate-pulse" /> : (
             <>
@@ -1089,12 +1107,12 @@ function OwnerOpsWidgets() {
         </Link>
 
         {/* Active owner blocks */}
-        <Link to="/admin/calendar?tab=availability&section=owner-blocks" className="bg-white rounded-2xl border p-5 hover:border-gray-300 transition-colors group">
+        <Link to="/admin/calendar?tab=availability&section=owner-blocks" className="bg-white rounded-2xl border p-5 min-[700px]:max-[833px]:p-2.5 min-[834px]:p-4 min-[960px]:p-5 hover:border-gray-300 transition-colors group">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
               <Shield className="w-4 h-4 text-red-500" />
             </div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Owner Blocks</p>
+            <p className="text-xs min-[700px]:max-[833px]:text-[10px] font-medium text-gray-500 uppercase tracking-wide">Owner Blocks</p>
           </div>
           {loading ? <div className="h-5 w-16 bg-gray-100 rounded animate-pulse" /> : (
             <>
@@ -1105,18 +1123,18 @@ function OwnerOpsWidgets() {
         </Link>
 
         {/* Upcoming checkouts */}
-        <Link to="/admin/bookings" className="bg-white rounded-2xl border p-5 hover:border-gray-300 transition-colors group">
+        <Link to="/admin/bookings" className="bg-white rounded-2xl border p-5 min-[700px]:max-[833px]:p-2.5 min-[834px]:p-4 min-[960px]:p-5 hover:border-gray-300 transition-colors group">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
               <LogOut className="w-4 h-4 text-blue-500" />
             </div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Checkouts (7d)</p>
+            <p className="text-xs min-[700px]:max-[833px]:text-[10px] font-medium text-gray-500 uppercase tracking-wide">Checkouts (7d)</p>
           </div>
           {loading ? <div className="h-5 w-24 bg-gray-100 rounded animate-pulse" /> : upcomingCheckouts.length > 0 ? (
             <div className="space-y-1">
               {upcomingCheckouts.slice(0, 3).map((b, i) => (
                 <p key={i} className="text-xs text-gray-700">
-                  <span className="font-medium">{fmtShort(b.check_out)}</span> — {b.guest_name}
+                  <span className="font-medium">{fmtShort(b.check_out)}</span> &mdash; {b.guest_name}
                 </p>
               ))}
               {upcomingCheckouts.length > 3 && <p className="text-xs text-gray-400">+{upcomingCheckouts.length - 3} more</p>}
