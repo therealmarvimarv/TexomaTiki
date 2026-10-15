@@ -9,6 +9,66 @@ This project follows semantic versioning:
 
 ---
 
+
+## [1.0.1] - 2026-10-14
+
+### Changed
+
+**Admin Overview Dashboard**
+
+- Redesigned the Admin Overview dashboard for improved responsiveness, readability, spacing, and visual organization.
+- Updated the four dashboard summary cards with improved typography, icon positioning, padding, and alignment.
+- Maintained all four summary cards in a single horizontal row across approved laptop and tablet layouts.
+- Improved the responsive arrangement of Upcoming Bookings, Pending Requests, Calendar Preview, Revenue Estimate, Recent Inquiries, and Calendar Sync Health.
+- Maintained the Calendar Preview and Revenue Estimate panels side by side at supported screen widths.
+- Preserved the existing Revenue Estimate calculations and filter functionality.
+- Improved Revenue Estimate filter labels to display more clearly within compact layouts.
+- Maintained the four bottom Property Operations cards in a single row at approved tablet widths.
+- Implemented the approved 700px tablet layout:
+  - Four summary cards in one row.
+  - Upcoming Bookings and Pending Requests stacked at full width.
+  - Calendar Preview and Revenue Estimate displayed side by side at approximately 60% / 40%.
+  - Recent Inquiries and Calendar Sync Health displayed side by side at approximately 60% / 40%.
+  - Four Property Operations cards retained in one row.
+- Improved dashboard layouts at 834px and other approved laptop and tablet widths.
+- Preserved existing dashboard navigation, data displays, actions, and business logic.
+
+**Admin Bookings Page**
+
+- Redesigned the Admin Bookings page for improved responsiveness and readability.
+- Preserved the original 11-column desktop booking table at viewport widths of 1400px and above.
+- Added responsive two-row booking cards for viewport widths below 1400px.
+- Preserved all existing booking information, including Guest, Check-in, Check-out, Nights, Total, Paid, Method, Status, Payment, Created, and Actions.
+- Added light-gray header strips to separate booking field labels from their corresponding values.
+- Centered booking field labels and values within consistent column widths.
+- Improved spacing, padding, and visual separation between booking records.
+- Applied bold formatting to Check-in, Check-out, and Nights values in the top row, matching the existing Total formatting.
+- Preserved booking status and payment status badges.
+- Maintained View buttons within the responsive booking card layout.
+- Renamed the Active / Archived filter's "All" option to "All Bookings".
+- Renamed the booking status filter's "All" option to "All Statuses".
+- Preserved the original independent behavior of both filters.
+
+### Fixed
+
+- Corrected booking card header and value alignment.
+- Corrected inconsistent spacing between responsive booking columns.
+- Fixed the responsive breakpoint that caused the full desktop booking table to appear prematurely at 1280px.
+- Changed the desktop table visibility breakpoint to 1400px to improve booking detail and action visibility at narrower widths.
+- Corrected corrupted dash characters in booking information using encoding-safe Unicode escapes.
+
+### Notes
+
+- Updated `AdminOverview.tsx` and `BookingsManager.tsx`.
+- Changes were limited to approved UI design, responsive layouts, presentation, and filter-label improvements.
+- Existing Supabase queries, booking calculations, revenue calculations, filtering behavior, CSV export, and booking-detail navigation were preserved.
+- No booking workflow, payment processing, pricing logic, or calendar synchronization changes were required.
+- No database schema changes, migrations, or Edge Function changes were required.
+- Updated components passed source-level syntax and encoding checks.
+- Approved responsive layouts were reviewed using browser screenshots.
+- Full application runtime verification remains separate from source-code and visual verification.
+
+
 ## [1.0.1] - 2026-10-11
 
 ### Changed
