@@ -411,11 +411,11 @@ function RevenueWidget() {
 
   const avg = data && data.count > 0 ? data.totalCents / data.count : 0;
 
-  const RANGES: { key: RevenueRange; label: string }[] = [
-    { key: 'month', label: 'This Month' },
-    { key: 'next30', label: 'Next 30d' },
-    { key: 'next90', label: 'Next 90d' },
-    { key: 'ytd', label: 'Year to Date' },
+  const RANGES: { key: RevenueRange; topLabel: string; bottomLabel: string }[] = [
+    { key: 'month', topLabel: 'This', bottomLabel: 'Month' },
+    { key: 'next30', topLabel: 'Next', bottomLabel: '30d' },
+    { key: 'next90', topLabel: 'Next', bottomLabel: '90d' },
+    { key: 'ytd', topLabel: 'Year to', bottomLabel: 'Date' },
   ];
 
   return (
@@ -433,7 +433,8 @@ function RevenueWidget() {
               onClick={() => setRange(r.key)}
               className={`text-xs px-2.5 py-1 min-[700px]:max-[833px]:px-1 min-[700px]:max-[833px]:text-[9px] min-[834px]:px-1 min-[834px]:text-[9px] min-[960px]:px-1.5 min-[960px]:text-[10px] lg:px-2.5 lg:text-xs whitespace-nowrap rounded-lg transition-colors ${range === r.key ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
             >
-              {r.label}
+              <span className="block leading-tight">{r.topLabel}</span>
+              <span className="block leading-tight">{r.bottomLabel}</span>
             </button>
           ))}
         </div>
