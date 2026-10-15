@@ -37,7 +37,7 @@ type StatusFilter = typeof STATUS_FILTERS[number];
 type ViewFilter = 'active' | 'archived' | 'all';
 
 const FILTER_LABELS: Record<StatusFilter, string> = {
-  all: 'All',
+  all: 'All Statuses',
   pending_review: 'Pending Review',
   pending_payment: 'Pending Payment',
   confirmed: 'Confirmed',
@@ -169,7 +169,7 @@ export default function BookingsManager() {
   const VIEW_FILTERS: { id: ViewFilter; label: string }[] = [
     { id: 'active',   label: 'Active'   },
     { id: 'archived', label: 'Archived' },
-    { id: 'all',      label: 'All'      },
+    { id: 'all',      label: 'All Bookings' },
   ];
 
   return (
@@ -230,7 +230,113 @@ export default function BookingsManager() {
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border overflow-hidden">
+      {/* Narrow screens: display the same booking data across two readable rows. */}
+      <div className="min-[1400px]:hidden space-y-3">
+        {filtered.map((b) => {
+          const totalDisplay = b.amount_total != null
+            ? `$${(b.amount_total / 100).toFixed(2)}`
+            : `$${Number(b.total_price).toFixed(2)}`;
+          const paidDisplay = b.amount_paid != null && b.amount_paid > 0
+            ? `$${(b.amount_paid / 100).toFixed(2)}`
+            : null;
+          const n = nights(b.check_in, b.check_out);
+
+          return (
+            <div key={b.id} className={`bg-white rounded-2xl border border-gray-200 overflow-hidden ${b.archived_at ? 'opacity-70' : ''}`}>
+              {/* Top section labels strip */}
+              <div className="grid grid-cols-2 sm:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.45fr)_minmax(0,0.85fr)_72px] gap-x-3 gap-y-2 text-center bg-gray-50/80 px-4 py-3 sm:px-5 border-b border-gray-200">
+                <p className="text-xs font-medium text-gray-600">Guest</p>
+                <p className="text-xs font-medium text-gray-600">Check-in</p>
+                <p className="text-xs font-medium text-gray-600">Check-out</p>
+                <p className="text-xs font-medium text-gray-600">Nights</p>
+                <p className="text-xs font-medium text-gray-600">Total</p>
+                <p className="text-xs font-medium text-gray-600 text-center">Actions</p>
+              </div>
+
+              {/* Top section values */}
+              <div className="grid grid-cols-2 sm:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.45fr)_minmax(0,0.85fr)_72px] gap-x-3 gap-y-3 items-start text-center px-4 py-4 sm:px-5">
+                <div className="min-w-0">
+                  <p className="font-medium text-sm text-gray-900 break-words">{b.guest_name}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 break-all">{b.guest_email}</p>
+                  {b.archived_at && (
+                    <span className="inline-block mt-1 text-xs px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded font-medium">
+                      Archived
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm text-gray-900">{new Date(b.check_in).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm text-gray-900">{new Date(b.check_out).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm text-gray-900">{n}</p>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm text-gray-900">{totalDisplay}</p>
+                </div>
+                <div className="flex justify-center items-center self-start">
+                  <Link
+                    to={`/admin/bookings/${b.id}`}
+                    className="text-xs font-medium text-gray-700 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap"
+                  >
+                    View
+                  </Link>
+                </div>
+              </div>
+
+              {/* Bottom section labels strip */}
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-x-3 gap-y-2 text-center bg-gray-50/80 px-4 py-3 sm:px-5 border-y border-gray-200">
+                <p className="text-xs font-medium text-gray-600">Paid</p>
+                <p className="text-xs font-medium text-gray-600">Method</p>
+                <p className="text-xs font-medium text-gray-600">Status</p>
+                <p className="text-xs font-medium text-gray-600">Payment</p>
+                <p className="text-xs font-medium text-gray-600">Created</p>
+              </div>
+
+              {/* Bottom section values */}
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-x-3 gap-y-3 text-center px-4 py-4 sm:px-5">
+                <div className="min-w-0">
+                  <p className="text-sm text-gray-700">{paidDisplay ?? <span className="text-gray-400">{'\u2014'}</span>}</p>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm text-gray-500 capitalize break-words">{b.payment_method ?? <span className="text-gray-400">{'\u2014'}</span>}</p>
+                </div>
+                <div className="min-w-0">
+                  <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${BOOKING_STATUS_STYLES[b.status] ?? 'bg-gray-100 text-gray-700'}`}>
+                    {b.status.replace(/_/g, ' ')}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  {b.payment_status ? (
+                    <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${PAYMENT_STATUS_STYLES[b.payment_status] ?? 'bg-gray-100 text-gray-700'}`}>
+                      {b.payment_status}
+                    </span>
+                  ) : (
+                    <span className="text-gray-400">{'\u2014'}</span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-gray-500">{new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {filtered.length === 0 && (
+          <div className="bg-white rounded-xl border text-center py-16 text-gray-400">
+            {viewFilter === 'archived'
+              ? 'No archived bookings.'
+              : statusFilter === 'all'
+                ? 'No bookings yet'
+                : `No ${FILTER_LABELS[statusFilter].toLowerCase()} bookings`}
+          </div>
+        )}
+      </div>
+
+      {/* Keep the original full table unchanged at desktop widths. */}
+      <div className="hidden min-[1400px]:block bg-white rounded-xl border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b">
@@ -278,10 +384,10 @@ export default function BookingsManager() {
                     <td className="px-5 py-4 text-gray-700">{n}</td>
                     <td className="px-5 py-4 font-semibold text-gray-900">{totalDisplay}</td>
                     <td className="px-5 py-4 text-gray-700">
-                      {paidDisplay ?? <span className="text-gray-400">—</span>}
+                      {paidDisplay ?? <span className="text-gray-400">{'\u2014'}</span>}
                     </td>
                     <td className="px-5 py-4 text-gray-500 text-xs capitalize">
-                      {b.payment_method ?? <span className="text-gray-400">—</span>}
+                      {b.payment_method ?? <span className="text-gray-400">{'\u2014'}</span>}
                     </td>
                     <td className="px-5 py-4">
                       <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${BOOKING_STATUS_STYLES[b.status] ?? 'bg-gray-100 text-gray-700'}`}>
@@ -294,7 +400,7 @@ export default function BookingsManager() {
                           {b.payment_status}
                         </span>
                       ) : (
-                        <span className="text-gray-400">—</span>
+                        <span className="text-gray-400">{'\u2014'}</span>
                       )}
                     </td>
                     <td className="px-5 py-4 text-xs text-gray-500">
