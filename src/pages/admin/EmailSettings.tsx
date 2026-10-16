@@ -11,7 +11,7 @@ import {
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 interface EmailStatus {
   provider: string;
@@ -57,32 +57,32 @@ interface NotificationLog {
   created_at: string;
 }
 
-// ── Default template content (for Reset to Default) ───────────────────────────
+// -- Default template content (for Reset to Default) ---------------------------
 
 const TEMPLATE_DEFAULTS: Record<string, { subject: string; html_body: string }> = {
   booking_request_received_guest: {
-    subject: 'Booking Request Received – {{listing_name}}',
+    subject: 'Booking Request Received \u2013 {{listing_name}}',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">Booking Request Received</h2><p style="color:#555;margin-top:0">Hi {{guest_name}}, your booking request for {{listing_name}} has been received. The host will review it and confirm availability soon.</p><table style="width:100%;border-collapse:collapse;margin:24px 0"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Property</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><strong>{{listing_name}}</strong></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_out}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Nights</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{nights}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Guests</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{guests}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Estimated total</td><td style="padding:10px 0;font-size:14px"><strong>{{total_trip_price}}</strong></td></tr></table><p style="font-size:13px;color:#777">No payment has been charged yet. You will receive another email once the host confirms your stay.</p></div>`,
   },
   booking_request_received_admin: {
-    subject: 'New Booking Request – {{guest_name}} ({{check_in}})',
+    subject: 'New Booking Request \u2013 {{guest_name}} ({{check_in}})',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">New Booking Request</h2><p style="color:#555;margin-top:0">A guest is requesting dates at {{listing_name}}. Review and confirm or decline.</p><table style="width:100%;border-collapse:collapse;margin:24px 0"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Guest</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><strong>{{guest_name}}</strong></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{guest_email}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Nights</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{nights}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Estimated total</td><td style="padding:10px 0;font-size:14px"><strong>{{total_trip_price}}</strong></td></tr></table></div>`,
   },
   booking_confirmed_guest: {
-    subject: 'Your Booking is Confirmed – {{listing_name}}',
-    html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">Your Booking is Confirmed!</h2><p style="color:#555;margin-top:0">Hi {{guest_name}}, great news — your stay at {{listing_name}} is confirmed.</p><table style="width:100%;border-collapse:collapse;margin:24px 0"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_out}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Nights</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{nights}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Total paid</td><td style="padding:10px 0;font-size:14px"><strong>{{total_trip_price}}</strong></td></tr></table><p style="font-size:13px;color:#777">If you have any questions, reply to this email or contact the host directly.</p></div>`,
+    subject: 'Your Booking is Confirmed \u2013 {{listing_name}}',
+    html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">Your Booking is Confirmed!</h2><p style="color:#555;margin-top:0">Hi {{guest_name}}, great news \u2014 your stay at {{listing_name}} is confirmed.</p><table style="width:100%;border-collapse:collapse;margin:24px 0"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_out}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Nights</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{nights}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Total paid</td><td style="padding:10px 0;font-size:14px"><strong>{{total_trip_price}}</strong></td></tr></table><p style="font-size:13px;color:#777">If you have any questions, reply to this email or contact the host directly.</p></div>`,
   },
   booking_cancelled_guest: {
-    subject: 'Your Booking Has Been Cancelled – {{listing_name}}',
+    subject: 'Your Booking Has Been Cancelled \u2013 {{listing_name}}',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">Booking Cancelled</h2><p style="color:#555;margin-top:0">Hi {{guest_name}}, your booking at {{listing_name}} has been cancelled.</p><table style="width:100%;border-collapse:collapse;margin:24px 0"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;font-size:14px">{{check_out}}</td></tr></table><p style="font-size:13px;color:#777">If you believe this is an error, please contact the host directly.</p></div>`,
   },
   booking_request_approved_guest: {
-    subject: 'Your booking request has been approved – {{listing_name}}',
+    subject: 'Your booking request has been approved \u2013 {{listing_name}}',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;padding:20px">
   <h2 style="font-size:22px;font-weight:600;margin:0 0 8px">Booking Request Approved!</h2>
 
   <p style="color:#555;margin:0 0 20px">
-    Hi {{guest_name}}, great news — your booking request at <strong>{{listing_name}}</strong> has been approved.
+    Hi {{guest_name}}, great news \u2014 your booking request at <strong>{{listing_name}}</strong> has been approved.
   </p>
 
   <p style="color:#555;margin:0 0 20px">
@@ -137,15 +137,15 @@ const TEMPLATE_DEFAULTS: Record<string, { subject: string; html_body: string }> 
 </div>`,
   },
   booking_request_approved_admin: {
-    subject: 'Booking Approved – {{guest_name}} ({{check_in}})',
-    html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;padding:20px"><h2 style="font-size:22px;font-weight:600;margin:0 0 8px">Booking Request Approved</h2><p style="color:#555;margin:0 0 20px">You approved a booking request at <strong>{{listing_name}}</strong>.</p><table style="width:100%;border-collapse:collapse;margin:0 0 20px"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Guest</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><strong>{{guest_name}}</strong></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><a href="mailto:{{guest_email}}">{{guest_email}}</a></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_out}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Total</td><td style="padding:10px 0;font-size:14px"><strong>{{total_trip_price}}</strong></td></tr></table><p style="font-size:13px;color:#777">Payment status: <strong>{{payment_status}}</strong>{{payment_url}} — <a href="{{payment_url}}">View payment link</a></p></div>`,
+    subject: 'Booking Approved \u2013 {{guest_name}} ({{check_in}})',
+    html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;padding:20px"><h2 style="font-size:22px;font-weight:600;margin:0 0 8px">Booking Request Approved</h2><p style="color:#555;margin:0 0 20px">You approved a booking request at <strong>{{listing_name}}</strong>.</p><table style="width:100%;border-collapse:collapse;margin:0 0 20px"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Guest</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><strong>{{guest_name}}</strong></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><a href="mailto:{{guest_email}}">{{guest_email}}</a></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_out}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Total</td><td style="padding:10px 0;font-size:14px"><strong>{{total_trip_price}}</strong></td></tr></table><p style="font-size:13px;color:#777">Payment status: <strong>{{payment_status}}</strong>{{payment_url}} \u2014 <a href="{{payment_url}}">View payment link</a></p></div>`,
   },
   booking_request_declined_guest: {
-    subject: 'Your booking request was not approved – {{listing_name}}',
+    subject: 'Your booking request was not approved \u2013 {{listing_name}}',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;padding:20px"><h2 style="font-size:22px;font-weight:600;margin:0 0 8px">Booking Request Not Approved</h2><p style="color:#555;margin:0 0 20px">Hi {{guest_name}}, unfortunately your booking request at <strong>{{listing_name}}</strong> was not approved for the requested dates.</p><table style="width:100%;border-collapse:collapse;margin:0 0 20px"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Requested check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Requested check-out</td><td style="padding:10px 0;font-size:14px">{{check_out}}</td></tr></table><p style="font-size:14px;color:#555;margin:0 0 12px">Your dates were not reserved and no payment was collected.</p><p style="font-size:14px;color:#555;margin:0 0 20px">You are welcome to check availability for other dates or contact us at <a href="mailto:{{owner_email}}">{{owner_email}}</a>.</p></div>`,
   },
   booking_request_declined_admin: {
-    subject: 'Booking Request Declined – {{guest_name}} ({{check_in}})',
+    subject: 'Booking Request Declined \u2013 {{guest_name}} ({{check_in}})',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;padding:20px"><h2 style="font-size:22px;font-weight:600;margin:0 0 8px">Booking Request Declined</h2><p style="color:#555;margin:0 0 20px">You declined a booking request at <strong>{{listing_name}}</strong>. The dates remain available.</p><table style="width:100%;border-collapse:collapse;margin:0 0 20px"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Guest</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><strong>{{guest_name}}</strong></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><a href="mailto:{{guest_email}}">{{guest_email}}</a></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;font-size:14px">{{check_out}}</td></tr></table><p style="font-size:13px;color:#777">No payment was collected and no dates were reserved.</p></div>`,
   },
   inquiry_received_admin: {
@@ -153,19 +153,19 @@ const TEMPLATE_DEFAULTS: Record<string, { subject: string; html_body: string }> 
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">New Contact Message</h2><p style="color:#555;margin-top:0">Someone sent a message through the {{listing_name}} contact form.</p><table style="width:100%;border-collapse:collapse;margin:24px 0"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Name</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><strong>{{guest_name}}</strong></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{guest_email}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Message</td><td style="padding:10px 0;font-size:14px;white-space:pre-wrap">{{inquiry_message}}</td></tr></table><a href="mailto:{{guest_email}}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600">Reply to {{guest_name}}</a></div>`,
   },
   inquiry_auto_reply_guest: {
-    subject: 'We received your message – {{listing_name}}',
-    html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">We got your message!</h2><p style="color:#555;margin-top:0">Hi {{guest_name}}, thanks for reaching out about {{listing_name}}. We will get back to you as soon as possible.</p><blockquote style="border-left:3px solid #ddd;padding-left:16px;color:#666;font-size:14px;margin:24px 0">{{inquiry_message}}</blockquote><p style="font-size:13px;color:#777">Please do not reply to this email directly — we will reach out from {{support_email}}.</p></div>`,
+    subject: 'We received your message \u2013 {{listing_name}}',
+    html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">We got your message!</h2><p style="color:#555;margin-top:0">Hi {{guest_name}}, thanks for reaching out about {{listing_name}}. We will get back to you as soon as possible.</p><blockquote style="border-left:3px solid #ddd;padding-left:16px;color:#666;font-size:14px;margin:24px 0">{{inquiry_message}}</blockquote><p style="font-size:13px;color:#777">Please do not reply to this email directly \u2014 we will reach out from {{support_email}}.</p></div>`,
   },
   test_email: {
-    subject: 'Test Email – {{listing_name}}',
+    subject: 'Test Email \u2013 {{listing_name}}',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">Test Email</h2><p style="color:#555;">This is a test email from {{listing_name}}. Your email provider is configured and working correctly.</p><p style="font-size:13px;color:#777;margin-top:24px;">Sent at: {{current_date}}</p></div>`,
   },
   booking_confirmed_admin: {
-    subject: 'Booking Confirmed – {{guest_name}} ({{check_in}})',
+    subject: 'Booking Confirmed \u2013 {{guest_name}} ({{check_in}})',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">Booking Confirmed</h2><p style="color:#555;margin-top:0">A booking at <strong>{{listing_name}}</strong> has been confirmed.</p><table style="width:100%;border-collapse:collapse;margin:24px 0"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Guest</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><strong>{{guest_name}}</strong></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Guest Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{guest_email}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_out}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Nights</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{nights}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Guests</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{guests}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Total</td><td style="padding:10px 0;font-size:14px"><strong>{{total_trip_price}}</strong></td></tr></table><p style="font-size:13px;color:#777">Log in to the admin dashboard to view the full booking details.</p></div>`,
   },
   booking_cancelled_admin: {
-    subject: 'Booking Cancelled – {{guest_name}} ({{check_in}})',
+    subject: 'Booking Cancelled \u2013 {{guest_name}} ({{check_in}})',
     html_body: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111"><h2 style="font-size:22px;margin-bottom:4px">Booking Cancelled</h2><p style="color:#555;margin-top:0">A booking at <strong>{{listing_name}}</strong> has been cancelled.</p><table style="width:100%;border-collapse:collapse;margin:24px 0"><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px;width:40%">Guest</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><strong>{{guest_name}}</strong></td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Guest Email</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{guest_email}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-in</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_in}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Check-out</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{check_out}}</td></tr><tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#555;font-size:14px">Guests</td><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px">{{guests}}</td></tr><tr><td style="padding:10px 0;color:#555;font-size:14px">Total</td><td style="padding:10px 0;font-size:14px">{{total_trip_price}}</td></tr></table><p style="font-size:13px;color:#777">Log in to the admin dashboard to review and manage this booking.</p></div>`,
   },
 };
@@ -196,7 +196,7 @@ const BOOKING_SAMPLE_VARS: Record<string, string> = {
   payment_button: '<a href="https://checkout.stripe.com/c/pay/sample" style="display:inline-block;padding:12px 24px;background:#1a1a1a;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px">Complete Payment</a>',
 };
 
-// Keys sourced from account_settings — real values are loaded at runtime.
+// Keys sourced from account_settings -- real values are loaded at runtime.
 const ACCOUNT_VAR_KEYS: (keyof AccountVars)[] = [
   'listing_name', 'listing_address', 'listing_city', 'listing_state', 'listing_zip', 'listing_country',
   'check_in_time', 'check_out_time', 'suggested_door_code',
@@ -234,7 +234,7 @@ const EMAIL_TEMPLATE_VARIABLES: { group: string; vars: [string, string][] }[] = 
     ['listing_country', 'Listing country'],
     ['check_in_time', 'Check-in time (e.g. 4:00 PM)'],
     ['check_out_time', 'Check-out time (e.g. 11:00 AM)'],
-    ['suggested_door_code', 'Door/access code (private — admin use only)'],
+    ['suggested_door_code', 'Door/access code (private \u2014 admin use only)'],
   ]},
   { group: 'Listing Contact', vars: [
     ['listing_manager_name', 'Listing manager name'],
@@ -283,7 +283,7 @@ const EMAIL_TEMPLATE_VARIABLES: { group: string; vars: [string, string][] }[] = 
   ]},
 ];
 
-// ── API helpers ───────────────────────────────────────────────────────────────
+// -- API helpers ---------------------------------------------------------------
 
 async function fetchStatus(token: string): Promise<EmailStatus | null> {
   try {
@@ -309,7 +309,7 @@ async function saveProviderSettings(token: string, body: Record<string, unknown>
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
@@ -339,7 +339,7 @@ function ProviderBadge({ provider }: { provider: string }) {
   return <span className={`inline-block text-xs font-medium px-2.5 py-0.5 rounded-full border ${c.style}`}>{c.label}</span>;
 }
 
-// ── Secret field ──────────────────────────────────────────────────────────────
+// -- Secret field --------------------------------------------------------------
 
 function SecretField({ label, value, onChange, placeholder }: {
   label: string; value: string; onChange: (v: string) => void; placeholder?: string;
@@ -361,7 +361,7 @@ function SecretField({ label, value, onChange, placeholder }: {
   );
 }
 
-// ── Provider form ─────────────────────────────────────────────────────────────
+// -- Provider form -------------------------------------------------------------
 
 function SmtpForm({ status, token, onSaved }: {
   status: EmailStatus | null; token: string; onSaved: (s: EmailStatus) => void;
@@ -417,7 +417,7 @@ function SmtpForm({ status, token, onSaved }: {
   }
 
   const portNum = parseInt(smtpPort, 10);
-  const portHint = portNum === 465 ? 'Port 465 — Secure: On (SSL)' : portNum === 587 ? 'Port 587 — Secure: Off (STARTTLS, recommended)' : '';
+  const portHint = portNum === 465 ? 'Port 465 \u2014 Secure: On (SSL)' : portNum === 587 ? 'Port 587 \u2014 Secure: Off (STARTTLS, recommended)' : '';
 
   return (
     <div className="space-y-5">
@@ -436,7 +436,7 @@ function SmtpForm({ status, token, onSaved }: {
       {provider === 'smtp' && (
         <>
           <p className="text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2.5">
-            SMTP sends emails through your own provider — Google Workspace, Zoho, cPanel, GoDaddy, or any SMTP host.
+            SMTP sends emails through your own provider &#8212; Google Workspace, Zoho, cPanel, GoDaddy, or any SMTP host.
             Use port 587 with Secure off for most providers. Credentials are stored securely and never shown again.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -536,7 +536,7 @@ function SmtpForm({ status, token, onSaved }: {
   );
 }
 
-// ── Template editor ───────────────────────────────────────────────────────────
+// -- Template editor -----------------------------------------------------------
 
 function TemplateEditor({ tpl, token, onSaved, onDuplicate, onDelete, previewVars }: {
   tpl: EmailTemplate; token: string;
@@ -576,7 +576,7 @@ function TemplateEditor({ tpl, token, onSaved, onDuplicate, onDelete, previewVar
       });
       const data = await res.json();
       if (data.sent) setMsg({ type: 'ok', text: 'Test email sent.' });
-      else setMsg({ type: 'err', text: data.reason ?? data.error ?? 'Not sent — check provider.' });
+      else setMsg({ type: 'err', text: data.reason ?? data.error ?? 'Not sent \u2014 check provider.' });
     } catch { setMsg({ type: 'err', text: 'Request failed.' }); }
     setTesting(false);
     setTimeout(() => setMsg(null), 5000);
@@ -587,7 +587,7 @@ function TemplateEditor({ tpl, token, onSaved, onDuplicate, onDelete, previewVar
     if (!def) return;
     setSubject(def.subject);
     setHtml(def.html_body);
-    setMsg({ type: 'ok', text: 'Reset to default — save to apply.' });
+    setMsg({ type: 'ok', text: 'Reset to default \u2014 save to apply.' });
     setTimeout(() => setMsg(null), 4000);
   }
 
@@ -621,7 +621,7 @@ function TemplateEditor({ tpl, token, onSaved, onDuplicate, onDelete, previewVar
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${isActive ? 'translate-x-4' : 'translate-x-0'}`} />
             </button>
             <span className="text-sm text-gray-700">Active</span>
-            {!isActive && <span className="text-xs text-amber-600 ml-1">(inactive — will use built-in fallback)</span>}
+            {!isActive && <span className="text-xs text-amber-600 ml-1">(inactive &#8212; will use built-in fallback)</span>}
           </div>
 
           {/* Variable reference */}
@@ -705,7 +705,7 @@ function TemplateEditor({ tpl, token, onSaved, onDuplicate, onDelete, previewVar
   );
 }
 
-// ── Templates section ─────────────────────────────────────────────────────────
+// -- Templates section ---------------------------------------------------------
 
 function slugify(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
@@ -797,7 +797,7 @@ function CreateTemplateForm({ propertyId, existingKeys, onCreated, onCancel, pre
                   onChange={e => { setKeyTouched(true); setKey(e.target.value); }}
                   placeholder="welcome_message" className={`${inputCls} font-mono`} />
                 {keyError && <p className="text-xs text-red-600 mt-1">{keyError}</p>}
-                {!keyError && derivedKey && <p className="text-xs text-gray-400 mt-1 font-mono">{`{{${derivedKey}}}`} — used by automations</p>}
+                {!keyError && derivedKey && <p className="text-xs text-gray-400 mt-1 font-mono">{`{{${derivedKey}}}`} &#8212; used by automations</p>}
               </div>
               <div className="sm:col-span-2">
                 <label className={labelCls}>Subject</label>
@@ -986,7 +986,7 @@ function TemplatesSection({ token }: { token: string }) {
         <p className="text-xs text-gray-500">
           Customize the email copy sent to guests and admins. Use{' '}
           <code className="bg-gray-100 px-1 rounded font-mono text-xs">{'{{variable}}'}</code>{' '}
-          placeholders — values are filled in automatically when emails are sent.
+          placeholders &#8212; values are filled in automatically when emails are sent.
         </p>
         {!creating && (
           <button onClick={() => { setCreating(true); setExpandedId(null); }}
@@ -1089,7 +1089,7 @@ function TemplatesSection({ token }: { token: string }) {
   );
 }
 
-// ── Test email button ─────────────────────────────────────────────────────────
+// -- Test email button ---------------------------------------------------------
 
 function TestEmailButton({ token }: { token: string }) {
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -1107,7 +1107,7 @@ function TestEmailButton({ token }: { token: string }) {
       if (data.sent) {
         setState('sent'); setMessage('Test email sent.');
       } else {
-        const base = data.reason ?? data.error ?? 'Not sent — check provider.';
+        const base = data.reason ?? data.error ?? 'Not sent \u2014 check provider.';
         const cfg = data._config;
         const hint = cfg
           ? ` (provider=${cfg.provider}, host=${cfg.smtpHostExists}, user=${cfg.smtpUsernameExists}, pass=${cfg.smtpPasswordExists})`
@@ -1132,7 +1132,7 @@ function TestEmailButton({ token }: { token: string }) {
   );
 }
 
-// ── Notification logs ─────────────────────────────────────────────────────────
+// -- Notification logs ---------------------------------------------------------
 
 function NotificationLogs() {
   const [logs, setLogs] = useState<NotificationLog[]>([]);
@@ -1187,53 +1187,60 @@ function NotificationLogs() {
             <p className="text-sm text-gray-400">No notification logs yet.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto -mx-5 px-5">
-            <table className="w-full text-sm min-w-[640px]">
-              <thead>
-                <tr className="text-xs text-gray-500 border-b">
-                  <th className="text-left py-2 pr-3 font-medium">Time</th>
-                  <th className="text-left py-2 pr-3 font-medium">Status</th>
-                  <th className="text-left py-2 pr-3 font-medium">Template</th>
-                  <th className="text-left py-2 pr-3 font-medium">Recipient</th>
-                  <th className="text-left py-2 font-medium">Subject</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {logs.map(log => {
-                  const s = STATUS_STYLES[log.status] ?? STATUS_STYLES.skipped;
-                  const StatusIcon = s.icon;
-                  return (
-                    <tr key={log.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="py-2.5 pr-3 text-xs text-gray-400 whitespace-nowrap">{fmtDate(log.created_at)}</td>
-                      <td className="py-2.5 pr-3">
-                        <div className="flex items-center gap-1.5">
+          <>
+            {/* Two-row notification log entries at every screen width. */}
+            <div className="space-y-3">
+              {logs.map(log => {
+                const s = STATUS_STYLES[log.status] ?? STATUS_STYLES.skipped;
+                const StatusIcon = s.icon;
+                return (
+                  <div key={log.id} className="rounded-xl border border-gray-200 overflow-hidden">
+                    {/* First row: Time, Status, Template. */}
+                    <div className="grid grid-cols-[minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1.5fr)] gap-3 px-3 py-3">
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-1">Time</p>
+                        <p className="text-xs text-gray-600 break-words">{fmtDate(log.created_at)}</p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-1">Status</p>
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <StatusIcon className={`w-3.5 h-3.5 flex-shrink-0 ${s.iconClass}`} />
                           <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${s.badge}`}>{log.status}</span>
                         </div>
                         {log.error_message && (
-                          <p className="text-xs text-red-500 mt-0.5 max-w-xs truncate" title={log.error_message}>{log.error_message}</p>
+                          <p className="text-xs text-red-500 mt-1 break-words" title={log.error_message}>{log.error_message}</p>
                         )}
-                      </td>
-                      <td className="py-2.5 pr-3">
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-1">Template</p>
                         {log.template_key
-                          ? <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono text-gray-700">{log.template_key}</code>
-                          : <span className="text-xs text-gray-400">—</span>}
-                      </td>
-                      <td className="py-2.5 pr-3 text-xs text-gray-600 max-w-[140px] truncate" title={log.recipient}>{log.recipient}</td>
-                      <td className="py-2.5 text-xs text-gray-700 max-w-[200px] truncate" title={log.subject}>{log.subject}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                          ? <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono text-gray-700 break-all">{log.template_key}</code>
+                          : <span className="text-xs text-gray-400">{'\u2014'}</span>}
+                      </div>
+                    </div>
+                    {/* Second row: Recipient, Subject. */}
+                    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3 px-3 py-3 bg-gray-50/70 border-t border-gray-200">
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-1">Recipient</p>
+                        <p className="text-xs text-gray-700 break-all" title={log.recipient}>{log.recipient}</p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-1">Subject</p>
+                        <p className="text-xs text-gray-700 break-words" title={log.subject}>{log.subject}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
     </div>
   );
 }
 
-// ── Automations ───────────────────────────────────────────────────────────────
+// -- Automations ---------------------------------------------------------------
 
 const SUPABASE_FUNC_URL = SUPABASE_URL;
 
@@ -1375,7 +1382,7 @@ function AutoForm({ initial, templates, onSave, onCancel, saving }: AutoFormProp
               onChange={e => set('template_key', e.target.value || null)}
               className={inputCls + ' appearance-none pr-8'}
             >
-              <option value="">— Select a template —</option>
+              <option value="">&#8212; Select a template &#8212;</option>
               {templates.map(t => <option key={t.id} value={t.template_key}>{t.name}</option>)}
             </select>
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
@@ -1393,7 +1400,7 @@ function AutoForm({ initial, templates, onSave, onCancel, saving }: AutoFormProp
             <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${form.is_active ? 'translate-x-4' : 'translate-x-0'}`} />
           </button>
           <span className="text-sm text-gray-700">Active</span>
-          {!form.is_active && <span className="text-xs text-amber-600">(inactive — will not run)</span>}
+          {!form.is_active && <span className="text-xs text-amber-600">(inactive &#8212; will not run)</span>}
         </div>
       </div>
       <div className="flex items-center gap-2 pt-2">
@@ -1491,7 +1498,7 @@ function AutomationsSection({ token }: { token: string }) {
       });
       const data = await res.json();
       if (data.ok && data.sent > 0) flash({ type: 'ok', text: `Test email sent to admin for "${a.name}".` });
-      else flash({ type: 'err', text: data.error ?? 'Test failed — no email was sent.' });
+      else flash({ type: 'err', text: data.error ?? 'Test failed \u2014 no email was sent.' });
     } catch { flash({ type: 'err', text: 'Request failed.' }); }
     setTesting(null);
   }
@@ -1559,7 +1566,7 @@ function AutomationsSection({ token }: { token: string }) {
         <div className="space-y-2">
           {automations.map(a => {
             const isEditing = editingId === a.id;
-            const templateName = templates.find(t => t.template_key === a.template_key || t.id === a.template_id)?.name ?? a.template_key ?? '—';
+            const templateName = templates.find(t => t.template_key === a.template_key || t.id === a.template_id)?.name ?? a.template_key ?? '\u2014';
 
             return (
               <div key={a.id} className={`border rounded-xl bg-white overflow-hidden ${a.is_active ? 'border-green-200' : 'border-gray-200'}`}>
@@ -1587,7 +1594,7 @@ function AutomationsSection({ token }: { token: string }) {
                             {a.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-500">{triggerDescription(a)} · {RECIPIENT_LABELS[a.recipient_type] ?? a.recipient_type}</p>
+                        <p className="text-xs text-gray-500">{triggerDescription(a)} &#183; {RECIPIENT_LABELS[a.recipient_type] ?? a.recipient_type}</p>
                         <p className="text-xs text-gray-400 mt-0.5">Template: <span className="text-gray-600">{templateName}</span></p>
                         {a.notes && <p className="text-xs text-gray-400 mt-0.5 italic">{a.notes}</p>}
                       </div>
@@ -1648,7 +1655,7 @@ function AutomationsSection({ token }: { token: string }) {
   );
 }
 
-// ── Inquiries ─────────────────────────────────────────────────────────────────
+// -- Inquiries -----------------------------------------------------------------
 
 interface InquiryRow {
   id: string;
@@ -1728,7 +1735,7 @@ function InquiriesSection() {
       <div className="flex items-center justify-between px-5 py-4 border-b flex-wrap gap-3">
         <div>
           <h3 className="font-semibold text-gray-900">Guest Inquiries</h3>
-          <p className="text-xs text-gray-400 mt-0.5">Contact form submissions. Replies happen from your email inbox — inquiry emails use Reply-To: guest email.</p>
+          <p className="text-xs text-gray-400 mt-0.5">Contact form submissions. Replies happen from your email inbox &#8212; inquiry emails use Reply-To: guest email.</p>
         </div>
         <button onClick={load} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Refresh">
           <RefreshCw className="w-4 h-4 text-gray-500" />
@@ -1760,7 +1767,7 @@ function InquiriesSection() {
                       <span className="font-medium text-sm text-gray-900">{inq.sender_name}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${INQUIRY_STATUS_STYLES[inq.status] ?? 'bg-gray-100 text-gray-600'}`}>{inq.status}</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-0.5">{inq.sender_email}{inq.sender_phone ? ` · ${inq.sender_phone}` : ''}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{inq.sender_email}{inq.sender_phone ? ` \u00B7 ${inq.sender_phone}` : ''}</p>
                   </div>
                   <span className="text-xs text-gray-400 flex-shrink-0 whitespace-nowrap">{fmtDate(inq.created_at)}</span>
                 </div>
@@ -1806,7 +1813,7 @@ function InquiriesSection() {
           <div className="relative bg-white rounded-2xl border shadow-xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-gray-900">Inquiry Details</h3>
-              <button onClick={() => setDetail(null)} className="text-gray-400 hover:text-gray-700 text-lg leading-none">✕</button>
+              <button onClick={() => setDetail(null)} className="text-gray-400 hover:text-gray-700 text-lg leading-none">&#10005;</button>
             </div>
             <dl className="space-y-3 text-sm">
               <div>
@@ -1853,7 +1860,7 @@ function InquiriesSection() {
   );
 }
 
-// ── Main page ─────────────────────────────────────────────────────────────────
+// -- Main page -----------------------------------------------------------------
 
 type Tab = 'provider' | 'templates' | 'automations' | 'inquiries' | 'logs';
 
