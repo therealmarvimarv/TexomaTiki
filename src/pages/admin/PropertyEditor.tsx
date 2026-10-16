@@ -9,7 +9,7 @@ const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
 type Tab = 'basic' | 'highlights' | 'amenities' | 'neighborhood' | 'contact' | 'photos' | 'policies' | 'sections';
 
-// ── Highlights ────────────────────────────────────────────────────────────────
+// -- Highlights ----------------------------------------------------------------
 
 const AVAILABLE_ICONS = [
   'bed', 'briefcase', 'waves', 'car', 'wifi', 'dog', 'tv',
@@ -75,7 +75,7 @@ function HighlightsEditor({ propertyId }: { propertyId: string }) {
             className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-orange-600 transition-all disabled:opacity-50 text-sm"
           >
             <Save className="w-4 h-4" />
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? 'Saving\u2026' : 'Save'}
           </button>
         </div>
       </div>
@@ -132,7 +132,7 @@ function HighlightsEditor({ propertyId }: { propertyId: string }) {
   );
 }
 
-// ── Amenities ─────────────────────────────────────────────────────────────────
+// -- Amenities -----------------------------------------------------------------
 
 interface AmenityCategory {
   id: string;
@@ -233,7 +233,7 @@ function AmenitiesEditor({ propertyId }: { propertyId: string }) {
             className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-orange-600 transition-all disabled:opacity-50 text-sm"
           >
             <Save className="w-4 h-4" />
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? 'Saving\u2026' : 'Save'}
           </button>
         </div>
       </div>
@@ -318,7 +318,7 @@ function AmenitiesEditor({ propertyId }: { propertyId: string }) {
   );
 }
 
-// ── Neighborhood Highlights ───────────────────────────────────────────────────
+// -- Neighborhood Highlights ---------------------------------------------------
 
 const NEIGHBORHOOD_CATEGORIES = [
   { value: 'swim', label: 'Water & Recreation' },
@@ -423,16 +423,16 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-[669px]:flex-col max-[669px]:items-stretch max-[669px]:gap-4">
         <div>
           <h3 className="text-lg font-semibold">Neighborhood Highlights</h3>
           <p className="text-sm text-gray-500 mt-0.5">Nearby places shown in the location modal on the listing page.</p>
         </div>
-        <div className="flex items-center gap-3">
-          {msg && <span className="text-sm text-green-600 font-medium">{msg}</span>}
+        <div className="flex items-center gap-3 max-[669px]:grid max-[669px]:grid-cols-2 max-[669px]:w-full max-[669px]:gap-3">
+          {msg && <span className="text-sm text-green-600 font-medium max-[669px]:col-span-2">{msg}</span>}
           <button
             onClick={addItem}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors max-[669px]:min-w-0 max-[669px]:w-full max-[669px]:justify-center max-[669px]:whitespace-nowrap"
           >
             <Plus className="w-4 h-4" />
             Add Place
@@ -440,10 +440,10 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
           <button
             onClick={save}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-orange-600 transition-all disabled:opacity-50 text-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-orange-600 transition-all disabled:opacity-50 text-sm max-[669px]:min-w-0 max-[669px]:w-full max-[669px]:justify-center max-[669px]:whitespace-nowrap"
           >
             <Save className="w-4 h-4" />
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? 'Saving\u2026' : 'Save'}
           </button>
         </div>
       </div>
@@ -452,27 +452,27 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
         {grouped.map(cat => cat.items.length === 0 ? null : (
           <div key={cat.value} className="bg-gray-50 rounded-xl p-5">
             <h4 className="font-semibold text-gray-700 mb-3 text-sm">{cat.label}</h4>
-            <div className="space-y-2">
+            <div className="space-y-2 max-[669px]:space-y-4">
               {cat.items.map(item => (
-                <div key={item.id} className="flex gap-3 items-center">
+                <div key={item.id} className="flex gap-3 items-center max-[669px]:grid max-[669px]:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)_auto] max-[669px]:gap-x-3 max-[669px]:gap-y-2">
                   <input
                     type="text"
                     placeholder="Place name"
                     value={item.name}
                     onChange={e => update(item.id, 'name', e.target.value)}
-                    className="flex-1 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
+                    className="flex-1 max-[669px]:col-span-3 max-[669px]:min-w-0 max-[669px]:w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                   />
                   <input
                     type="text"
                     placeholder="Distance"
                     value={item.distance}
                     onChange={e => update(item.id, 'distance', e.target.value)}
-                    className="w-28 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
+                    className="w-28 max-[669px]:min-w-0 max-[669px]:w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                   />
                   <select
                     value={item.category}
                     onChange={e => update(item.id, 'category', e.target.value)}
-                    className="px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
+                    className="max-[669px]:min-w-0 max-[669px]:w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                   >
                     {NEIGHBORHOOD_CATEGORIES.map(c => (
                       <option key={c.value} value={c.value}>{c.label}</option>
@@ -480,7 +480,7 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
                   </select>
                   <button
                     onClick={() => removeItem(item)}
-                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                    className="p-2 text-gray-400 hover:text-red-500 transition-colors max-[669px]:border max-[669px]:border-gray-200 max-[669px]:rounded-lg max-[669px]:bg-white"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -494,27 +494,27 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
         {items.filter(i => i.isNew).length > 0 && (
           <div className="bg-blue-50 rounded-xl p-5">
             <h4 className="font-semibold text-blue-700 mb-3 text-sm">New items (unsaved)</h4>
-            <div className="space-y-2">
+            <div className="space-y-2 max-[669px]:space-y-4">
               {items.filter(i => i.isNew).map(item => (
-                <div key={item.id} className="flex gap-3 items-center">
+                <div key={item.id} className="flex gap-3 items-center max-[669px]:grid max-[669px]:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)_auto] max-[669px]:gap-x-3 max-[669px]:gap-y-2">
                   <input
                     type="text"
                     placeholder="Place name"
                     value={item.name}
                     onChange={e => update(item.id, 'name', e.target.value)}
-                    className="flex-1 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
+                    className="flex-1 max-[669px]:col-span-3 max-[669px]:min-w-0 max-[669px]:w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                   />
                   <input
                     type="text"
                     placeholder="Distance"
                     value={item.distance}
                     onChange={e => update(item.id, 'distance', e.target.value)}
-                    className="w-28 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
+                    className="w-28 max-[669px]:min-w-0 max-[669px]:w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                   />
                   <select
                     value={item.category}
                     onChange={e => update(item.id, 'category', e.target.value)}
-                    className="px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
+                    className="max-[669px]:min-w-0 max-[669px]:w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 bg-white"
                   >
                     {NEIGHBORHOOD_CATEGORIES.map(c => (
                       <option key={c.value} value={c.value}>{c.label}</option>
@@ -522,7 +522,7 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
                   </select>
                   <button
                     onClick={() => removeItem(item)}
-                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                    className="p-2 text-gray-400 hover:text-red-500 transition-colors max-[669px]:border max-[669px]:border-gray-200 max-[669px]:rounded-lg max-[669px]:bg-white"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -542,7 +542,7 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
   );
 }
 
-// ── Contact Info ──────────────────────────────────────────────────────────────
+// -- Contact Info --------------------------------------------------------------
 
 interface ContactInfo {
   email: string;
@@ -592,7 +592,7 @@ function ContactEditor({ propertyId }: { propertyId: string }) {
             className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-orange-600 transition-all disabled:opacity-50 text-sm"
           >
             <Save className="w-4 h-4" />
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? 'Saving\u2026' : 'Save'}
           </button>
         </div>
       </div>
@@ -634,7 +634,7 @@ function ContactEditor({ propertyId }: { propertyId: string }) {
   );
 }
 
-// ── Sections Visibility ───────────────────────────────────────────────────────
+// -- Sections Visibility -------------------------------------------------------
 
 interface SectionFlags {
   show_local_recommendations: boolean;
@@ -707,7 +707,7 @@ function SectionsEditor({ propertyId }: { propertyId: string }) {
             className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-orange-600 transition-all disabled:opacity-50 text-sm"
           >
             <Save className="w-4 h-4" />
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? 'Saving\u2026' : 'Save'}
           </button>
         </div>
       </div>
@@ -748,7 +748,7 @@ function SectionsEditor({ propertyId }: { propertyId: string }) {
   );
 }
 
-// ── Main PropertyEditor ───────────────────────────────────────────────────────
+// -- Main PropertyEditor -------------------------------------------------------
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'basic', label: 'Basic Info' },
@@ -916,7 +916,7 @@ export default function PropertyEditor() {
       });
   }, [property?.id]);
 
-  if (!property) return <div className="p-8 text-gray-500">Loading…</div>;
+  if (!property) return <div className="p-8 text-gray-500">Loading&#8230;</div>;
 
   return (
     <div className="space-y-6">
@@ -956,7 +956,7 @@ export default function PropertyEditor() {
                     className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-orange-600 transition-all disabled:opacity-50 text-sm"
                   >
                     <Save className="w-4 h-4" />
-                    {saving ? 'Saving…' : 'Save'}
+                    {saving ? 'Saving\u2026' : 'Save'}
                   </button>
                 </div>
               </div>
@@ -1066,7 +1066,7 @@ export default function PropertyEditor() {
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
                       >
                         <Upload className="w-3.5 h-3.5" />
-                        {hostPhotoUploading ? 'Uploading…' : 'Replace'}
+                        {hostPhotoUploading ? 'Uploading\u2026' : 'Replace'}
                       </button>
                       <button
                         onClick={removeHostPhoto}
@@ -1090,7 +1090,7 @@ export default function PropertyEditor() {
                     )}
                   </button>
                 )}
-                <p className="mt-1 text-xs text-gray-400">Recommended size: 500 × 500 pixels. File types: PNG, JPEG, or WebP.</p>
+                <p className="mt-1 text-xs text-gray-400">Recommended size: 500 &#215; 500 pixels. File types: PNG, JPEG, or WebP.</p>
                 <input ref={hostPhotoFileRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={handleHostPhotoUpload} className="hidden" />
               </div>
 
@@ -1128,7 +1128,7 @@ export default function PropertyEditor() {
                     className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-orange-600 transition-all disabled:opacity-50 text-sm"
                   >
                     <Save className="w-4 h-4" />
-                    {saving ? 'Saving…' : 'Save'}
+                    {saving ? 'Saving\u2026' : 'Save'}
                   </button>
                 </div>
               </div>
