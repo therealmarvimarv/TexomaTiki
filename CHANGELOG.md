@@ -13,6 +13,44 @@ This project follows semantic versioning:
 
 ### Changed
 
+**Admin Calendar - Mobile Responsive Layout**
+
+- Redesigned the Calendar navigation for screens below 640px into a two-column, two-row layout, keeping Calendar, Availability, Pricing, and Calendar Sync accessible without horizontal overflow.
+- Kept the existing desktop navigation layout at 640px and above.
+- Reorganized the mobile calendar header: month navigation remains grouped, while Today and Refresh fit on a separate action row when needed.
+- Reduced mobile calendar grid padding, day-number size, and minimum cell height so the seven-day calendar fits narrow screens more comfortably.
+- Changed mobile event display from truncated names to compact color-coded bars; retained event names on larger screens.
+- Displayed selected event details in a mobile bottom sheet while preserving the existing desktop popover.
+- Tightened the mobile status legend spacing and adjusted the calendar card's mobile padding.
+- Added accessible labels to the previous-month, next-month, and Refresh controls.
+
+### Fixed
+
+- Corrected mobile Calendar navigation overflow and cramped month controls on narrow devices, including 375px and 440px viewport widths.
+- Cleaned non-ASCII source characters to avoid corrupted divider or punctuation characters when transferring code. Visible punctuation and behavior were preserved.
+
+### Preserved
+
+- **Texoma Tiki** branding, including the existing sidebar and collapsed `TT` icon; no branding changes were made.
+- LIVE's existing desktop Calendar layout and all client-specific behavior.
+- Booking, owner-block, iCal import, and cleaning event data queries and their existing status colors.
+- Month-navigation, Today, Refresh, event selection, and booking-detail navigation behavior.
+- Availability, Pricing (including Rates and Fees), and Calendar Sync functionality.
+- No database migrations, Edge Function updates, or payment/booking business-logic changes.
+
+### File Updated
+
+- `AdminCalendar.tsx`
+
+### Validation Note
+
+- The updated LIVE file was checked for ASCII-safe source and TypeScript/JSX syntax. The mobile layout was positively reviewed at narrow viewport sizes; continue to verify production interactions after deployment.
+
+
+## [1.0.1] - 2026-10-15
+
+### Changed
+
 **Property Editor - Neighborhood Highlights**
 - Updated the Neighborhood Highlights layout for screens narrower than 670px.
 - Moved Place Name to its own full-width row.
