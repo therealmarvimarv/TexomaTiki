@@ -924,12 +924,12 @@ export default function PropertyEditor() {
 
       {/* Tab bar */}
       <div className="bg-white rounded-xl border overflow-hidden">
-        <div className="flex border-b overflow-x-auto">
+        <div className="flex flex-wrap border-b">
           {TABS.map(t => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`px-5 py-3.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
+              className={`px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
                 tab === t.id
                   ? 'border-pink-500 text-pink-600'
                   : 'border-transparent text-gray-500 hover:text-gray-800'
