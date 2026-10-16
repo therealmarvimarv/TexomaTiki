@@ -9,6 +9,45 @@ This project follows semantic versioning:
 
 ---
 
+## [1.0.1] - 2026-10-15
+
+### Changed
+
+**Property Editor - Neighborhood Highlights**
+- Updated the Neighborhood Highlights layout for screens narrower than 670px.
+- Moved Place Name to its own full-width row.
+- Arranged Distance, Category, and Delete on the following row.
+- Placed the heading and description above the Add Place and Save buttons on narrow screens.
+- Kept the previously existing layout at 670px and wider.
+
+**Property Editor - Navigation Tabs**
+- Matched LIVE's top tab behavior to MASTER: tabs wrap onto additional rows instead of scrolling horizontally.
+- Changed the tab container from `flex border-b overflow-x-auto` to `flex flex-wrap border-b`.
+- Changed only the navigation tab button horizontal padding from `px-5` to `px-4`.
+
+**Email Settings - Notification Logs**
+- Updated notification logs to use two-row entries at all screen sizes.
+- First row: Time, Status, and Template.
+- Second row: Recipient and Subject.
+- Kept existing log loading, filtering, status indicators, error details, and Refresh behavior.
+
+### Fixed
+- Cleaned character-encoding artifacts in the updated LIVE source files while preserving displayed text and template content.
+
+### Unchanged
+- Preserved LIVE's **Texoma Tiki** branding, including its expanded sidebar branding and collapsed `TT` icon.
+- Made no changes to `AdminDashboard.tsx` or the sidebar.
+- Preserved LIVE-specific property editing and host-photo behavior.
+- Preserved existing email templates, settings, automations, database operations, and business logic.
+- No database migrations or Edge Function changes.
+
+### Files Updated
+- `PropertyEditor.tsx`
+- `EmailSettings.tsx`
+
+### Deployment Note
+- Verify the Property tabs and Neighborhood layout at narrow and wide viewport sizes, and the Email notification logs, in LIVE before publishing.
+
 
 ## [1.0.1] - 2026-10-14
 
