@@ -243,6 +243,67 @@ export default function BookingsManager() {
 
           return (
             <div key={b.id} className={`bg-white rounded-2xl border border-gray-200 overflow-hidden ${b.archived_at ? 'opacity-70' : ''}`}>
+              {/* Approved mobile booking summary: guest, stay dates, payment, and total. */}
+              <Link
+                to={`/admin/bookings/${b.id}`}
+                aria-label={`View booking for ${b.guest_name}`}
+                className="block sm:hidden px-4 py-5 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-sm text-gray-900 break-words">{b.guest_name}</p>
+                    <p className="text-xs text-gray-500 mt-1 break-all">{b.guest_email}</p>
+                    {b.archived_at && (
+                      <span className="inline-block mt-2 text-xs px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded font-medium">
+                        Archived
+                      </span>
+                    )}
+                  </div>
+                  <span className={`shrink-0 inline-block px-2.5 py-1 rounded-full text-xs font-medium ${BOOKING_STATUS_STYLES[b.status] ?? 'bg-gray-100 text-gray-700'}`}>
+                    {b.status.replace(/_/g, ' ')}
+                  </span>
+                </div>
+
+                <div className="border-t border-gray-100 mt-4 pt-4 grid grid-cols-2 gap-x-4 gap-y-5">
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase text-gray-500">Check-in</p>
+                    <p className="font-semibold text-sm text-gray-900 mt-1">
+                      {new Date(b.check_in).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase text-gray-500">Check-out</p>
+                    <p className="font-semibold text-sm text-gray-900 mt-1">
+                      {new Date(b.check_out).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase text-gray-500">Payment</p>
+                    <div className="mt-1">
+                      {b.payment_status ? (
+                        <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${PAYMENT_STATUS_STYLES[b.payment_status] ?? 'bg-gray-100 text-gray-700'}`}>
+                          {b.payment_status}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400">{'\u2014'}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase text-gray-500">Total</p>
+                    <p className="font-semibold text-base text-gray-900 mt-1">{totalDisplay}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 border-t border-gray-100 pt-4 text-center">
+                  <span className="inline-flex items-center justify-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700">
+                    View Booking
+                  </span>
+                </div>
+              </Link>
+
+              {/* Approved tablet/laptop card is unchanged from 640px upwards. */}
+              <div className="hidden sm:block">
               {/* Top section labels strip */}
               <div className="grid grid-cols-2 sm:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.45fr)_minmax(0,0.85fr)_72px] gap-x-3 gap-y-2 text-center bg-gray-50/80 px-4 py-3 sm:px-5 border-b border-gray-200">
                 <p className="text-xs font-medium text-gray-600">Guest</p>
@@ -320,6 +381,7 @@ export default function BookingsManager() {
                 <div className="min-w-0">
                   <p className="text-xs text-gray-500">{new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                 </div>
+              </div>
               </div>
             </div>
           );
