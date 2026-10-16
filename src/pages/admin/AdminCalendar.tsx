@@ -13,7 +13,7 @@ import {
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// -- Types ---------------------------------------------------------------------
 
 interface BookingEvent {
   id: string;
@@ -60,7 +60,7 @@ interface CleaningEvent {
 
 type CalEvent = BookingEvent | OwnerBlockEvent | IcalBlockEvent | CleaningEvent;
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -87,14 +87,14 @@ function fmtDate(s: string): string {
 }
 
 function fmtMoney(v: number): string {
-  return v == null ? '—' : `${v.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  return v == null ? '\u2014' : `${v.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 }
 
 function isBetween(day: string, start: string, end: string): boolean {
   return day >= start && day < end;
 }
 
-// ── Status config ─────────────────────────────────────────────────────────────
+// -- Status config -------------------------------------------------------------
 
 const STATUS_CFG: Record<string, { bar: string; dot: string; label: string; text: string }> = {
   confirmed:        { bar: 'bg-emerald-500',  dot: 'bg-emerald-500',  label: 'Confirmed',        text: 'text-emerald-700' },
@@ -126,7 +126,7 @@ function labelFor(e: CalEvent): string {
   return '';
 }
 
-// ── Detail panel ──────────────────────────────────────────────────────────────
+// -- Detail panel --------------------------------------------------------------
 
 function EventDetail({ event, onClose }: { event: CalEvent; onClose: () => void }) {
   const cfg = cfgFor(event);
@@ -203,7 +203,7 @@ function EventDetail({ event, onClose }: { event: CalEvent; onClose: () => void 
   );
 }
 
-// ── Legend ────────────────────────────────────────────────────────────────────
+// -- Legend --------------------------------------------------------------------
 
 function Legend() {
   const items = [
@@ -216,10 +216,10 @@ function Legend() {
     { key: 'cleaning',         label: 'Cleaning' },
   ];
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-gray-600">
+    <div className="flex flex-wrap gap-x-2 gap-y-1 text-[10px] text-gray-600 sm:gap-x-4 sm:gap-y-1.5 sm:text-xs">
       {items.map(i => (
-        <span key={i.key} className="flex items-center gap-1.5">
-          <span className={`w-2.5 h-2.5 rounded-sm ${STATUS_CFG[i.key].bar}`} />
+        <span key={i.key} className="flex items-center gap-1 sm:gap-1.5">
+          <span className={`w-2 h-2 flex-shrink-0 rounded-sm sm:w-2.5 sm:h-2.5 ${STATUS_CFG[i.key].bar}`} />
           {i.label}
         </span>
       ))}
@@ -227,7 +227,7 @@ function Legend() {
   );
 }
 
-// ── Calendar tab ──────────────────────────────────────────────────────────────
+// -- Calendar tab --------------------------------------------------------------
 
 function CalendarView() {
   const today = new Date();
@@ -290,9 +290,9 @@ function CalendarView() {
     if (blocksRes.error)   console.error('[AdminCalendar] owner_blocks query error:', blocksRes.error.message);
     if (icalRes.error)     console.error('[AdminCalendar] blocked_dates query error:', icalRes.error.message);
     if (cleaningRes.error) console.error('[AdminCalendar] cleaning_tasks query error:', cleaningRes.error.message);
-    console.log('[AdminCalendar] range:', rStart, '→', rEnd, '| bookings:', bookingsRes.data?.length ?? 0, '| ical blocks:', icalRes.data?.length ?? 0);
+    console.log('[AdminCalendar] range:', rStart, '\u2192', rEnd, '| bookings:', bookingsRes.data?.length ?? 0, '| ical blocks:', icalRes.data?.length ?? 0);
 
-    // Build source lookup: ical_source id → {name, platform}
+    // Build source lookup: ical_source id -> {name, platform}
     const sourceMap = new Map<string, { name: string; platform: string | null }>();
     (sourcesRes.data ?? []).forEach((s: Record<string, unknown>) => {
       sourceMap.set(s.id as string, { name: s.name as string, platform: (s.platform as string) || null });
@@ -436,27 +436,35 @@ function CalendarView() {
   return (
     <div ref={gridRef} className="relative">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-        <div className="flex items-center gap-2">
-          <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+      <div className="flex flex-wrap items-center justify-between mb-4 gap-2 sm:gap-3">
+        <div className="flex w-full items-center justify-between gap-1 sm:w-auto sm:justify-start sm:gap-2">
+          <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Previous month">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <h2 className="text-lg font-semibold text-gray-900 w-44 text-center">
+          <h2 className="min-w-0 flex-1 text-base font-semibold text-gray-900 text-center whitespace-nowrap sm:w-44 sm:flex-none sm:text-lg">
             {MONTHS[month]} {year}
           </h2>
-          <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+          <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Next month">
             <ChevronRight className="w-4 h-4" />
           </button>
           <button
             onClick={() => { setYear(today.getFullYear()); setMonth(today.getMonth()); }}
-            className="ml-2 px-3 py-1 text-xs font-medium border rounded-lg hover:bg-gray-50 transition-colors text-gray-600"
+            className="hidden sm:inline-block ml-2 px-3 py-1 text-xs font-medium border rounded-lg hover:bg-gray-50 transition-colors text-gray-600"
           >
             Today
           </button>
         </div>
-        <button onClick={loadEvents} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500" title="Refresh">
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+        <div className="flex items-center gap-2 ml-auto sm:ml-0">
+          <button
+            onClick={() => { setYear(today.getFullYear()); setMonth(today.getMonth()); }}
+            className="sm:hidden px-3 py-1 text-xs font-medium border rounded-lg hover:bg-gray-50 transition-colors text-gray-600"
+          >
+            Today
+          </button>
+          <button onClick={loadEvents} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500" title="Refresh" aria-label="Refresh calendar">
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       <Legend />
@@ -482,13 +490,13 @@ function CalendarView() {
               return (
                 <div
                   key={di}
-                  className={`min-h-[80px] sm:min-h-[96px] p-1 sm:p-1.5 ${di < 6 ? 'border-r' : ''} ${
+                  className={`min-w-0 min-h-[62px] sm:min-h-[96px] p-0.5 sm:p-1.5 ${di < 6 ? 'border-r' : ''} ${
                     isCurrentMonth ? 'bg-white' : 'bg-gray-50/60'
                   }`}
                 >
                   {day && (
                     <>
-                      <div className={`text-xs font-medium mb-1 w-6 h-6 flex items-center justify-center rounded-full ${
+                      <div className={`text-[10px] sm:text-xs font-medium mb-1 w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full ${
                         isToday
                           ? 'bg-gray-900 text-white'
                           : isCurrentMonth
@@ -505,15 +513,16 @@ function CalendarView() {
                             <button
                               key={e.id + ds}
                               onClick={ev => handleEventClick(ev, e)}
-                              className={`w-full text-left rounded px-1 py-0.5 text-xs truncate transition-opacity hover:opacity-80 ${cfg.bar} text-white font-medium`}
-                              title={isFirst ? labelFor(e) : undefined}
+                              className={`block w-full h-2.5 sm:h-auto text-left rounded-sm sm:rounded px-0 sm:px-1 py-0 sm:py-0.5 text-xs truncate transition-opacity hover:opacity-80 ${cfg.bar} text-white font-medium`}
+                              title={labelFor(e)}
+                              aria-label={`${cfg.label}: ${labelFor(e)} on ${fmtDate(ds)}`}
                             >
-                              {isFirst ? <span className="truncate">{labelFor(e)}</span> : <span>&nbsp;</span>}
+                              <span className="hidden sm:inline">{isFirst ? labelFor(e) : '\u00a0'}</span>
                             </button>
                           );
                         })}
                         {dayEvents.length > 3 && (
-                          <p className="text-xs text-gray-400 pl-1">+{dayEvents.length - 3} more</p>
+                          <p className="text-[9px] sm:text-xs text-gray-400 pl-0.5 sm:pl-1">+{dayEvents.length - 3} more</p>
                         )}
                       </div>
                     </>
@@ -529,7 +538,7 @@ function CalendarView() {
       {selected && popoverPos && (
         <div
           ref={popoverRef}
-          className="absolute z-50"
+          className="absolute z-50 hidden sm:block"
           style={{ top: popoverPos.top, left: Math.max(0, popoverPos.left) }}
         >
           <EventDetail event={selected} onClose={() => { setSelected(null); setPopoverPos(null); }} />
@@ -537,7 +546,7 @@ function CalendarView() {
       )}
 
       {/* Mobile: bottom sheet */}
-      {selected && !popoverPos && (
+      {selected && (
         <div className="fixed inset-0 z-50 flex items-end sm:hidden">
           <div className="absolute inset-0 bg-black/30" onClick={() => setSelected(null)} />
           <div className="relative w-full bg-white rounded-t-2xl p-4 max-h-[70vh] overflow-y-auto">
@@ -555,7 +564,7 @@ function CalendarView() {
   );
 }
 
-// ── Main page ─────────────────────────────────────────────────────────────────
+// -- Main page -----------------------------------------------------------------
 
 function PricingPanel() {
   const [pricingTab, setPricingTab] = useState<'rates' | 'fees'>('rates');
@@ -583,7 +592,7 @@ function PricingPanel() {
   if (!pricingSettings) {
     return (
       <div className="bg-white rounded-2xl border p-6">
-        <div className="text-sm text-gray-400">Loading pricing…</div>
+        <div className="text-sm text-gray-400">Loading pricing&#8230;</div>
       </div>
     );
   }
@@ -665,26 +674,26 @@ export default function AdminCalendar() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="min-w-0 w-full max-w-7xl space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Calendar</h2>
         <p className="text-sm text-gray-500 mt-1">View bookings, manage availability, and sync external calendars.</p>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-1 sm:border-b sm:border-gray-200">
         {TABS.map(({ id, label, icon: Icon, badge }) => (
           <button
             key={id}
             onClick={() => switchTab(id)}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+            className={`flex min-w-0 items-center justify-center gap-1.5 rounded-lg border px-2 py-2.5 text-xs font-medium transition-colors sm:justify-start sm:rounded-none sm:border-0 sm:border-b-2 sm:-mb-px sm:px-4 sm:text-sm ${
               activeTab === id
-                ? 'border-gray-900 text-gray-900'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-gray-900 bg-gray-900 text-white sm:bg-transparent sm:text-gray-900'
+                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 sm:border-transparent sm:bg-transparent sm:text-gray-500 sm:hover:text-gray-700'
             }`}
           >
-            <Icon className="w-3.5 h-3.5" />
-            {label}
+            <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+            <span className="whitespace-nowrap">{label}</span>
             {badge && (
               <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[9px] font-bold tracking-wide text-red-700">
                 {badge}
@@ -695,7 +704,7 @@ export default function AdminCalendar() {
       </div>
 
       {activeTab === 'calendar' && (
-        <div className="bg-white rounded-2xl border p-4 sm:p-6">
+        <div className="min-w-0 bg-white rounded-2xl border p-3 sm:p-6">
           <CalendarView />
         </div>
       )}
