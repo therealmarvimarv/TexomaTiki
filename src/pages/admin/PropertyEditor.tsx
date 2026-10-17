@@ -341,6 +341,8 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
   const [items, setItems] = useState<NeighborhoodItem[]>([]);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
+  const pendingNewPlaceIdRef = useRef<string | null>(null);
+  const newPlaceNameInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   useEffect(() => {
     supabase
@@ -353,12 +355,24 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
       });
   }, [propertyId]);
 
+  // Once the new item is rendered, bring its name field into view and focus it.
+  useEffect(() => {
+    const pendingId = pendingNewPlaceIdRef.current;
+    const input = pendingId ? newPlaceNameInputRefs.current[pendingId] : null;
+    if (!input) return;
+
+    pendingNewPlaceIdRef.current = null;
+    input.focus({ preventScroll: true });
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [items]);
+
   const update = (id: string, field: keyof NeighborhoodItem, value: string | number) => {
     setItems(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item));
   };
 
   const addItem = () => {
     const tempId = `new-${Date.now()}`;
+    pendingNewPlaceIdRef.current = tempId;
     setItems(prev => [...prev, {
       id: tempId,
       name: '',
@@ -498,6 +512,7 @@ function NeighborhoodEditor({ propertyId }: { propertyId: string }) {
               {items.filter(i => i.isNew).map(item => (
                 <div key={item.id} className="flex gap-3 items-center max-[669px]:grid max-[669px]:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)_auto] max-[669px]:gap-x-3 max-[669px]:gap-y-2">
                   <input
+                    ref={element => { newPlaceNameInputRefs.current[item.id] = element; }}
                     type="text"
                     placeholder="Place name"
                     value={item.name}
