@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import {
@@ -10,11 +10,83 @@ import {
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
-// --- Helpers ---
+// --- Property-local display helpers ---
+// All date-only booking / operations values retain their recorded calendar day.
+// True timestamps (inquiries and sync events) use the saved property time zone.
+type PropertyDateFormat = 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD';
+type OverviewPreferences = { timeZone: string; dateFormat: PropertyDateFormat };
 
-function fmtDate(iso: string | null | undefined): string {
-  if (!iso) return '\u2014';
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const DEFAULT_PREFERENCES: OverviewPreferences = {
+  timeZone: 'America/Los_Angeles',
+  dateFormat: 'MM/DD/YYYY',
+};
+const OverviewPreferencesContext = createContext<OverviewPreferences>(DEFAULT_PREFERENCES);
+function useOverviewPreferences(): OverviewPreferences {
+  return useContext(OverviewPreferencesContext);
+}
+
+function validPreferences(row: { timezone?: string | null; date_format?: string | null } | null): OverviewPreferences {
+  const timeZoneCandidate = row?.timezone || DEFAULT_PREFERENCES.timeZone;
+  let timeZone = DEFAULT_PREFERENCES.timeZone;
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: timeZoneCandidate });
+    timeZone = timeZoneCandidate;
+  } catch { /* Invalid IANA zone: retain the documented default. */ }
+  const requested = row?.date_format;
+  const dateFormat: PropertyDateFormat = requested === 'DD/MM/YYYY' || requested === 'YYYY-MM-DD'
+    ? requested : DEFAULT_PREFERENCES.dateFormat;
+  return { timeZone, dateFormat };
+}
+
+function propertyDay(instant: Date, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(instant);
+  const get = (key: string) => parts.find(p => p.type === key)?.value ?? '';
+  return `${get('year')}-${get('month')}-${get('day')}`;
+}
+
+function storedDay(value: string): string {
+  // The booking engine stores check-in/check-out as calendar dates represented
+  // by TIMESTAMPTZ values; retain the YYYY-MM-DD part without re-zoning them.
+  return value.slice(0, 10);
+}
+
+function calendarDayPlus(yyyyMmDd: string, days: number): string {
+  const d = new Date(`${yyyyMmDd}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function fmtCalendarDate(value: string | null | undefined, format: PropertyDateFormat): string {
+  if (!value) return '\u2014';
+  const iso = storedDay(value);
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!match) return '\u2014';
+  const [, y, m, d] = match;
+  return format === 'YYYY-MM-DD' ? `${y}-${m}-${d}`
+    : format === 'DD/MM/YYYY' ? `${d}/${m}/${y}` : `${m}/${d}/${y}`;
+}
+
+function fmtEventDate(timestamp: string, prefs: OverviewPreferences): string {
+  const instant = new Date(timestamp);
+  return Number.isNaN(instant.getTime()) ? '\u2014'
+    : fmtCalendarDate(propertyDay(instant, prefs.timeZone), prefs.dateFormat);
+}
+
+function fmtSyncTimestamp(timestamp: string, prefs: OverviewPreferences): string {
+  const instant = new Date(timestamp);
+  if (Number.isNaN(instant.getTime())) return '\u2014';
+  const clock = new Intl.DateTimeFormat('en-US', {
+    timeZone: prefs.timeZone, hour: 'numeric', minute: '2-digit',
+  }).format(instant);
+  return `${fmtEventDate(timestamp, prefs)} ${clock}`;
+}
+
+function fmtHeadingDate(dateOnly: string): string {
+  return new Date(`${dateOnly}T12:00:00Z`).toLocaleDateString('en-US', {
+    timeZone: 'UTC', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+  });
 }
 
 function fmtMoney(cents: number): string {
@@ -159,12 +231,14 @@ function useSummaryStats() {
   return { stats, loading };
 }
 
-function StatsRow() {
+function StatsRow({ currentSyncStatus }: { currentSyncStatus: SummaryStats['syncStatus'] | null }) {
   const { stats, loading } = useSummaryStats();
+  // Only the Calendar Sync card receives the refreshed status. Other stat cards remain unchanged.
+  const syncStatus = currentSyncStatus ?? stats?.syncStatus;
   const syncLabel =
-    stats?.syncStatus === 'healthy' ? 'All synced' :
-    stats?.syncStatus === 'error' ? 'Sync error' :
-    stats?.syncStatus === 'warning' ? 'Needs attention' : 'No sources';
+    syncStatus === 'healthy' ? 'All synced' :
+    syncStatus === 'error' ? 'Sync error' :
+    syncStatus === 'warning' ? 'Needs attention' : 'No sources';
 
   return (
     <div className="grid grid-cols-2 min-[700px]:grid-cols-4 min-[834px]:grid-cols-4 lg:grid-cols-4 gap-4">
@@ -196,11 +270,11 @@ function StatsRow() {
         icon={RefreshCw}
         label="Calendar Sync"
         value={loading ? '\u2014' : syncLabel}
-        sub={stats?.syncStatus === 'none' ? 'No iCal sources' : 'iCal import status'}
+        sub={syncStatus === 'none' ? 'No iCal sources' : 'iCal import status'}
         accent={
-          stats?.syncStatus === 'healthy' ? 'bg-green-50' :
-          stats?.syncStatus === 'error' ? 'bg-red-50' :
-          stats?.syncStatus === 'warning' ? 'bg-yellow-50' : 'bg-gray-100'
+          syncStatus === 'healthy' ? 'bg-green-50' :
+          syncStatus === 'error' ? 'bg-red-50' :
+          syncStatus === 'warning' ? 'bg-yellow-50' : 'bg-gray-100'
         }
         loading={loading}
       />
@@ -223,6 +297,7 @@ interface BookingRow {
 }
 
 function UpcomingBookings() {
+  const { dateFormat } = useOverviewPreferences();
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -267,7 +342,7 @@ function UpcomingBookings() {
                 <div className="min-w-0">
                   <p className="font-medium text-gray-900 text-sm truncate">{b.guest_name}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {fmtDate(b.check_in)} &#8594; {fmtDate(b.check_out)}
+                    {fmtCalendarDate(b.check_in, dateFormat)} &#8594; {fmtCalendarDate(b.check_out, dateFormat)}
                     <span className="mx-1.5 text-gray-300">&#183;</span>
                     {nights}n &#183; {b.guests} guest{b.guests !== 1 ? 's' : ''}
                   </p>
@@ -293,6 +368,7 @@ function UpcomingBookings() {
 // --- 3. Pending requests ---
 
 function PendingRequests() {
+  const { dateFormat } = useOverviewPreferences();
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -302,6 +378,7 @@ function PendingRequests() {
       .select('id,guest_name,check_in,check_out,guests,amount_total,total_price,status,payment_status,payment_expires_at' as string)
       .eq('property_id', PROPERTY_ID)
       .in('status', ['pending_review', 'pending_payment'])
+      .is('archived_at', null)
       .order('created_at', { ascending: false })
       .limit(5)
       .then(({ data, error: err }) => {
@@ -334,7 +411,7 @@ function PendingRequests() {
                 <div className="min-w-0">
                   <p className="font-medium text-gray-900 text-sm truncate">{b.guest_name}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {fmtDate(b.check_in)} &#8594; {fmtDate(b.check_out)}
+                    {fmtCalendarDate(b.check_in, dateFormat)} &#8594; {fmtCalendarDate(b.check_out, dateFormat)}
                   </p>
                   {expires && (
                     <span className="inline-block mt-1 text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
@@ -415,7 +492,7 @@ function RevenueWidget() {
     { key: 'month', topLabel: 'This', bottomLabel: 'Month' },
     { key: 'next30', topLabel: 'Next', bottomLabel: '30d' },
     { key: 'next90', topLabel: 'Next', bottomLabel: '90d' },
-    { key: 'ytd', topLabel: 'Year to', bottomLabel: 'Date' },
+    { key: 'ytd', topLabel: 'This', bottomLabel: 'Year' },
   ];
 
   return (
@@ -475,14 +552,23 @@ interface DayDetail {
 }
 
 function MiniCalendar() {
-  const [year, setYear] = useState(() => new Date().getFullYear());
-  const [month, setMonth] = useState(() => new Date().getMonth());
+  const prefs = useOverviewPreferences();
+  const [year, setYear] = useState(() => Number(propertyDay(new Date(), DEFAULT_PREFERENCES.timeZone).slice(0, 4)));
+  const [month, setMonth] = useState(() => Number(propertyDay(new Date(), DEFAULT_PREFERENCES.timeZone).slice(5, 7)) - 1);
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selected, setSelected] = useState<DayDetail | null>(null);
 
+  // Align the initially displayed month after the saved time zone is loaded.
   useEffect(() => {
+    const date = propertyDay(new Date(), prefs.timeZone);
+    setYear(Number(date.slice(0, 4)));
+    setMonth(Number(date.slice(5, 7)) - 1);
+  }, [prefs.timeZone]);
+
+  useEffect(() => {
+    let active = true;
     setLoading(true);
     setError('');
     const pad = (n: number) => String(n).padStart(2, '0');
@@ -507,15 +593,14 @@ function MiniCalendar() {
         .lte('start_date', lastDay)
         .gt('end_date', firstDay),
     ]).then(([bRes, bdRes, obRes]) => {
+      if (!active) return;
       if (bRes.error || bdRes.error) { setError('Could not load calendar.'); setLoading(false); return; }
       const evts: CalEvent[] = [];
 
       for (const b of (bRes.data ?? [])) {
-        const ci = new Date(b.check_in);
-        const co = new Date(b.check_out);
-        const cur = new Date(ci);
-        while (cur < co) {
-          const dateStr = cur.toISOString().split('T')[0];
+        const ci = storedDay(b.check_in);
+        const co = storedDay(b.check_out);
+        for (let dateStr = ci; dateStr < co; dateStr = calendarDayPlus(dateStr, 1)) {
           if (dateStr >= firstDay && dateStr <= lastDay) {
             evts.push({
               date: dateStr,
@@ -524,7 +609,6 @@ function MiniCalendar() {
               bookingId: b.id,
             });
           }
-          cur.setDate(cur.getDate() + 1);
         }
       }
 
@@ -539,10 +623,7 @@ function MiniCalendar() {
       }
 
       for (const ob of (obRes.data ?? [])) {
-        const cur = new Date(ob.start_date + 'T00:00:00');
-        const end = new Date(ob.end_date + 'T00:00:00');
-        while (cur < end) {
-          const ds = `${cur.getFullYear()}-${pad(cur.getMonth() + 1)}-${pad(cur.getDate())}`;
+        for (let ds = ob.start_date; ds < ob.end_date; ds = calendarDayPlus(ds, 1)) {
           if (ds >= firstDay && ds <= lastDay) {
             const taken = evts.some(e => e.date === ds && (e.type === 'confirmed' || e.type === 'pending'));
             if (!taken) {
@@ -553,18 +634,18 @@ function MiniCalendar() {
               });
             }
           }
-          cur.setDate(cur.getDate() + 1);
         }
       }
 
       setEvents(evts);
       setLoading(false);
     });
+    return () => { active = false; };
   }, [year, month]);
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDow = new Date(year, month, 1).getDay();
-  const today = new Date().toISOString().split('T')[0];
+  const today = propertyDay(new Date(), prefs.timeZone);
 
   function eventsForDate(dateStr: string): CalEvent[] {
     return events.filter(e => e.date === dateStr);
@@ -635,7 +716,7 @@ function MiniCalendar() {
                     key={day}
                     type="button"
                     onClick={() => handleDayClick(dateStr)}
-                    aria-label={fmtDate(dateStr)}
+                    aria-label={fmtCalendarDate(dateStr, prefs.dateFormat)}
                     aria-pressed={isSelected}
                     className={`relative flex min-h-[24px] flex-col items-center justify-center rounded-lg text-[11px] transition-colors 2xl:min-h-[26px] 2xl:text-xs
                       ${isSelected ? 'bg-gray-900 text-white' : isToday ? 'bg-blue-50 font-semibold text-blue-700' : 'text-gray-700 hover:bg-gray-50'}
@@ -676,7 +757,7 @@ function MiniCalendar() {
         {selected && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-2">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-gray-900">{fmtDate(selected.date)}</p>
+              <p className="text-sm font-semibold text-gray-900">{fmtCalendarDate(selected.date, prefs.dateFormat)}</p>
               <button onClick={() => setSelected(null)} className="text-xs text-gray-400 hover:text-gray-700">&#10005;</button>
             </div>
             <div className="space-y-2">
@@ -724,6 +805,7 @@ const INQUIRY_STATUS_STYLES: Record<string, string> = {
 };
 
 function RecentInquiries() {
+  const prefs = useOverviewPreferences();
   const [inquiries, setInquiries] = useState<InquiryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -774,7 +856,7 @@ function RecentInquiries() {
                 <div className="min-w-0">
                   <span className="font-medium text-sm text-gray-900">{inq.sender_name}</span>
                   <span className="text-xs text-gray-400 mx-1.5">&#183;</span>
-                  <span className="text-xs text-gray-500">{fmtDate(inq.created_at)}</span>
+                  <span className="text-xs text-gray-500">{fmtEventDate(inq.created_at, prefs)}</span>
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${INQUIRY_STATUS_STYLES[inq.status] ?? 'bg-gray-100 text-gray-600'}`}>
                   {inq.status}
@@ -831,7 +913,7 @@ function RecentInquiries() {
               )}
               <div>
                 <dt className="text-xs text-gray-500 mb-0.5">Received</dt>
-                <dd className="text-gray-900">{fmtDate(detail.created_at)}</dd>
+                <dd className="text-gray-900">{fmtEventDate(detail.created_at, prefs)}</dd>
               </div>
               <div>
                 <dt className="text-xs text-gray-500 mb-0.5">Message</dt>
@@ -870,11 +952,13 @@ interface IcalSource {
   last_error: string | null;
 }
 
-function SyncHealth() {
+function SyncHealth({ onStatusRefreshed }: { onStatusRefreshed: (status: SummaryStats['syncStatus']) => void }) {
+  const prefs = useOverviewPreferences();
   const [sources, setSources] = useState<IcalSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [syncing, setSyncing] = useState<string | null>(null);
+  const [syncErrors, setSyncErrors] = useState<Record<string, string>>({});
 
   async function load() {
     const { data, error: err } = await supabase
@@ -882,8 +966,18 @@ function SyncHealth() {
       .select('id,name,url,enabled,last_sync_at,last_error')
       .eq('property_id', PROPERTY_ID)
       .order('created_at', { ascending: true });
-    if (err) setError('Could not load calendar sync status.');
+    // Clear a previous load error as soon as a subsequent query succeeds.
+    setError(err ? 'Could not load calendar sync status.' : '');
     setSources((data ?? []) as IcalSource[]);
+    if (!err) {
+      // Reuse this successful source refresh to update the small Overview status card.
+      // No extra database requests, and no changes to the manual import or cron.
+      const refreshed = (data ?? []) as IcalSource[];
+      const status: SummaryStats['syncStatus'] = refreshed.length === 0 ? 'none' :
+        refreshed.some(s => s.last_error) ? 'error' :
+        refreshed.some(s => s.enabled && !s.last_sync_at) ? 'warning' : 'healthy';
+      onStatusRefreshed(status);
+    }
     setLoading(false);
   }
 
@@ -891,17 +985,46 @@ function SyncHealth() {
 
   async function handleSyncOne(sourceId: string) {
     setSyncing(sourceId);
+    setSyncErrors(previous => ({ ...previous, [sourceId]: '' }));
     try {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ical-import`, {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ical-import`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ source_id: sourceId }),
       });
-      await load();
+      // The importer returns { synced: [{ name, dates, error? }] } even when
+      // an individual feed fails (HTTP 200). HTTP failures return { error }.
+      const result = await response.json().catch(() => null) as {
+        error?: string;
+        synced?: { name: string; dates: number; error?: string }[];
+      } | null;
+      if (!response.ok) {
+        throw new Error(result?.error || `Calendar sync request failed (HTTP ${response.status}).`);
+      }
+      if (!Array.isArray(result?.synced) || result.synced.length === 0) {
+        throw new Error('Calendar sync did not return a result for this source.');
+      }
+      const sourceError = result.synced.find(item => item?.error)?.error;
+      if (sourceError) throw new Error(sourceError);
+    } catch (err) {
+      const message = err instanceof TypeError
+        ? 'Could not contact calendar sync. Check your connection and try again.'
+        : err instanceof Error ? err.message : 'Calendar sync failed. Please try again.';
+      setSyncErrors(previous => ({ ...previous, [sourceId]: message }));
     } finally {
-      setSyncing(null);
+      // Refresh existing database-backed status on success AND failure.
+      try {
+        await load();
+      } catch {
+        setSyncErrors(previous => ({
+          ...previous,
+          [sourceId]: previous[sourceId] || 'Could not refresh calendar sync status.',
+        }));
+      } finally {
+        setSyncing(null);
+      }
     }
   }
 
@@ -970,9 +1093,12 @@ function SyncHealth() {
                   <p className="text-sm font-medium text-gray-900">{s.name}</p>
                   <p className="text-xs text-gray-400 font-mono truncate">{maskedUrl}</p>
                   {s.last_error && <p className="text-xs text-red-500 mt-0.5">{s.last_error}</p>}
+                  {syncErrors[s.id] && syncErrors[s.id] !== s.last_error && (
+                    <p className="text-xs text-red-600 mt-0.5" role="alert">Sync now: {syncErrors[s.id]}</p>
+                  )}
                   {!s.last_error && (
                     <p className="text-xs text-gray-400 mt-0.5">
-                      {s.last_sync_at ? `Synced ${new Date(s.last_sync_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}` : 'Never synced'}
+                      {s.last_sync_at ? `Synced ${fmtSyncTimestamp(s.last_sync_at, prefs)}` : 'Never synced'}
                     </p>
                   )}
                 </div>
@@ -996,17 +1122,34 @@ function SyncHealth() {
 // --- Main Overview ---
 
 export default function AdminOverview() {
+  const [prefs, setPrefs] = useState<OverviewPreferences>(DEFAULT_PREFERENCES);
+  const [currentSyncStatus, setCurrentSyncStatus] = useState<SummaryStats['syncStatus'] | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    supabase.from('account_settings')
+      .select('timezone,date_format')
+      .eq('property_id', PROPERTY_ID)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (active && !error) setPrefs(validPreferences(data));
+        if (error) console.error('Overview: could not load Account Preferences', error);
+      });
+    return () => { active = false; };
+  }, []);
+
   return (
+    <OverviewPreferencesContext.Provider value={prefs}>
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
         <p className="text-sm text-gray-500 mt-1">
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          {fmtHeadingDate(propertyDay(new Date(), prefs.timeZone))}
         </p>
       </div>
 
       {/* Stats row */}
-      <StatsRow />
+      <StatsRow currentSyncStatus={currentSyncStatus} />
 
       {/* Upcoming + Pending side by side */}
       <div className="grid grid-cols-1 min-[834px]:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -1023,7 +1166,7 @@ export default function AdminOverview() {
       {/* Inquiries + Sync health side by side */}
       <div className="grid grid-cols-1 min-[700px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] min-[834px]:grid-cols-2 lg:grid-cols-2 gap-6 min-[700px]:max-[833px]:gap-4">
         <RecentInquiries />
-        <SyncHealth />
+        <SyncHealth onStatusRefreshed={setCurrentSyncStatus} />
       </div>
 
       {/* Owner operations widgets */}
@@ -1031,12 +1174,14 @@ export default function AdminOverview() {
         <OwnerOpsWidgets />
       </div>
     </div>
+    </OverviewPreferencesContext.Provider>
   );
 }
 
 // --- Owner ops widgets ---
 
 function OwnerOpsWidgets() {
+  const prefs = useOverviewPreferences();
   const [nextCleaning, setNextCleaning] = useState<{ task_date: string; assigned_to: string; guest_name: string | null } | null>(null);
   const [openMaint, setOpenMaint] = useState(0);
   const [activeBlocks, setActiveBlocks] = useState(0);
@@ -1044,8 +1189,9 @@ function OwnerOpsWidgets() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    const in7 = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    let active = true;
+    const today = propertyDay(new Date(), prefs.timeZone);
+    const in7 = calendarDayPlus(today, 7);
     Promise.all([
       supabase.from('cleaning_tasks').select('task_date,assigned_to,bookings(guest_name)')
         .eq('property_id', PROPERTY_ID)
@@ -1060,6 +1206,7 @@ function OwnerOpsWidgets() {
         .eq('property_id', PROPERTY_ID).eq('status', 'confirmed')
         .gte('check_out', today).lte('check_out', in7).order('check_out').limit(5),
     ]).then(([cleaning, maint, blocks, checkouts]) => {
+      if (!active) return;
       const c = cleaning.data as any;
       setNextCleaning(c ? { task_date: c.task_date, assigned_to: c.assigned_to, guest_name: c.bookings?.guest_name ?? null } : null);
       setOpenMaint(maint.count ?? 0);
@@ -1067,9 +1214,10 @@ function OwnerOpsWidgets() {
       setUpcomingCheckouts((checkouts.data ?? []) as { guest_name: string; check_out: string }[]);
       setLoading(false);
     });
-  }, []);
+    return () => { active = false; };
+  }, [prefs.timeZone]);
 
-  const fmtShort = (d: string) => new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const fmtShort = (d: string) => fmtCalendarDate(d, prefs.dateFormat);
 
   return (
     <div className="col-span-full">
