@@ -8,7 +8,7 @@ import { supabase } from '../../lib/supabase';
 
 const PROPERTY_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// -- Types --
 
 interface FAQ {
   id: string;
@@ -62,7 +62,7 @@ const TABS: { id: Tab; label: string }[] = [
 const FAQ_CATEGORIES = ['Booking', 'Payments', 'Check-in / Check-out', 'Pets', 'Cancellations', 'House Rules', 'Local Area', 'General'];
 const REC_CATEGORIES = ['Beaches & Outdoors', 'Food & Drinks', 'Family Activities', 'Shopping', 'Essentials', 'General'];
 
-// ─── Shared helpers ───────────────────────────────────────────────────────────
+// -- Shared helpers --
 
 function StatusBadge({ active }: { active: boolean }) {
   return (
@@ -72,7 +72,7 @@ function StatusBadge({ active }: { active: boolean }) {
   );
 }
 
-// ─── FAQ Tab ──────────────────────────────────────────────────────────────────
+// -- FAQ Tab --
 
 function FAQsTab() {
   const [items, setItems] = useState<FAQ[]>([]);
@@ -130,7 +130,7 @@ function FAQsTab() {
     await Promise.all(updates.map((u) => supabase.from('faqs').update({ sort_order: u.sort_order }).eq('id', u.id)));
   }
 
-  if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading…</div>;
+  if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading&#8230;</div>;
 
   return (
     <div className="space-y-4">
@@ -163,9 +163,9 @@ function FAQsTab() {
         </div>
       )}
 
-      <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden">
+      <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden max-[639px]:divide-y-0 max-[639px]:border-0 max-[639px]:overflow-visible max-[639px]:space-y-3">
         {items.map((item, i) => (
-          <div key={item.id} className="bg-white">
+          <div key={item.id} className="bg-white max-[639px]:rounded-xl max-[639px]:border max-[639px]:border-gray-200 max-[639px]:overflow-hidden">
             {editId === item.id ? (
               <div className="p-4 space-y-3 bg-blue-50">
                 <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" value={draft.question ?? ''} onChange={(e) => setDraft((d) => ({ ...d, question: e.target.value }))} />
@@ -183,23 +183,23 @@ function FAQsTab() {
                 </div>
               </div>
             ) : (
-              <div className="px-5 py-4 flex items-start gap-3">
-                <div className="flex flex-col gap-1 flex-shrink-0 mt-1">
+              <div className="px-5 py-4 flex items-start gap-3 max-[639px]:relative max-[639px]:flex-col max-[639px]:gap-0 max-[639px]:p-0">
+                <div className="flex flex-col gap-1 flex-shrink-0 mt-1 max-[639px]:absolute max-[639px]:bottom-3 max-[639px]:left-3 max-[639px]:mt-0 max-[639px]:flex-row">
                   <button onClick={() => move(i, -1)} disabled={i === 0} className="text-gray-300 hover:text-gray-600 disabled:opacity-30 transition-colors"><ChevronUp className="w-4 h-4" /></button>
                   <button onClick={() => move(i, 1)} disabled={i === items.length - 1} className="text-gray-300 hover:text-gray-600 disabled:opacity-30 transition-colors"><ChevronDown className="w-4 h-4" /></button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start gap-2 mb-1">
+                <div className="flex-1 min-w-0 max-[639px]:w-full max-[639px]:px-4 max-[639px]:pt-4 max-[639px]:pb-3 max-[639px]:flex max-[639px]:flex-col">
+                  <div className="flex items-start gap-2 mb-1 max-[639px]:order-1 max-[639px]:flex-col max-[639px]:gap-2 max-[639px]:mb-2">
                     <p className="text-sm font-medium text-gray-900 flex-1">{item.question}</p>
                     <StatusBadge active={item.is_active} />
                   </div>
-                  <p className="text-sm text-gray-500 leading-relaxed">{item.answer}</p>
-                  <span className="inline-block mt-1.5 text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{item.category}</span>
+                  <p className="text-sm text-gray-500 leading-relaxed max-[639px]:order-3">{item.answer}</p>
+                  <span className="inline-block mt-1.5 text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full max-[639px]:order-2 max-[639px]:self-start max-[639px]:mt-0 max-[639px]:mb-2">{item.category}</span>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button onClick={() => { setEditId(item.id); setDraft({ question: item.question, answer: item.answer, category: item.category }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors">Edit</button>
-                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors">{item.is_active ? 'Hide' : 'Show'}</button>
-                  <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                <div className="flex items-center gap-2 flex-shrink-0 max-[639px]:w-full max-[639px]:justify-end max-[639px]:border-t max-[639px]:border-gray-100 max-[639px]:px-4 max-[639px]:py-3 max-[639px]:pl-14">
+                  <button onClick={() => { setEditId(item.id); setDraft({ question: item.question, answer: item.answer, category: item.category }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2">Edit</button>
+                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2">{item.is_active ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 transition-colors max-[639px]:p-2 max-[639px]:rounded-lg max-[639px]:bg-red-50"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             )}
@@ -211,7 +211,7 @@ function FAQsTab() {
   );
 }
 
-// ─── House Rules Tab ──────────────────────────────────────────────────────────
+// -- House Rules Tab --
 
 function HouseRulesTab() {
   const [items, setItems] = useState<HouseRule[]>([]);
@@ -268,7 +268,7 @@ function HouseRulesTab() {
     await Promise.all(next.map((r, i) => supabase.from('house_rules').update({ sort_order: i * 10 }).eq('id', r.id)));
   }
 
-  if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading…</div>;
+  if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading&#8230;</div>;
 
   return (
     <div className="space-y-4">
@@ -281,29 +281,31 @@ function HouseRulesTab() {
 
       {editId === 'new' && <div className="bg-blue-50 border border-blue-100 rounded-xl p-5"><p className="text-sm font-semibold text-gray-900 mb-3">New rule</p><RuleForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>}
 
-      <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden">
+      <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden max-[639px]:divide-y-0 max-[639px]:border-0 max-[639px]:overflow-visible max-[639px]:space-y-3">
         {items.map((item, i) => (
-          <div key={item.id} className="bg-white">
+          <div key={item.id} className="bg-white max-[639px]:rounded-xl max-[639px]:border max-[639px]:border-gray-200 max-[639px]:overflow-hidden">
             {editId === item.id ? (
               <div className="p-4 bg-blue-50"><RuleForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>
             ) : (
-              <div className="px-5 py-4 flex items-start gap-3">
-                <div className="flex flex-col gap-1 flex-shrink-0 mt-1">
+              <div className="px-5 py-4 flex items-start gap-3 max-[639px]:relative max-[639px]:flex-col max-[639px]:gap-0 max-[639px]:p-0">
+                <div className="flex flex-col gap-1 flex-shrink-0 mt-1 max-[639px]:absolute max-[639px]:bottom-3 max-[639px]:left-3 max-[639px]:mt-0 max-[639px]:flex-row">
                   <button onClick={() => move(i, -1)} disabled={i === 0} className="text-gray-300 hover:text-gray-600 disabled:opacity-30"><ChevronUp className="w-4 h-4" /></button>
                   <button onClick={() => move(i, 1)} disabled={i === items.length - 1} className="text-gray-300 hover:text-gray-600 disabled:opacity-30"><ChevronDown className="w-4 h-4" /></button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-sm font-medium text-gray-900">{item.title}</p>
-                    <StatusBadge active={item.is_active} />
-                    <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{item.icon}</span>
+                <div className="flex-1 min-w-0 max-[639px]:w-full max-[639px]:px-4 max-[639px]:pt-4 max-[639px]:pb-3">
+                  <div className="flex items-center gap-2 mb-0.5 max-[639px]:flex-col max-[639px]:items-start max-[639px]:gap-2 max-[639px]:mb-2">
+                    <p className="text-sm font-medium text-gray-900 max-[639px]:w-full">{item.title}</p>
+                    <div className="contents max-[639px]:flex max-[639px]:flex-wrap max-[639px]:gap-2">
+                      <StatusBadge active={item.is_active} />
+                      <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{item.icon}</span>
+                    </div>
                   </div>
                   {item.description && <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>}
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button onClick={() => { setEditId(item.id); setDraft({ title: item.title, description: item.description, icon: item.icon }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50">Edit</button>
-                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50">{item.is_active ? 'Hide' : 'Show'}</button>
-                  <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
+                <div className="flex items-center gap-2 flex-shrink-0 max-[639px]:w-full max-[639px]:justify-end max-[639px]:border-t max-[639px]:border-gray-100 max-[639px]:px-4 max-[639px]:py-3 max-[639px]:pl-14">
+                  <button onClick={() => { setEditId(item.id); setDraft({ title: item.title, description: item.description, icon: item.icon }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2">Edit</button>
+                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2">{item.is_active ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 max-[639px]:p-2 max-[639px]:rounded-lg max-[639px]:bg-red-50"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             )}
@@ -365,7 +367,7 @@ function RuleForm({ draft, setDraft, save, saving, setEditId }: {
   );
 }
 
-// ─── Policies Tab ─────────────────────────────────────────────────────────────
+// -- Policies Tab --
 
 const BUILTIN_POLICY_TYPES = new Set(['cancellation', 'check_in_out', 'pet', 'accessibility']);
 
@@ -459,7 +461,7 @@ function PoliciesTab() {
     if (!error) setItems((prev) => prev.filter((p) => p.id !== id));
   }
 
-  if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading…</div>;
+  if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading&#8230;</div>;
 
   function PolicyForm() {
     const isCheckInOut = (draft.policy_type ?? '').trim() === 'check_in_out';
@@ -528,7 +530,7 @@ function PoliciesTab() {
               <textarea
                 rows={4}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
-                placeholder="Policy text shown to guests…"
+                placeholder={'Policy text shown to guests\u2026'}
                 value={draft.content ?? ''}
                 onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))}
               />
@@ -557,7 +559,7 @@ function PoliciesTab() {
               <textarea
                 rows={4}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
-                placeholder="Policy text shown to guests…"
+                placeholder={'Policy text shown to guests\u2026'}
                 value={draft.content ?? ''}
                 onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))}
               />
@@ -603,7 +605,7 @@ function PoliciesTab() {
             <textarea
               rows={6}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
-              placeholder="Policy text shown to guests…"
+              placeholder={'Policy text shown to guests\u2026'}
               value={draft.content ?? ''}
               onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))}
             />
@@ -650,38 +652,40 @@ function PoliciesTab() {
         </div>
       )}
 
-      <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden">
+      <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden max-[639px]:divide-y-0 max-[639px]:border-0 max-[639px]:overflow-visible max-[639px]:space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="bg-white">
+          <div key={item.id} className="bg-white max-[639px]:rounded-xl max-[639px]:border max-[639px]:border-gray-200 max-[639px]:overflow-hidden">
             {editId === item.id ? (
               <div className="p-5 bg-blue-50">
                 <p className="text-sm font-semibold text-gray-900 mb-3">Edit policy</p>
                 {PolicyForm()}
               </div>
             ) : (
-              <div className="px-5 py-4 flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="text-sm font-semibold text-gray-900">{item.title}</p>
-                    <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-mono">{item.policy_type}</span>
-                    <StatusBadge active={item.is_active} />
+              <div className="px-5 py-4 flex items-start justify-between gap-3 max-[639px]:flex-col max-[639px]:gap-0 max-[639px]:p-0">
+                <div className="flex-1 min-w-0 max-[639px]:w-full max-[639px]:px-4 max-[639px]:pt-4 max-[639px]:pb-3">
+                  <div className="flex items-center gap-2 mb-1 max-[639px]:flex-col max-[639px]:items-start max-[639px]:gap-2 max-[639px]:mb-2">
+                    <p className="text-sm font-semibold text-gray-900 max-[639px]:w-full">{item.title}</p>
+                    <div className="contents max-[639px]:flex max-[639px]:flex-wrap max-[639px]:gap-2">
+                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-mono">{item.policy_type}</span>
+                      <StatusBadge active={item.is_active} />
+                    </div>
                   </div>
                   <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">{item.content}</p>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
+                <div className="flex items-center gap-2 flex-shrink-0 mt-0.5 max-[639px]:w-full max-[639px]:justify-end max-[639px]:border-t max-[639px]:border-gray-100 max-[639px]:px-4 max-[639px]:py-3 max-[639px]:mt-0">
                   <button
                     onClick={() => { setEditId(item.id); setDraft({ policy_type: item.policy_type, title: item.title, content: item.content, metadata: item.metadata ?? {} }); }}
-                    className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => toggleActive(item)}
-                    className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2"
                   >
                     {item.is_active ? 'Hide' : 'Show'}
                   </button>
-                  <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                  <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 transition-colors max-[639px]:p-2 max-[639px]:rounded-lg max-[639px]:bg-red-50">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -697,7 +701,7 @@ function PoliciesTab() {
   );
 }
 
-// ─── Recommendations Tab ──────────────────────────────────────────────────────
+// -- Recommendations Tab --
 
 function RecommendationsTab() {
   const [items, setItems] = useState<Recommendation[]>([]);
@@ -751,7 +755,7 @@ function RecommendationsTab() {
     setItems((prev) => prev.filter((r) => r.id !== id));
   }
 
-  if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading…</div>;
+  if (loading) return <div className="py-8 text-center text-gray-400 text-sm">Loading&#8230;</div>;
 
   return (
     <div className="space-y-4">
@@ -764,29 +768,31 @@ function RecommendationsTab() {
 
       {editId === 'new' && <div className="bg-blue-50 border border-blue-100 rounded-xl p-5"><p className="text-sm font-semibold text-gray-900 mb-3">New recommendation</p><RecForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>}
 
-      <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden">
+      <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden max-[639px]:divide-y-0 max-[639px]:border-0 max-[639px]:overflow-visible max-[639px]:space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="bg-white">
+          <div key={item.id} className="bg-white max-[639px]:rounded-xl max-[639px]:border max-[639px]:border-gray-200 max-[639px]:overflow-hidden">
             {editId === item.id ? (
               <div className="p-5 bg-blue-50"><RecForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>
             ) : (
-              <div className="px-5 py-4 flex items-start gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-sm font-semibold text-gray-900">{item.name}</p>
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{item.category}</span>
-                    {item.is_featured && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Featured</span>}
-                    <StatusBadge active={item.is_active} />
+              <div className="px-5 py-4 flex items-start gap-3 max-[639px]:flex-col max-[639px]:gap-0 max-[639px]:p-0">
+                <div className="flex-1 min-w-0 max-[639px]:w-full max-[639px]:px-4 max-[639px]:pt-4 max-[639px]:pb-3">
+                  <div className="flex items-center gap-2 mb-0.5 max-[639px]:flex-col max-[639px]:items-start max-[639px]:gap-2 max-[639px]:mb-2">
+                    <p className="text-sm font-semibold text-gray-900 max-[639px]:w-full">{item.name}</p>
+                    <div className="contents max-[639px]:flex max-[639px]:flex-wrap max-[639px]:gap-2">
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{item.category}</span>
+                      {item.is_featured && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Featured</span>}
+                      <StatusBadge active={item.is_active} />
+                    </div>
                   </div>
                   <p className="text-sm text-gray-500">{item.description}</p>
                   {(item.address || item.distance_label) && (
-                    <p className="text-xs text-gray-400 mt-0.5">{[item.address, item.distance_label].filter(Boolean).join(' · ')}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{[item.address, item.distance_label].filter(Boolean).join(' \u00B7 ')}</p>
                   )}
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button onClick={() => { setEditId(item.id); setDraft({ name: item.name, category: item.category, description: item.description, address: item.address, distance_label: item.distance_label, website_url: item.website_url, is_featured: item.is_featured }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50">Edit</button>
-                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50">{item.is_active ? 'Hide' : 'Show'}</button>
-                  <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
+                <div className="flex items-center gap-2 flex-shrink-0 max-[639px]:w-full max-[639px]:justify-end max-[639px]:border-t max-[639px]:border-gray-100 max-[639px]:px-4 max-[639px]:py-3">
+                  <button onClick={() => { setEditId(item.id); setDraft({ name: item.name, category: item.category, description: item.description, address: item.address, distance_label: item.distance_label, website_url: item.website_url, is_featured: item.is_featured }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2">Edit</button>
+                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2">{item.is_active ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 max-[639px]:p-2 max-[639px]:rounded-lg max-[639px]:bg-red-50"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             )}
@@ -831,24 +837,24 @@ function RecForm({ draft, setDraft, save, saving, setEditId }: {
   );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────────────
+// -- Main page --
 
 function ContentEditor() {
   const [activeTab, setActiveTab] = useState<Tab>('faqs');
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 max-[639px]:flex-col max-[639px]:items-start max-[639px]:gap-1">
         <h2 className="text-2xl font-bold">Content</h2>
         <p className="text-sm text-gray-500">Manage guest-facing content and policies</p>
       </div>
 
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6 w-fit">
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6 w-fit max-[639px]:grid max-[639px]:grid-cols-4 max-[639px]:w-full">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors max-[639px]:min-w-0 max-[639px]:px-1 max-[639px]:text-xs max-[639px]:leading-snug max-[639px]:min-h-[48px] ${
               activeTab === tab.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
             }`}
           >
