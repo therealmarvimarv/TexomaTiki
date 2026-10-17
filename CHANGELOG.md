@@ -9,6 +9,47 @@ This project follows semantic versioning:
 
 ---
 
+## [1.0.1] - 2026-10-17
+
+### Changed
+
+**Property > Neighborhood - Add Place**
+- Added automatic scrolling to the newly created, unsaved Neighborhood item after clicking **Add Place**.
+- Automatically focuses the new item's **Place Name** field so the administrator can start typing without manually scrolling.
+- Uses the newly created item's input reference to locate the correct field.
+- Preserved all existing Neighborhood Add, Save, Edit, and Delete behavior.
+
+**Property > Sections & Content - Mobile Content Cards**
+- Applied the approved **actions-at-bottom** mobile layout to **FAQs, House Rules, Policies, and Local Recs** below 640px.
+- Gave card titles, status/category badges, and descriptions more horizontal space.
+- Moved **Edit**, **Hide/Show**, and **Delete** into a separate footer beneath each card's content.
+- Kept FAQ and House Rules ordering arrows available in the mobile footer.
+- Added spacing, card outlines, and rounded corners to improve readability on narrow screens.
+- Reorganized the mobile Content heading/description and made the four section tabs share a responsive four-column row.
+- Preserved the original desktop layouts at 640px and wider.
+
+**FAQs - Mobile Badge Alignment**
+- Corrected the FAQ badge arrangement so **Active/Hidden** and the category badge (such as **Payments**) appear side by side beneath the question, rather than on separate lines.
+- Limited this adjustment to FAQ cards on mobile; other Content sections were not altered by this follow-up correction.
+
+### Maintenance
+- Updated `ContentEditor.tsx` to use ASCII-safe source text and comments without changing intended displayed wording.
+
+### Preserved
+- Existing **Texoma Tiki** branding, sidebar, and other LIVE-specific design.
+- LIVE's original property editing and host-photo behavior.
+- LIVE-specific policy save/update logic, policy metadata handling, and database operations.
+- All existing Content Editor Add, Edit, Save, Cancel, Hide/Show, Delete, and ordering handlers.
+- No database migrations, Edge Function changes, or unrelated functional updates.
+
+### Files Updated
+- `PropertyEditor.tsx` - Neighborhood Add Place auto-scroll and focus only.
+- `ContentEditor.tsx` - Mobile card/header/tab layout, FAQ badge alignment, and source-encoding-safe text only.
+
+### Testing Note
+- Source changes were compared against the preceding LIVE files. Verify Add Place scrolling and all four Content sections at mobile widths before publication.
+
+
 ## [1.0.1] - 2026-10-15
 
 ### Changed
