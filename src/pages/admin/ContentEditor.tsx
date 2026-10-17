@@ -189,12 +189,13 @@ function FAQsTab() {
                   <button onClick={() => move(i, 1)} disabled={i === items.length - 1} className="text-gray-300 hover:text-gray-600 disabled:opacity-30 transition-colors"><ChevronDown className="w-4 h-4" /></button>
                 </div>
                 <div className="flex-1 min-w-0 max-[639px]:w-full max-[639px]:px-4 max-[639px]:pt-4 max-[639px]:pb-3 max-[639px]:flex max-[639px]:flex-col">
-                  <div className="flex items-start gap-2 mb-1 max-[639px]:order-1 max-[639px]:flex-col max-[639px]:gap-2 max-[639px]:mb-2">
-                    <p className="text-sm font-medium text-gray-900 flex-1">{item.question}</p>
+                  <div className="flex items-start gap-2 mb-1 max-[639px]:order-1 max-[639px]:flex-wrap max-[639px]:gap-2 max-[639px]:mb-2">
+                    <p className="text-sm font-medium text-gray-900 flex-1 max-[639px]:w-full max-[639px]:flex-none">{item.question}</p>
                     <StatusBadge active={item.is_active} />
+                    <span className="hidden max-[639px]:inline-block text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{item.category}</span>
                   </div>
                   <p className="text-sm text-gray-500 leading-relaxed max-[639px]:order-3">{item.answer}</p>
-                  <span className="inline-block mt-1.5 text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full max-[639px]:order-2 max-[639px]:self-start max-[639px]:mt-0 max-[639px]:mb-2">{item.category}</span>
+                  <span className="inline-block mt-1.5 text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full max-[639px]:hidden">{item.category}</span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 max-[639px]:w-full max-[639px]:justify-end max-[639px]:border-t max-[639px]:border-gray-100 max-[639px]:px-4 max-[639px]:py-3 max-[639px]:pl-14">
                   <button onClick={() => { setEditId(item.id); setDraft({ question: item.question, answer: item.answer, category: item.category }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2">Edit</button>
