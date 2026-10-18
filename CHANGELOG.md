@@ -9,6 +9,178 @@ This project follows semantic versioning:
 
 ---
 
+# CHANGELOG - Texoma Tiki LIVE - Content Hide/Show Repair
+
+**Date:** October 18, 2026  
+**Project:** Texoma Tiki LIVE  
+**Status:** COMPLETED - User verified all four content sections  
+**Change type:** Bug fix / Database Row Level Security (RLS) / Admin UI persistence  
+**Affected area:** Admin Dashboard > Property > Sections & Content > Content
+
+---
+
+## 1. Summary
+
+Repaired individual Hide/Show functionality for the following Admin Dashboard content sections:
+
+- FAQs
+- House Rules
+- Policies
+- Local Recs
+
+Administrators can now hide an individual record, retain access to it in the Admin Dashboard, and restore it later. Hidden records are excluded from their corresponding public-facing content sections. The fix was deliberately limited to four additive database SELECT policies and the four existing Hide/Show handlers.
+
+**Verification:** After Bolt completed the implementation, the project owner confirmed that all four sections passed manual testing.
+
+## 2. Original Problem
+
+The existing implementation had two defects:
+
+1. **Hidden records could not be retrieved by administrators after a reload.** The database SELECT policies allowed only `is_active = true` rows for both anonymous and authenticated sessions. There was no separate policy granting authorized administrators access to inactive rows, so a successfully hidden item could disappear from the Admin list and could not be restored using Show.
+2. **The Admin UI could report a change that was not saved.** The FAQs, House Rules, and Local Recs handlers changed local state without checking database errors. The Policies handler checked for an error but did not verify that the intended row had actually been updated. None of the handlers prevented repeated clicks while a request was in flight.
+
+The public-facing content components already filtered records by `is_active = true` and did not require modification.
+
+## 3. Database Repair
+
+**Migration name reported by Bolt:** `add_admin_select_content_tables`  
+**Migration filename or timestamp:** Not provided in Bolt's completion report.
+
+Bolt reported creating and applying one migration adding exactly four administrator SELECT policies:
+
+| Table | New policy | Operation | Role | Predicate |
+| --- | --- | --- | --- | --- |
+| `public.faqs` | `Admins can read all faqs` | SELECT | authenticated | `public.is_admin_user()` |
+| `public.house_rules` | `Admins can read all house_rules` | SELECT | authenticated | `public.is_admin_user()` |
+| `public.property_policies` | `Admins can read all property_policies` | SELECT | authenticated | `public.is_admin_user()` |
+| `public.local_recommendations` | `Admins can read all local_recommendations` | SELECT | authenticated | `public.is_admin_user()` |
+
+Policy behavior:
+
+- Existing `Public can read active [table]` SELECT policies were preserved.
+- Anonymous and non-admin authenticated sessions remain limited to active content under the reported RLS configuration.
+- Authorized administrators gain SELECT access to both active and hidden records through the existing `public.is_admin_user()` check.
+- Existing INSERT, UPDATE, and DELETE policies were not changed.
+- No content rows, tables, columns, or other database objects were reported as modified.
+
+These are additive, permissive PostgreSQL RLS policies. The admin SELECT policies supplement rather than replace the public active-only SELECT policies.
+
+## 4. Application Code Repair
+
+**Only application source file modified:** `src/pages/admin/ContentEditor.tsx`
+
+The following four handlers were updated:
+
+- `FAQsTab.toggleActive`
+- `HouseRulesTab.toggleActive`
+- `PoliciesTab.toggleActive`
+- `RecommendationsTab.toggleActive`
+
+### Updated Hide/Show sequence
+
+Each handler now:
+
+1. Calculates the requested new `is_active` value.
+2. Marks the affected item as processing via `togglingId`.
+3. Updates that record in the corresponding content table.
+4. Retrieves the resulting row with `.select('id,is_active').maybeSingle()`.
+5. Checks for a database error, a missing record, an incorrect record ID, or an unexpected `is_active` value.
+6. Changes the visible Active/Hidden status only after the update is confirmed.
+7. Displays an error message instead of falsely reporting success when verification fails.
+8. Disables the affected Hide/Show button while its request is being processed.
+
+**Additional local state:** `togglingId` and `toggleErr` were added to each applicable tab component. Policies also uses the confirmed-update pattern.
+
+**Reported error messages:**
+
+- `Failed to update. Please try again.`
+- `Update could not be verified. Please reload.`
+
+The existing interface design and other Content Editor behavior were preserved.
+
+## 5. Components and Functionality Left Unchanged
+
+Bolt reported no modifications to:
+
+- Public-facing FAQ, Guest Information, and Local Recommendations components.
+- `PropertyPage.tsx` or public section-level visibility controls.
+- Existing authentication functions or other database RLS policies.
+- Existing Edit, Save, Add, Delete, ordering, categories, or metadata behavior.
+- Booking, payment, notification, and other unrelated application functionality.
+- Edge Functions, bootstrap SQL files, or historical migrations.
+
+**Important distinction:** Individual item visibility (`is_active`) remains separate from whole-section visibility settings. Any independently managed property-level content was outside the scope of this repair.
+
+## 6. Verification Results
+
+### Bolt-reported implementation checks
+
+| Check | Result |
+| --- | --- |
+| Four new administrator SELECT policies | Created and confirmed by Bolt |
+| Original public active-only SELECT policies | Preserved, per Bolt |
+| Four Hide/Show handlers changed | Completed, per Bolt |
+| Database-returned row and state confirmation | Implemented, per Bolt |
+| Duplicate-click protection | Implemented, per Bolt |
+| Application build | PASSED - 1,623 modules, approximately 18.61 seconds |
+| TypeScript check | NOT CLEAN - pre-existing errors remain; Bolt reported no new errors |
+| Additional source-code or database changes | None reported beyond approved scope |
+
+**Existing TypeScript errors reported by Bolt:** Six in `ContentEditor.tsx` (including `.finally()` on `PromiseLike` and `meta.max_pets` typing issues) and 29 in `src/pages/platform/`. These errors were reported as pre-existing and were not addressed under this repair.
+
+### Owner-performed browser testing
+
+**Result: PASSED.** After implementation, the project owner confirmed that all requested tests passed in LIVE, covering the four sections:
+
+- Hide an item and confirm its Hidden status in Admin.
+- Navigate away, return, and refresh; confirm the hidden item remains manageable in Admin.
+- Refresh the public-facing page and confirm the item is excluded from the appropriate section.
+- Use Show to restore the item and confirm that public visibility returns.
+- Confirm the existing Edit functionality continues working.
+
+Bolt did not independently perform authenticated browser end-to-end tests; those checks were completed manually by the project owner.
+
+## 7. Exact Scope of This Release
+
+**Database:** Four new admin SELECT policies, created through one migration.  
+**Application source:** `src/pages/admin/ContentEditor.tsx`, with four targeted Hide/Show handler changes.  
+**Public website components:** No code changes.  
+**Bootstrap:** No changes.  
+**Deployment:** No Edge Function deployments reported.
+
+The work was a targeted repair, not a general synchronization with another codebase or a redesign of the Admin Dashboard.
+
+## 8. Follow-Up Item - Standalone Bootstrap
+
+**Status: NOT YET REVIEWED OR UPDATED for LIVE.**
+
+The current LIVE database has the four additional policies. However, Bolt explicitly reported that no standalone bootstrap SQL file was modified as part of this implementation.
+
+Before relying on any standalone bootstrap for a new database installation:
+
+1. Identify the actual standalone bootstrap used for that workflow.
+2. Inspect whether it already includes administrator SELECT policies for the four content tables.
+3. If missing, propose only the four required additions, using the bootstrap's existing policy guards and authorization conventions.
+4. Review and approve the proposal before making any changes.
+
+This follow-up does **not** require reopening the working LIVE Hide/Show code or changing the current database again.
+
+## 9. Final Status
+
+| Item | Status |
+| --- | --- |
+| LIVE Hide/Show behavior | RESOLVED - Owner tested |
+| Hidden-record administrator access | RESOLVED - New RLS policies |
+| Verified save confirmation | IMPLEMENTED |
+| Public exclusion and Show restoration | PASSED manual tests |
+| Application build | PASSED |
+| Existing TypeScript issues | REMAIN - Out of scope |
+| LIVE standalone bootstrap review | PENDING - Separate task |
+
+**Conclusion:** The requested Texoma Tiki LIVE Content Hide/Show repair is complete and verified. No further changes to this working functionality are required. The standalone bootstrap review remains a separate, controlled follow-up.
+
+---
+
 ## [1.0.1] - 2026-10-17
 
 ## 2026-10-17 - Texoma Tiki LIVE Admin Dashboard Updates
