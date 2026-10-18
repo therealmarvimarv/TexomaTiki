@@ -157,7 +157,7 @@ function SaveButton({ onClick, saving }: { onClick: () => void; saving: boolean 
       className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-60"
     >
       <Save className="w-4 h-4" />
-      {saving ? 'Saving\u2026' : 'Save'}
+      {saving ? 'Saving…' : 'Save'}
     </button>
   );
 }
@@ -203,7 +203,7 @@ export default function AccountPage() {
   const [bizSaving, setBizSaving] = useState(false);
   const [bizFlash, setBizFlash] = useState<Flash>(null);
 
-  // Support (read-only - developer-controlled)
+  // Support (read-only — developer-controlled)
   const [supportEmail, setSupportEmail] = useState('');
   const [supportPhone, setSupportPhone] = useState('');
   const [supportMessage, setSupportMessage] = useState('');
@@ -710,7 +710,7 @@ export default function AccountPage() {
               <TextInput value={checkOutTime} onChange={setCheckOutTime} placeholder="e.g. 11:00 AM" />
             </Field>
           </div>
-          <Field label="Suggested Door Code" helper={"Optional \u2014 used in email templates only, not enforced"}>
+          <Field label="Suggested Door Code" helper="Optional — used in email templates only, not enforced">
             <TextInput value={suggestedDoorCode} onChange={setSuggestedDoorCode} placeholder="e.g. 1234" />
           </Field>
           <div className="flex items-center gap-3 pt-1">
@@ -728,7 +728,7 @@ export default function AccountPage() {
               <SelectInput value={timezone} onChange={setTimezone} options={TIMEZONES} />
             </Field>
             <Field label="Currency">
-              <TextInput value={currency || CURRENCIES[0]} readOnly />
+              <SelectInput value={currency} onChange={setCurrency} options={CURRENCIES} />
             </Field>
             <Field label="Date Format">
               <SelectInput value={dateFormat} onChange={setDateFormat} options={DATE_FORMATS} />
@@ -763,7 +763,7 @@ export default function AccountPage() {
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
                       >
                         <Upload className="w-3.5 h-3.5" />
-                        {logoUploading ? 'Uploading\u2026' : 'Replace'}
+                        {logoUploading ? 'Uploading…' : 'Replace'}
                       </button>
                       <button
                         onClick={removeLogo}
@@ -792,7 +792,7 @@ export default function AccountPage() {
                     </button>
                   </div>
                 )}
-                <p className="mt-1 text-xs text-gray-400">Recommended size: 500 &#215; 500 pixels</p>
+                <p className="mt-1 text-xs text-gray-400">Recommended size: 500 × 500 pixels</p>
                 <input ref={logoFileRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={handleLogoUpload} className="hidden" />
               </div>
 
@@ -811,7 +811,7 @@ export default function AccountPage() {
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
                       >
                         <Upload className="w-3.5 h-3.5" />
-                        {faviconUploading ? 'Uploading\u2026' : 'Replace'}
+                        {faviconUploading ? 'Uploading…' : 'Replace'}
                       </button>
                       <button
                         onClick={removeFavicon}
@@ -840,7 +840,7 @@ export default function AccountPage() {
                     </button>
                   </div>
                 )}
-                <p className="mt-1 text-xs text-gray-400">Recommended size: 512 &#215; 512 pixels</p>
+                <p className="mt-1 text-xs text-gray-400">Recommended size: 512 × 512 pixels</p>
                 <input ref={faviconFileRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/x-icon,image/vnd.microsoft.icon" onChange={handleFaviconUpload} className="hidden" />
               </div>
             </div>
@@ -884,9 +884,9 @@ export default function AccountPage() {
                             onChange={e => { setTaglineSelectValue(e.target.value); if (e.target.value && e.target.value !== '__custom__') { addTagline(e.target.value); setTaglineSelectValue(''); } }}
                             className="w-full appearance-none px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent pr-8"
                           >
-                            <option value="">Select a preset&#8230;</option>
+                            <option value="">Select a preset…</option>
                             {TAGLINE_PRESETS.map(p => <option key={p} value={p}>{p}</option>)}
-                            <option value="__custom__">Custom&#8230;</option>
+                            <option value="__custom__">Custom…</option>
                           </select>
                           <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                         </div>
@@ -969,13 +969,13 @@ export default function AccountPage() {
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">SEO</p>
             <div className="space-y-4">
               <Field label="Homepage SEO Title" helper="Used as the browser tab title for your homepage">
-                <TextInput value={seoTitle} onChange={setSeoTitle} placeholder={"e.g. Tiki Cottage Lake Texoma \u2013 Vacation Rental"} />
+                <TextInput value={seoTitle} onChange={setSeoTitle} placeholder="e.g. Tiki Cottage Lake Texoma – Vacation Rental" />
               </Field>
               <Field label="Homepage Meta Description" helper="Shown in search engine results for your homepage">
                 <textarea
                   value={seoMetaDescription}
                   onChange={e => setSeoMetaDescription(e.target.value)}
-                  placeholder={"Brief description of your property for search engines\u2026"}
+                  placeholder="Brief description of your property for search engines…"
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none"
                 />
@@ -1031,7 +1031,7 @@ export default function AccountPage() {
                 disabled={resetSending}
                 className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
               >
-                {resetSending ? 'Sending\u2026' : 'Send Password Reset Email'}
+                {resetSending ? 'Sending…' : 'Send Password Reset Email'}
               </button>
               {resetFlash && <FlashBanner flash={resetFlash} />}
             </div>
@@ -1068,7 +1068,7 @@ export default function AccountPage() {
         </div>
       </SectionCard>
 
-      {/* Support - read-only, developer-controlled */}
+      {/* Support — read-only, developer-controlled */}
       {supportEnabled && (
         <SectionCard icon={HeadphonesIcon} title="Support">
           <div className="space-y-3">
