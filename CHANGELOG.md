@@ -29,7 +29,7 @@ This project follows semantic versioning:
 - Updated the top **Calendar Sync** summary card after manual synchronization using the refreshed source-status data, without extra queries for that summary update or changes to the other stat cards.
 - Corrected corrupted text encoding in **AccountPage.tsx**, including punctuation, image-dimension labels, select labels, and SEO placeholder text. Retained the intended displayed wording.
 
-### Preserved â€” LIVE Client iCal Exception
+### Preserved - LIVE Client iCal Exception
 
 - **Texoma Tiki LIVE retains its existing, tested legacy iCal scheduler and authentication implementation.** It was **not** replaced, refactored, or migrated to the MASTER implementation.
 - No changes were made to the automatic scheduler, cron configuration, Edge Functions, import/export behavior, authentication requirements, or underlying Airbnb/Vrbo calendar synchronization logic.
