@@ -11,7 +11,7 @@ This project follows semantic versioning:
 
 ## [1.0.1] - 2026-10-17
 
-## 2026-10-17 â€” Texoma Tiki LIVE Admin Dashboard Updates
+## 2026-10-17 - Texoma Tiki LIVE Admin Dashboard Updates
 
 ### Changed
 
