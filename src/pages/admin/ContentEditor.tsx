@@ -80,6 +80,8 @@ function FAQsTab() {
   const [editId, setEditId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Partial<FAQ>>({});
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [toggleErr, setToggleErr] = useState('');
 
   useEffect(() => {
     supabase.from('faqs').select('*').eq('property_id', PROPERTY_ID).order('sort_order')
@@ -110,8 +112,25 @@ function FAQsTab() {
   }
 
   async function toggleActive(item: FAQ) {
-    await supabase.from('faqs').update({ is_active: !item.is_active }).eq('id', item.id);
-    setItems((prev) => prev.map((f) => f.id === item.id ? { ...f, is_active: !f.is_active } : f));
+    const next = !item.is_active;
+    setTogglingId(item.id);
+    setToggleErr('');
+    const { data, error } = await supabase
+      .from('faqs')
+      .update({ is_active: next })
+      .eq('id', item.id)
+      .select('id,is_active')
+      .maybeSingle();
+    setTogglingId(null);
+    if (error) {
+      setToggleErr('Failed to update. Please try again.');
+      return;
+    }
+    if (!data || data.id !== item.id || data.is_active !== next) {
+      setToggleErr('Update could not be verified. Please reload.');
+      return;
+    }
+    setItems((prev) => prev.map((f) => f.id === item.id ? { ...f, is_active: next } : f));
   }
 
   async function remove(id: string) {
@@ -143,6 +162,8 @@ function FAQsTab() {
           <Plus className="w-4 h-4" /> Add FAQ
         </button>
       </div>
+
+      {toggleErr && <p className="text-sm text-red-600 mb-2">{toggleErr}</p>}
 
       {editId === 'new' && (
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 space-y-3">
@@ -199,7 +220,7 @@ function FAQsTab() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 max-[639px]:w-full max-[639px]:justify-end max-[639px]:border-t max-[639px]:border-gray-100 max-[639px]:px-4 max-[639px]:py-3 max-[639px]:pl-14">
                   <button onClick={() => { setEditId(item.id); setDraft({ question: item.question, answer: item.answer, category: item.category }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2">Edit</button>
-                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2">{item.is_active ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => toggleActive(item)} disabled={togglingId === item.id} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2 disabled:opacity-50 disabled:cursor-not-allowed">{item.is_active ? 'Hide' : 'Show'}</button>
                   <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 transition-colors max-[639px]:p-2 max-[639px]:rounded-lg max-[639px]:bg-red-50"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
@@ -220,6 +241,8 @@ function HouseRulesTab() {
   const [editId, setEditId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Partial<HouseRule>>({});
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [toggleErr, setToggleErr] = useState('');
 
   useEffect(() => {
     supabase.from('house_rules').select('*').eq('property_id', PROPERTY_ID).order('sort_order')
@@ -250,8 +273,25 @@ function HouseRulesTab() {
   }
 
   async function toggleActive(item: HouseRule) {
-    await supabase.from('house_rules').update({ is_active: !item.is_active }).eq('id', item.id);
-    setItems((prev) => prev.map((r) => r.id === item.id ? { ...r, is_active: !r.is_active } : r));
+    const next = !item.is_active;
+    setTogglingId(item.id);
+    setToggleErr('');
+    const { data, error } = await supabase
+      .from('house_rules')
+      .update({ is_active: next })
+      .eq('id', item.id)
+      .select('id,is_active')
+      .maybeSingle();
+    setTogglingId(null);
+    if (error) {
+      setToggleErr('Failed to update. Please try again.');
+      return;
+    }
+    if (!data || data.id !== item.id || data.is_active !== next) {
+      setToggleErr('Update could not be verified. Please reload.');
+      return;
+    }
+    setItems((prev) => prev.map((r) => r.id === item.id ? { ...r, is_active: next } : r));
   }
 
   async function remove(id: string) {
@@ -280,6 +320,8 @@ function HouseRulesTab() {
         </button>
       </div>
 
+      {toggleErr && <p className="text-sm text-red-600 mb-2">{toggleErr}</p>}
+
       {editId === 'new' && <div className="bg-blue-50 border border-blue-100 rounded-xl p-5"><p className="text-sm font-semibold text-gray-900 mb-3">New rule</p><RuleForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>}
 
       <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden max-[639px]:divide-y-0 max-[639px]:border-0 max-[639px]:overflow-visible max-[639px]:space-y-3">
@@ -305,7 +347,7 @@ function HouseRulesTab() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 max-[639px]:w-full max-[639px]:justify-end max-[639px]:border-t max-[639px]:border-gray-100 max-[639px]:px-4 max-[639px]:py-3 max-[639px]:pl-14">
                   <button onClick={() => { setEditId(item.id); setDraft({ title: item.title, description: item.description, icon: item.icon }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2">Edit</button>
-                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2">{item.is_active ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => toggleActive(item)} disabled={togglingId === item.id} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2 disabled:opacity-50 disabled:cursor-not-allowed">{item.is_active ? 'Hide' : 'Show'}</button>
                   <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 max-[639px]:p-2 max-[639px]:rounded-lg max-[639px]:bg-red-50"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
@@ -379,6 +421,8 @@ function PoliciesTab() {
   const [draft, setDraft] = useState<Partial<Policy>>({});
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [toggleErr, setToggleErr] = useState('');
 
   useEffect(() => {
     supabase
@@ -449,11 +493,24 @@ function PoliciesTab() {
 
   async function toggleActive(item: Policy) {
     const next = !item.is_active;
-    const { error } = await supabase
+    setTogglingId(item.id);
+    setToggleErr('');
+    const { data, error } = await supabase
       .from('property_policies')
       .update({ is_active: next, updated_at: new Date().toISOString() })
-      .eq('id', item.id);
-    if (!error) setItems((prev) => prev.map((p) => p.id === item.id ? { ...p, is_active: next } : p));
+      .eq('id', item.id)
+      .select('id,is_active')
+      .maybeSingle();
+    setTogglingId(null);
+    if (error) {
+      setToggleErr('Failed to update. Please try again.');
+      return;
+    }
+    if (!data || data.id !== item.id || data.is_active !== next) {
+      setToggleErr('Update could not be verified. Please reload.');
+      return;
+    }
+    setItems((prev) => prev.map((p) => p.id === item.id ? { ...p, is_active: next } : p));
   }
 
   async function remove(id: string) {
@@ -646,6 +703,8 @@ function PoliciesTab() {
         </div>
       </div>
 
+      {toggleErr && <p className="text-sm text-red-600 mb-2">{toggleErr}</p>}
+
       {editId === 'new' && (
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
           <p className="text-sm font-semibold text-gray-900 mb-3">New policy</p>
@@ -682,7 +741,8 @@ function PoliciesTab() {
                   </button>
                   <button
                     onClick={() => toggleActive(item)}
-                    className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2"
+                    disabled={togglingId === item.id}
+                    className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 transition-colors max-[639px]:px-3 max-[639px]:py-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {item.is_active ? 'Hide' : 'Show'}
                   </button>
@@ -710,6 +770,8 @@ function RecommendationsTab() {
   const [editId, setEditId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Partial<Recommendation>>({});
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [toggleErr, setToggleErr] = useState('');
 
   useEffect(() => {
     supabase.from('local_recommendations').select('*').eq('property_id', PROPERTY_ID).order('sort_order')
@@ -746,8 +808,25 @@ function RecommendationsTab() {
   }
 
   async function toggleActive(item: Recommendation) {
-    await supabase.from('local_recommendations').update({ is_active: !item.is_active }).eq('id', item.id);
-    setItems((prev) => prev.map((r) => r.id === item.id ? { ...r, is_active: !r.is_active } : r));
+    const next = !item.is_active;
+    setTogglingId(item.id);
+    setToggleErr('');
+    const { data, error } = await supabase
+      .from('local_recommendations')
+      .update({ is_active: next })
+      .eq('id', item.id)
+      .select('id,is_active')
+      .maybeSingle();
+    setTogglingId(null);
+    if (error) {
+      setToggleErr('Failed to update. Please try again.');
+      return;
+    }
+    if (!data || data.id !== item.id || data.is_active !== next) {
+      setToggleErr('Update could not be verified. Please reload.');
+      return;
+    }
+    setItems((prev) => prev.map((r) => r.id === item.id ? { ...r, is_active: next } : r));
   }
 
   async function remove(id: string) {
@@ -766,6 +845,8 @@ function RecommendationsTab() {
           <Plus className="w-4 h-4" /> Add place
         </button>
       </div>
+
+      {toggleErr && <p className="text-sm text-red-600 mb-2">{toggleErr}</p>}
 
       {editId === 'new' && <div className="bg-blue-50 border border-blue-100 rounded-xl p-5"><p className="text-sm font-semibold text-gray-900 mb-3">New recommendation</p><RecForm draft={draft} setDraft={setDraft} save={save} saving={saving} setEditId={setEditId} /></div>}
 
@@ -792,7 +873,7 @@ function RecommendationsTab() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0 max-[639px]:w-full max-[639px]:justify-end max-[639px]:border-t max-[639px]:border-gray-100 max-[639px]:px-4 max-[639px]:py-3">
                   <button onClick={() => { setEditId(item.id); setDraft({ name: item.name, category: item.category, description: item.description, address: item.address, distance_label: item.distance_label, website_url: item.website_url, is_featured: item.is_featured }); }} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2">Edit</button>
-                  <button onClick={() => toggleActive(item)} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2">{item.is_active ? 'Hide' : 'Show'}</button>
+                  <button onClick={() => toggleActive(item)} disabled={togglingId === item.id} className="text-xs text-gray-500 border border-gray-200 px-2.5 py-1 rounded-lg hover:bg-gray-50 max-[639px]:px-3 max-[639px]:py-2 disabled:opacity-50 disabled:cursor-not-allowed">{item.is_active ? 'Hide' : 'Show'}</button>
                   <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 max-[639px]:p-2 max-[639px]:rounded-lg max-[639px]:bg-red-50"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
