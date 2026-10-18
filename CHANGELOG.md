@@ -11,6 +11,46 @@ This project follows semantic versioning:
 
 ## [1.0.1] - 2026-10-17
 
+## 2026-10-17 â€” Texoma Tiki LIVE Admin Dashboard Updates
+
+### Changed
+
+- Updated **Admin Overview** to read the property's saved time zone and date-format preferences from `account_settings` and use them for relevant dashboard displays.
+- Updated display formatting so booking and availability **date-only values retain their recorded calendar day**, while actual event, inquiry, and calendar-sync timestamps are shown in the property's saved time zone.
+- Aligned the Overview date heading and Calendar Preview's current-day/month handling with the property time zone where applicable.
+- Changed the Revenue Estimate range label from **Year to Date** to **This Year**. The underlying January 1â€“December 31 range, confirmed-and-paid calculation, and internal range key remain unchanged.
+- Changed the **Currency** control in Account > Preferences from an editable selector to a **read-only display**. Existing currency values, state, persistence, and preference-saving behavior remain intact; no currency conversion was introduced.
+
+### Fixed
+
+- Excluded archived bookings from the **Pending Requests** list using the same active-booking filter as the corresponding summary count.
+- Improved manual **Sync Now** handling so HTTP failures, network errors, and returned synchronization errors are not incorrectly reported as successes.
+- Cleared stale Calendar Sync loading errors after a successful source-status refresh.
+- Updated the top **Calendar Sync** summary card after manual synchronization using the refreshed source-status data, without extra queries for that summary update or changes to the other stat cards.
+- Corrected corrupted text encoding in **AccountPage.tsx**, including punctuation, image-dimension labels, select labels, and SEO placeholder text. Retained the intended displayed wording.
+
+### Preserved â€” LIVE Client iCal Exception
+
+- **Texoma Tiki LIVE retains its existing, tested legacy iCal scheduler and authentication implementation.** It was **not** replaced, refactored, or migrated to the MASTER implementation.
+- No changes were made to the automatic scheduler, cron configuration, Edge Functions, import/export behavior, authentication requirements, or underlying Airbnb/Vrbo calendar synchronization logic.
+- Existing verified production behavior, including scheduled runs, HTTP 200 responses, Airbnb and Vrbo synchronization, `last_error = null`, and manual Admin Sync All, is documented as the **pre-existing baseline**; these integrations were not retested as part of this source-code update.
+- Future client deployments should continue using the current MASTER iCal architecture. Any migration of this LIVE client requires separate explicit approval and end-to-end verification.
+
+### Scope and Verification
+
+- Updated LIVE front-end source files only: `src/pages/admin/AdminOverview.tsx` and `src/pages/admin/AccountPage.tsx`.
+- Retained LIVE property-specific settings, branding, page layout/responsiveness, bookings, payments, emails, account/security actions, and existing back-end behavior.
+- Compared the latest supplied LIVE source files against the approved replacements: **AccountPage.tsx matched exactly**; **AdminOverview.tsx differed only by the final newline**.
+- Both supplied TSX files passed syntax parsing/transpilation checks with **zero syntax errors**.
+- **Not yet verified in this review:** a full LIVE project build, deployed-site behavior after publication, or end-to-end booking/payment/email/iCal tests. Source-file checks do not establish a successful production deployment.
+
+### Release Note
+
+This update carries the approved MASTER **admin-interface improvements** into Texoma Tiki LIVE **without migrating its protected legacy iCal scheduler/authentication implementation**.
+
+---
+
+
 ### Changed
 
 **Property > Neighborhood - Add Place**
