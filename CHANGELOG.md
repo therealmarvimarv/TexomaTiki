@@ -150,22 +150,7 @@ Bolt did not independently perform authenticated browser end-to-end tests; those
 
 The work was a targeted repair, not a general synchronization with another codebase or a redesign of the Admin Dashboard.
 
-## 8. Follow-Up Item - Standalone Bootstrap
-
-**Status: NOT YET REVIEWED OR UPDATED for LIVE.**
-
-The current LIVE database has the four additional policies. However, Bolt explicitly reported that no standalone bootstrap SQL file was modified as part of this implementation.
-
-Before relying on any standalone bootstrap for a new database installation:
-
-1. Identify the actual standalone bootstrap used for that workflow.
-2. Inspect whether it already includes administrator SELECT policies for the four content tables.
-3. If missing, propose only the four required additions, using the bootstrap's existing policy guards and authorization conventions.
-4. Review and approve the proposal before making any changes.
-
-This follow-up does **not** require reopening the working LIVE Hide/Show code or changing the current database again.
-
-## 9. Final Status
+## 8. Final Status
 
 | Item | Status |
 | --- | --- |
